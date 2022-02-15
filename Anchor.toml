@@ -1,0 +1,12 @@
+[programs.localnet]
+sunblock = "SUNPGzuYAL2GMBC3ZLMMAKmpVTuVDzanCojCL13cZYF"
+
+[registry]
+url = "https://anchor.projectserum.com"
+
+[provider]
+cluster = "localnet"
+wallet = "/Users/kenth/.config/solana/SBdSDnNzJQChKYcNys2bSY9AN1T63b3hLNGh8kBB9bs.json"
+
+[scripts]
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
