@@ -1,28 +1,32 @@
-import { Container, Stack } from '@mui/material'
+import { TabContext, TabList, TabPanel } from '@mui/lab'
+import { Box, Container, Stack, Tab } from '@mui/material'
 import { NextPage } from 'next'
 import Head from 'next/head'
+import React from 'react'
 import { AssetGroup } from '../components/assets/AssetGroup'
 import { HeroRow } from '../components/assets/HeroRow'
 import { Footer } from '../components/Footer'
 import { Header } from '../components/header'
+import { History } from '../components/personal/History'
+
 // import styles from '../styles/Home.module.css';
 
 const Home: NextPage = () => {
-  //   const style = {
-  //     background-image: url('./assets/space-bg.jpg'),
-  //     background-size: cover;
-  //     background-position: top;
-  //     min-height: 100%;
-  //     height: 100vh;
-  //     position: relative;
-  // }
+
+
+  const [value, setValue] = React.useState('1')
+
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    setValue(newValue)
+  }
 
   return (
     <div
       style={{
         backgroundImage: 'url(/background-neon.jpeg)',
-        minHeight: '100%',
-        backgroundSize: 'cover',
+        backgroundPosition:'fixed',
+        backgroundSize:'100%',
+        backgroundRepeat:'no-repeat'
       }}
     >
       <Head>
@@ -41,7 +45,24 @@ const Home: NextPage = () => {
           <Stack spacing={4}>
             <Header />
             <HeroRow />
-            <AssetGroup />
+            <Box sx={{ width: '100%', typography: 'body1' }}>
+              <TabContext value={value}>
+                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                  <TabList
+                    onChange={handleChange}
+                    aria-label="lab API tabs example"
+                  >
+                    <Tab label="Community stats" value="1" />
+                    <Tab label="Personal stats" value="2" />
+                    <Tab label="History" value="3" />
+                  </TabList>
+                </Box>
+                <TabPanel value="1"> <AssetGroup /></TabPanel>
+                <TabPanel value="2"> <AssetGroup /></TabPanel>
+                <TabPanel value="3"> <History /></TabPanel>
+              </TabContext>
+            </Box>
+
           </Stack>
           <Container>
             <Footer />

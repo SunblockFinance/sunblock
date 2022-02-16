@@ -12,7 +12,7 @@ export const AssetGroup: FC = () => {
 
     return (
         <>
-        <Container sx={{ borderRadius:'15px', backgroundColor:'rgba(77,156,175,0.3)', backdropFilter: "blur(8px)", padding:'20px', width:'100%' }}>
+        <Container sx={{outlineStyle:'solid', outlineColor:'gray', borderRadius:'5px', backgroundColor:'rgba(56,71,80,0.5)', backdropFilter: "blur(8px)", padding:'20px', width:'100%' }}>
             <Stack spacing={2} direction='column'>
             <Stack direction='row' spacing={2} justifyContent='space-between'>
                 <AssetItem title="Nodes owned" value="122" avatar={usdc}/>
