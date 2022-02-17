@@ -1,4 +1,4 @@
-import { createTheme, CssBaseline, ThemeProvider } from '@mui/material'
+import { createTheme, CssBaseline, ThemeProvider, Typography } from '@mui/material'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import {
   LedgerWalletAdapter,
@@ -58,7 +58,9 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <MoralisProvider appId={appid} serverUrl={severurl}>
+        <Typography fontFamily='sans-serif'>
         <Component {...pageProps} />
+        </Typography>
       </MoralisProvider>
     </ThemeProvider>
   )

@@ -26,7 +26,8 @@ const Home: NextPage = () => {
         backgroundImage: 'url(/background-sun.png)',
         backgroundPosition:'fixed',
         backgroundSize:'100%',
-        backgroundRepeat:'no-repeat'
+        backgroundRepeat:'no-repeat',
+        backgroundColor:"#252e83"
       }}
     >
       <Head>
