@@ -5,8 +5,8 @@ import { AssetItem } from "./AssetItem";
 
 export const AssetGroup: FC = () => {
     const background = blueGrey[700]
-    const usdc = './usdc-logo.png'
-    const strong = './strong-strong-logo.png'
+    const usdc = './usdc-logo.webp'
+    const strong = './strong-strong-logo.webp'
 
 
 

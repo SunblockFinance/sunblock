@@ -25,7 +25,7 @@ export const Header: FC = () => {
         alignItems="center"
         sx={{  width:'100%' }}
       >
-        <img height={300} src="./Sunblock-logos/Sunblock-logos_transparent.png"/>
+        <img height={300} src="./Sunblock-logos_transparent.webp"/>
 
         {isAuthenticated?authID:authenticatebtn}
       </Stack>
