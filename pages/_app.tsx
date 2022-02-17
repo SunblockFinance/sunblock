@@ -51,8 +51,8 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
     ['dark']
   )
 
-  const appid = process.env.NEXT_PUBLIC_APPID
-  const severurl = process.env.NEXT_PUBLIC_SERVER_URL
+  const appid = process.env.NEXT_PUBLIC_APPID!
+  const severurl = process.env.NEXT_PUBLIC_SERVER_URL!
 
   return (
     <ThemeProvider theme={theme}>
