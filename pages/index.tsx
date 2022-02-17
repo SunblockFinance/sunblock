@@ -23,7 +23,7 @@ const Home: NextPage = () => {
   return (
     <div
       style={{
-        backgroundImage: 'url(/background-sun.png)',
+        backgroundImage: 'url(/background-sun.webp)',
         backgroundPosition:'fixed',
         backgroundSize:'100%',
         backgroundRepeat:'no-repeat',
