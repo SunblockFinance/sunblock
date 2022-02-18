@@ -13,7 +13,7 @@ export const PurchaseShares: FC = () => {
   const DEFAULT_SHARE_VALUE = 10
   const TXT_NO_ALLOWANCE = "No allowanced"
 
-  
+
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
@@ -23,6 +23,7 @@ export const PurchaseShares: FC = () => {
   const [shareAmount, setShareAmount] = useState(DEFAULT_SHARE_VALUE)
 
   useEffect(() => {
+
     /**
      * Loading allowance data
      */
