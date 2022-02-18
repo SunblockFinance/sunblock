@@ -1,24 +1,15 @@
-import { TabContext, TabList, TabPanel } from '@mui/lab'
-import { Box, Container, Stack, Tab } from '@mui/material'
+import { Alert, Container, Stack } from '@mui/material'
 import { NextPage } from 'next'
 import Head from 'next/head'
 import React from 'react'
-import { AssetGroup } from '../components/assets/AssetGroup'
 import { HeroRow } from '../components/assets/HeroRow'
 import { Footer } from '../components/Footer'
 import { Header } from '../components/header'
-import { History } from '../components/personal/History'
+import { TabMenu } from '../components/navigation/TabMenu'
 
 // import styles from '../styles/Home.module.css';
 
 const Home: NextPage = () => {
-
-
-  const [value, setValue] = React.useState('1')
-
-  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-    setValue(newValue)
-  }
 
   return (
     <div
@@ -37,6 +28,11 @@ const Home: NextPage = () => {
       </Head>
 
       <main>
+      <Container sx={{justifyContent:'center'}}>
+      <Alert variant="filled" severity="error" sx={{width:'100%', borderStyle:'double'}}>
+      Development version! Do not use!!
+      </Alert>
+      </Container>
         <Stack
           direction="column"
           spacing={2}
@@ -46,23 +42,7 @@ const Home: NextPage = () => {
           <Stack spacing={4}>
             <Header />
             <HeroRow />
-            <Box sx={{ width: '100%', typography: 'body1' }}>
-              <TabContext value={value}>
-                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                  <TabList
-                    onChange={handleChange}
-                    aria-label="lab API tabs example"
-                  >
-                    <Tab label="Community stats" value="1" />
-                    <Tab label="Personal stats" value="2" />
-                    <Tab label="History" value="3" />
-                  </TabList>
-                </Box>
-                <TabPanel value="1"> <AssetGroup /></TabPanel>
-                <TabPanel value="2"> <AssetGroup /></TabPanel>
-                <TabPanel value="3"> <History /></TabPanel>
-              </TabContext>
-            </Box>
+            <TabMenu />
 
           </Stack>
           <Container>

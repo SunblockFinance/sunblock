@@ -1,20 +1,39 @@
 import FaceIcon from '@mui/icons-material/Face'
 import { Button, Chip, Stack } from '@mui/material'
-import { FC } from 'react'
+import Moralis from 'moralis'
+import { FC, useEffect, useState } from 'react'
 import { useMoralis } from 'react-moralis'
 
 
 export const Header: FC = () => {
   const signMsg = "Just making sure you are you. No transaction is made, thus, cost no gas fee!"
+
+  const [currentAccount, setCurrentAccount] = useState("")
+
+  const {isAuthenticated, authenticate, user, logout, isWeb3Enabled} = useMoralis()
+
+  useEffect(() => {
+    async () => {
+      const ethers = Moralis.web3Library
+    }
+  }, [])
+
+
+  Moralis.onAccountChanged((account) => {
+    console.log(`Account changed to ${account}`)
+    setCurrentAccount(account?account:"")
+
+  })
+
   const authfunc = () => {
     authenticate({signingMessage:signMsg})
   }
 
 
-  const {isAuthenticated, authenticate, user, logout} = useMoralis()
+
 
   const authenticatebtn = <Button onClick={authfunc} variant='contained'>Connect to wallet</Button>
-  const authID = <Chip icon={<FaceIcon />} label={user?.get('ethAddress')} onDelete={logout} variant="outlined" />
+  const authID = <Chip icon={<FaceIcon />} label={currentAccount} onDelete={logout} variant='filled' color='warning' />
 
 
   return (
