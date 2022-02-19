@@ -1,4 +1,5 @@
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material'
+import Moralis from 'moralis'
 import { AppProps } from 'next/app'
 import { SnackbarProvider } from 'notistack'
 import React, { FC } from 'react'
@@ -7,7 +8,7 @@ import { MoralisProvider } from 'react-moralis'
 
 const App: FC<AppProps> = ({ Component, pageProps }) => {
 
-
+  Moralis.enableWeb3()
   const theme = React.useMemo(
     () =>
       createTheme({

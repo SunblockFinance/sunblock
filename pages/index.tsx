@@ -29,18 +29,14 @@ const Home: NextPage = () => {
       </Head>
 
       <main>
-      <Container sx={{justifyContent:'center'}}>
-      {/* <Alert variant="filled" severity="error" sx={{width:'100%', borderStyle:'double'}}>
-      Development version! Do not use!!
-      </Alert> */}
-      </Container>
+
         <Stack
           direction="column"
           spacing={2}
           justifyItems="center"
           alignItems="center"
         >
-          <Stack spacing={4}>
+          <Stack spacing={4} sx={{marginRight:3, marginLeft:3}}>
             <Header />
             <HeroRow />
             <TabMenu />

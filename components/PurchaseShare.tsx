@@ -14,9 +14,7 @@ import {
 } from '../programs/polygon'
 export const PurchaseShares: FC = () => {
   const DEFAULT_SHARE_VALUE = 10
-  const TXT_NO_ALLOWANCE = "No allowanced"
-
-
+  const TXT_NO_ALLOWANCE = 'No allowanced'
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
@@ -26,33 +24,20 @@ export const PurchaseShares: FC = () => {
   const [shareAmount, setShareAmount] = useState(DEFAULT_SHARE_VALUE)
 
   useEffect(() => {
-    setShareAmount(10)
-
-    /**
-     * Loading allowance data
-     */
-    const fetchAllowance = async () => {
-      const allowanceWai = await getAllowance()
-      const tokenAmount = ethers.utils.formatEther(allowanceWai)
-      try {
-        setAllowance(`Spendlimit set to ${tokenAmount} USDC`)
-        setSpendlimitWarning(false)
-      } catch (error) {
-        console.log(error)
-        setAllowance('Danger! Unlimited spendlimit')
-        setSpendlimitWarning(true)
-      }
+    // setShareAmount(10)
+    const enableEmitter = Moralis.onWeb3Enabled(() => {
+      updateAllowance()
+    })
+    const unsub = Moralis.onAccountChanged((account) => {
+      updateAllowance()
+    })
+    return () => {
+      enableEmitter()
     }
-    fetchAllowance()
   }, [])
 
-  /**
-   *  Used to check how much allows our contract has been given by the logged in user.
-   *
-   * @returns amount, in wei, the contract is allowed to withdraw from the account
-   */
-  async function getAllowance(): Promise<BigNumber> {
-    const w3 = await Moralis.enableWeb3()
+  async function updateAllowance(): Promise<void> {
+    const w3 = Moralis.web3!
     const signer = w3.getSigner()
     const walletAddress = signer.getAddress()
     const erc20 = new ethers.Contract(
@@ -60,11 +45,26 @@ export const PurchaseShares: FC = () => {
       ABI_ERC20,
       signer
     )
-    const amount = await erc20.allowance(
+    const amount: BigNumber = await erc20.allowance(
       walletAddress,
       CONTRACT_ADDRESS_SUNBLOCK
     )
-    return amount
+
+    const allowanceWai = amount
+    const tokenAmount = ethers.utils.formatEther(allowanceWai)
+    try {
+      if ( Number.parseInt(tokenAmount) > Number.MAX_SAFE_INTEGER) {
+        setAllowance('Allowance is too damn high!')
+        setSpendlimitWarning(true)
+      } else {
+        setAllowance(`Spendlimit set to ${tokenAmount} USDC`)
+        setSpendlimitWarning(false)
+      }
+    } catch (error) {
+      console.log(error)
+      setAllowance('Allowance is too damn high!')
+      setSpendlimitWarning(true)
+    }
   }
 
   function removeAllowance() {
@@ -84,9 +84,14 @@ export const PurchaseShares: FC = () => {
       ABI_SUNBLOCK,
       signer
     )
-    const shareCostWei:BigNumber = await contract.purchaseTokensPrice(TOKEN_ADDRESS_DEMOERC20)
-    const tokenDecimals:number =  await erc20.decimals()
-    const totalWei = Moralis.Units.Token(shareCostWei.toNumber() * amount,tokenDecimals)
+    const shareCostWei: BigNumber = await contract.purchaseTokensPrice(
+      TOKEN_ADDRESS_DEMOERC20
+    )
+    const tokenDecimals: number = await erc20.decimals()
+    const totalWei = Moralis.Units.Token(
+      shareCostWei.toNumber() * amount,
+      tokenDecimals
+    )
     console.log(tokenDecimals)
     console.log(shareCostWei)
     console.log(totalWei)
@@ -126,31 +131,45 @@ export const PurchaseShares: FC = () => {
     )
   }
 
-
-
-  const purchaseButton = <Button color='warning' onClick={() => purchaseShare(shareAmount)} size="small" variant="contained">Buy shares</Button>
-  const allowanceButton = <Button onClick={() => addAllowance(shareAmount)} size="small" variant="contained">Approve spend</Button>
-
+  const purchaseButton = (
+    <Button
+      color="warning"
+      onClick={() => purchaseShare(shareAmount)}
+      size="small"
+      variant="contained"
+    >
+      Buy shares
+    </Button>
+  )
+  const allowanceButton = (
+    <Button
+      onClick={() => addAllowance(shareAmount)}
+      size="small"
+      variant="contained"
+      sx={{borderRadius:10}}
+    >
+      Approve spend
+    </Button>
+  )
 
   return (
-    <Stack direction="column" >
+    <Stack direction="column">
       <Stack direction="row" spacing={2}>
         <TextField
           id="outlined-helperText"
           label="Shares"
           defaultValue={shareAmount.toString()}
           onChange={(v) => setShareAmount(Number.parseInt(v.target.value))}
-          helperText="Each share is 10 USDC"
           type="number"
         />
-        {(allowance === "0"?allowanceButton:purchaseButton )}
+        {allowance === '0' ? allowanceButton : purchaseButton}
       </Stack>
       <Box sx={{ paddingTop: 2 }}>
         <Chip
           title="Revoke allowance for sunblock"
-          label={(allowance === "0"?TXT_NO_ALLOWANCE:allowance)}
-          clickable={(allowance === "0"?true:false)}
-          onDelete={(allowance === "0"?undefined:removeAllowance)}
+          label={allowance === '0' ? TXT_NO_ALLOWANCE : allowance}
+          clickable={allowance === '0' ? true : false}
+          onDelete={allowance === '0' ? undefined : removeAllowance}
           color={spendlimitWarning ? 'error' : 'default'}
         />
       </Box>

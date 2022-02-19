@@ -2,6 +2,7 @@ import FaceIcon from '@mui/icons-material/Face'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
 import Stack from '@mui/material/Stack'
+import Moralis from 'moralis'
 import Image from 'next/image'
 import { FC, useEffect, useState } from 'react'
 import { useMoralis } from 'react-moralis'
@@ -12,34 +13,32 @@ export const Header: FC = () => {
 
   const [currentAccount, setCurrentAccount] = useState('nobody')
 
-  const {
-    isAuthenticated,
-    authenticate,
-    user,
-    logout,
-    isWeb3Enabled,
-    web3,
-    Moralis,
-  } = useMoralis()
+  const { isAuthenticated } = useMoralis()
 
   useEffect(() => {
-    const unsub = Moralis.onWeb3Enabled((args) => {
-      Moralis.User.currentAsync().then((user) => {
-        const address = user ? user.get('ethAddress') : 'emptys'
-        setCurrentAccount(address)
-      })
+    const enableEmitter = Moralis.onWeb3Enabled(() => {
+      getCurrentAddress()
+    })
+    const accEmitter = Moralis.onAccountChanged(() => {
+      getCurrentAddress()
     })
     return () => {
-      unsub()
+      accEmitter()
+      enableEmitter()
     }
-  }, [Moralis, user])
+  }, [])
 
-  Moralis.onAccountChanged((account) => {
-    setCurrentAccount(account ? account : '')
-  })
+  async function getCurrentAddress(): Promise<void> {
+    //TODO: Check that metamask is cocnnected here
+    const w3 = Moralis.web3!
+    const signer = w3.getSigner()
+    const longAddress = await signer.getAddress()
+    const shortAddress = longAddress.slice(0, 10  ).concat('... and so on');
+    setCurrentAccount(shortAddress)
+  }
 
   const authfunc = () => {
-    authenticate({ signingMessage: signMsg })
+    Moralis.authenticate({ signingMessage: signMsg })
   }
 
   const authenticatebtn = (
@@ -51,20 +50,26 @@ export const Header: FC = () => {
     <Chip
       icon={<FaceIcon />}
       label={currentAccount}
-      onDelete={logout}
+      onDelete={Moralis.User.logOut}
       variant="filled"
       color="warning"
+      sx={{overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'}}
     />
   )
 
   return (
     <Stack
-      direction="row"
+      direction={{xs:'column', md:'row'}}
       justifyContent="space-between"
       alignItems="center"
       sx={{ width: '100%' }}
     >
-      <Image src="/Sunblock-logos/Sunblock-logos_white.png" alt='Sunblock logo' width='263' height='80'/>
+      <Image
+        src="/Sunblock-logos/Sunblock-logos_white.png"
+        alt="Sunblock logo"
+        width="263"
+        height="80"
+      />
 
       {isAuthenticated ? authID : authenticatebtn}
     </Stack>
