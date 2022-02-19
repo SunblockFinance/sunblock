@@ -8,9 +8,9 @@ import { MoralisProvider } from 'react-moralis'
 
 const App: FC<AppProps> = ({ Component, pageProps }) => {
 
-  useEffect(() => {
-    Moralis.enableWeb3()
-  }, [])
+  // useEffect(() => {
+  //   Moralis.enableWeb3()
+  // }, [])
 
   const theme = React.useMemo(
     () =>

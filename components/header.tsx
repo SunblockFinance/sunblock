@@ -5,40 +5,47 @@ import Stack from '@mui/material/Stack'
 import Moralis from 'moralis'
 import Image from 'next/image'
 import { FC, useEffect, useState } from 'react'
-import { useMoralis } from 'react-moralis'
 
 export const Header: FC = () => {
   const signMsg =
     'Just making sure you are you. No transaction is made, thus, cost no gas fee!'
 
-  const [currentAccount, setCurrentAccount] = useState('nobody')
+  const [currentAccount, setCurrentAccount] = useState('not connected')
 
-  const { isAuthenticated } = useMoralis()
 
   useEffect(() => {
+
+    if (!Moralis.enableWeb3()) {
+      Moralis.enableWeb3()
+    }
+
     const enableEmitter = Moralis.onWeb3Enabled(() => {
-      getCurrentAddress()
+      setCurrentAddress()
     })
     const accEmitter = Moralis.onAccountChanged(() => {
-      getCurrentAddress()
+      setCurrentAddress()
+    })
+    const conEmitter = Moralis.onConnect(() => {
+      setCurrentAddress()
     })
     return () => {
       accEmitter()
       enableEmitter()
+      conEmitter()
     }
   }, [])
 
-  async function getCurrentAddress(): Promise<void> {
+  async function setCurrentAddress(): Promise<void> {
     //TODO: Check that metamask is cocnnected here
     const w3 = Moralis.web3!
     const signer = w3.getSigner()
     const longAddress = await signer.getAddress()
-    const shortAddress = longAddress.slice(0, 10  ).concat('... and so on');
+    const shortAddress = longAddress.slice(0, 15  ).concat('... and so on');
     setCurrentAccount(shortAddress)
   }
 
-  const authfunc = () => {
-    Moralis.authenticate({ signingMessage: signMsg })
+  async function authfunc() {
+    await Moralis.enableWeb3()
   }
 
   const authenticatebtn = (
@@ -50,7 +57,6 @@ export const Header: FC = () => {
     <Chip
       icon={<FaceIcon />}
       label={currentAccount}
-      onDelete={Moralis.User.logOut}
       variant="filled"
       color="warning"
       sx={{overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'}}
@@ -71,7 +77,7 @@ export const Header: FC = () => {
         height="80"
       />
 
-      {isAuthenticated ? authID : authenticatebtn}
+      {(currentAccount !== 'not connected') ? authID : authenticatebtn}
     </Stack>
   )
 }
