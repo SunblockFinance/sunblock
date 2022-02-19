@@ -1,5 +1,6 @@
 import { TabContext, TabList, TabPanel } from "@mui/lab"
-import { Box, Tab } from "@mui/material"
+import Box from '@mui/material/Box'
+import Tab from '@mui/material/Tab'
 import React, { FC } from "react"
 import { AssetGroup } from "../assets/AssetGroup"
 import { History } from '../personal/History'

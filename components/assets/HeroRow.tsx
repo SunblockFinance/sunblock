@@ -1,4 +1,4 @@
-import { Stack } from '@mui/material'
+import Stack from '@mui/material/Stack'
 import { FC } from 'react'
 import { PurchaseShares } from '../PurchaseShare'
 import { HeroItem } from './HeroItem'

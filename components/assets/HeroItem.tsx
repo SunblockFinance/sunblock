@@ -1,5 +1,8 @@
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
-import { Avatar, Card, CardContent, CardHeader } from '@mui/material'
+import Avatar from '@mui/material/Avatar'
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import CardHeader from '@mui/material/CardHeader'
 import { FC } from 'react'
 
 export const HeroItem: FC<{

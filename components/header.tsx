@@ -1,5 +1,7 @@
 import FaceIcon from '@mui/icons-material/Face'
-import { Button, Chip, Stack } from '@mui/material'
+import Button from '@mui/material/Button'
+import Chip from '@mui/material/Chip'
+import Stack from '@mui/material/Stack'
 import Image from 'next/image'
 import { FC, useEffect, useState } from 'react'
 import { useMoralis } from 'react-moralis'

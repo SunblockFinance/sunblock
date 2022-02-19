@@ -1,4 +1,5 @@
-import { Container, Stack } from '@mui/material'
+import Container from '@mui/material/Container'
+import Stack from '@mui/material/Stack'
 import { NextPage } from 'next'
 import Head from 'next/head'
 import React from 'react'

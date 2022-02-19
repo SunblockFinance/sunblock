@@ -1,5 +1,6 @@
 import AddCircleOutlineSharpIcon from '@mui/icons-material/AddCircleOutlineSharp'
-import { ListItemText, Stack } from '@mui/material'
+import ListItemText from '@mui/material/ListItemText'
+import Stack from '@mui/material/Stack'
 import { FC } from 'react'
 
 export const HistoryCell: FC<{index:number}> = (data) => {

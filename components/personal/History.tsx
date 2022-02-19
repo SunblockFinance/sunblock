@@ -1,4 +1,6 @@
-import { Box, ListItem, ListItemButton } from '@mui/material';
+import Box from '@mui/material/Box';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
 import { FC } from 'react';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import { HistoryCell } from './HistoryCell';

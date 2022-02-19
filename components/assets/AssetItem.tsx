@@ -1,4 +1,6 @@
-import { Avatar, Card, CardHeader } from '@mui/material'
+import Avatar from '@mui/material/Avatar'
+import Card from '@mui/material/Card'
+import CardHeader from '@mui/material/CardHeader'
 import { grey } from '@mui/material/colors'
 import { FC } from 'react'
 
