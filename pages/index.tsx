@@ -1,4 +1,4 @@
-import { Alert, Container, Stack } from '@mui/material'
+import { Container, Stack } from '@mui/material'
 import { NextPage } from 'next'
 import Head from 'next/head'
 import React from 'react'
@@ -14,7 +14,7 @@ const Home: NextPage = () => {
   return (
     <div
       style={{
-        backgroundImage: 'url(/background-sun.webp)',
+        backgroundImage: 'url(/background-neon.jpeg)',
         backgroundPosition:'fixed',
         backgroundSize:'100%',
         backgroundRepeat:'no-repeat',
@@ -29,9 +29,9 @@ const Home: NextPage = () => {
 
       <main>
       <Container sx={{justifyContent:'center'}}>
-      <Alert variant="filled" severity="error" sx={{width:'100%', borderStyle:'double'}}>
+      {/* <Alert variant="filled" severity="error" sx={{width:'100%', borderStyle:'double'}}>
       Development version! Do not use!!
-      </Alert>
+      </Alert> */}
       </Container>
         <Stack
           direction="column"

@@ -3,7 +3,6 @@ import { BigNumber, ethers } from 'ethers'
 import Moralis from 'moralis'
 import { useSnackbar } from 'notistack'
 import { FC, useEffect, useState } from 'react'
-import { useMoralis, useWeb3ExecuteFunction } from 'react-moralis'
 import { ABI_ERC20, ABI_SUNBLOCK } from '../programs/contracts'
 import {
   CONTRACT_ADDRESS_SUNBLOCK,
@@ -23,16 +22,19 @@ export const PurchaseShares: FC = () => {
   const [shareAmount, setShareAmount] = useState(DEFAULT_SHARE_VALUE)
 
   useEffect(() => {
+    setShareAmount(10)
 
     /**
      * Loading allowance data
      */
     const fetchAllowance = async () => {
-      const allowance = await getAllowance()
+      const allowanceWai = await getAllowance()
+      const tokenAmount = ethers.utils.formatEther(allowanceWai)
       try {
-        setAllowance(allowance.toNumber().toString())
+        setAllowance(`Spendlimit set to ${tokenAmount} USDC`)
         setSpendlimitWarning(false)
       } catch (error) {
+        console.log(error)
         setAllowance('Danger! Unlimited spendlimit')
         setSpendlimitWarning(true)
       }
@@ -65,7 +67,7 @@ export const PurchaseShares: FC = () => {
     //TODO #3 Implement removal of allowance
   }
 
-  async function addAllowance(amount: BigNumber) {
+  async function addAllowance(amount: number) {
     const w3 = await Moralis.enableWeb3()
     const signer = w3.getSigner()
     const erc20 = new ethers.Contract(
@@ -73,10 +75,22 @@ export const PurchaseShares: FC = () => {
       ABI_ERC20,
       signer
     )
-    erc20.approve(CONTRACT_ADDRESS_SUNBLOCK, ethers.constants.MaxUint256)
+    const contract = new ethers.Contract(
+      CONTRACT_ADDRESS_SUNBLOCK,
+      ABI_SUNBLOCK,
+      signer
+    )
+    const shareCostWei:BigNumber = await contract.purchaseTokensPrice(TOKEN_ADDRESS_DEMOERC20)
+    const tokenDecimals:number =  await erc20.decimals()
+    const totalWei = Moralis.Units.Token(shareCostWei.toNumber() * amount,tokenDecimals)
+    console.log(tokenDecimals)
+    console.log(shareCostWei)
+    console.log(totalWei)
+    await erc20.approve(CONTRACT_ADDRESS_SUNBLOCK, totalWei)
   }
 
   async function purchaseShare(amount: number) {
+    //TODO: #7 Increse spendlimit if purchase is over set limit
     //TODO: #4 Validate buyshare amount with allowance
     //TODO: #5 Consume investment event from the chain
     const w3 = await Moralis.enableWeb3()
@@ -107,21 +121,15 @@ export const PurchaseShares: FC = () => {
       }
     )
   }
-  const { isAuthenticated } = useMoralis()
 
-  const { data, error, fetch, isFetching, isLoading } = useWeb3ExecuteFunction()
-  const options = {
-    abi: ABI_SUNBLOCK,
-    contractAddress: CONTRACT_ADDRESS_SUNBLOCK,
-    functionName: 'buyShares',
-    params: {
-      _token: TOKEN_ADDRESS_DEMOERC20,
-      _shareCount: 1,
-    },
-  }
+
+
+  const purchaseButton = <Button color='warning' onClick={() => purchaseShare(shareAmount)} size="small" variant="contained">Buy shares</Button>
+  const allowanceButton = <Button onClick={() => addAllowance(shareAmount)} size="small" variant="contained">Approve spend</Button>
+
 
   return (
-    <Stack direction="column">
+    <Stack direction="column" >
       <Stack direction="row" spacing={2}>
         <TextField
           id="outlined-helperText"
@@ -131,15 +139,7 @@ export const PurchaseShares: FC = () => {
           helperText="Each share is 10 USDC"
           type="number"
         />
-        <Button
-          // onClick={() => getAllowence()}
-          // onClick={() => requestAllowence()}
-          onClick={() => purchaseShare(shareAmount)}
-          size="small"
-          variant="contained"
-        >
-          Buy shares
-        </Button>
+        {(allowance === "0"?allowanceButton:purchaseButton )}
       </Stack>
       <Box sx={{ paddingTop: 2 }}>
         <Chip
