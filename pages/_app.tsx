@@ -15,7 +15,7 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
           mode: 'dark',
         },
       }),
-    ['dark']
+    []
   )
 
   const appid = process.env.NEXT_PUBLIC_APPID!

@@ -1,5 +1,6 @@
 import FaceIcon from '@mui/icons-material/Face'
 import { Button, Chip, Stack } from '@mui/material'
+import Image from 'next/image'
 import { FC, useEffect, useState } from 'react'
 import { useMoralis } from 'react-moralis'
 
@@ -61,7 +62,7 @@ export const Header: FC = () => {
       alignItems="center"
       sx={{ width: '100%' }}
     >
-      <img height={70} src="./Sunblock-logos/Sunblock-logos_white.png" />
+      <Image src="/Sunblock-logos/Sunblock-logos_white.png" alt='Sunblock logo' width='263' height='80'/>
 
       {isAuthenticated ? authID : authenticatebtn}
     </Stack>

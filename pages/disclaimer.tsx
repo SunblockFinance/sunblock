@@ -34,7 +34,7 @@ function Disclaimer() {
             <strong>Website</strong> refers to Sunblock, accessible from{' '}
             <a
               href="https://sunblock.finance"
-              rel="external nofollow noopener"
+              rel="external nofollow noopener noreferrer"
               target="_blank"
             >
               https://sunblock.finance
@@ -61,7 +61,7 @@ function Disclaimer() {
           the help of the{' '}
           <a
             href="https://www.termsfeed.com/blog/sample-disclaimer-template/"
-            target="_blank"
+            target="_blank" rel="noreferrer"
           >
             Disclaimer Template
           </a>
