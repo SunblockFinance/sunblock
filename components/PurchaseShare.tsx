@@ -6,7 +6,7 @@ import TextField from '@mui/material/TextField'
 import { BigNumber, ethers } from 'ethers'
 import Moralis from 'moralis'
 import { useSnackbar } from 'notistack'
-import { FC, useEffect, useState } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 import { ABI_ERC20, ABI_SUNBLOCK } from '../programs/contracts'
 import {
   CONTRACT_ADDRESS_SUNBLOCK,
@@ -20,8 +20,18 @@ export const PurchaseShares: FC = () => {
 
   // What is the users current allowance
   const [allowance, setAllowance] = useState('')
+  const [allowanceNeeded, setAllowanceNeeded] = useState(false)
   const [spendlimitWarning, setSpendlimitWarning] = useState(Boolean)
   const [shareAmount, setShareAmount] = useState(DEFAULT_SHARE_VALUE)
+
+  const eventListner = useCallback(() => {
+    const totalcost = shareAmount * 10 //TODO: Get shareprice from chain. Not hardcoded
+    const numAllowance = Number.parseInt(allowance)
+    if (totalcost>numAllowance) {
+      setSpendlimitWarning(true)
+
+    }
+  }, [shareAmount, allowance]);
 
   useEffect(() => {
     // setShareAmount(10)
@@ -33,6 +43,7 @@ export const PurchaseShares: FC = () => {
     })
     return () => {
       enableEmitter()
+      unsub()
     }
   }, [])
 
@@ -52,13 +63,20 @@ export const PurchaseShares: FC = () => {
 
     const allowanceWai = amount
     const tokenAmount = ethers.utils.formatEther(allowanceWai)
+    const tokenNumber = Number.parseInt(tokenAmount)
     try {
-      if ( Number.parseInt(tokenAmount) > Number.MAX_SAFE_INTEGER) {
+      if ( tokenNumber > Number.MAX_SAFE_INTEGER) {
         setAllowance('Allowance is too damn high!')
         setSpendlimitWarning(true)
+        setAllowanceNeeded(false)
+      } else if (tokenNumber === 0) {
+        setAllowance(`Spendlimit is ${tokenAmount} USDC. 💔`)
+        setSpendlimitWarning(true)
+        setAllowanceNeeded(true)
       } else {
         setAllowance(`Spendlimit set to ${tokenAmount} USDC`)
         setSpendlimitWarning(false)
+        setAllowanceNeeded(false)
       }
     } catch (error) {
       console.log(error)
@@ -146,7 +164,6 @@ export const PurchaseShares: FC = () => {
       onClick={() => addAllowance(shareAmount)}
       size="small"
       variant="contained"
-      sx={{borderRadius:10}}
     >
       Approve spend
     </Button>
@@ -162,7 +179,7 @@ export const PurchaseShares: FC = () => {
           onChange={(v) => setShareAmount(Number.parseInt(v.target.value))}
           type="number"
         />
-        {allowance === '0' ? allowanceButton : purchaseButton}
+        {allowanceNeeded ? allowanceButton : purchaseButton}
       </Stack>
       <Box sx={{ paddingTop: 2 }}>
         <Chip
