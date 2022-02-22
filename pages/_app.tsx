@@ -1,8 +1,12 @@
+// Copyright (c) 2022 Kenth Fagerlund
+//
+// This software is released under the MIT License.
+// https://opensource.org/licenses/MIT
+
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material'
-import Moralis from 'moralis'
 import { AppProps } from 'next/app'
 import { SnackbarProvider } from 'notistack'
-import React, { FC, useEffect } from 'react'
+import React, { FC } from 'react'
 import { MoralisProvider } from 'react-moralis'
 
 

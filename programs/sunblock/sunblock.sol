@@ -1,3 +1,6 @@
+// Copyright 2022 Kenth Fagerlund.
+// SPDX-License-Identifier: MIT
+
 
 // File: contracts/sunblock.sol
 

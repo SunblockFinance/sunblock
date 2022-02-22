@@ -1,3 +1,8 @@
+// Copyright (c) 2022 Kenth Fagerlund
+//
+// This software is released under the MIT License.
+// https://opensource.org/licenses/MIT
+
 import Typography from '@mui/material/Typography'
 import { FC } from 'react'
 

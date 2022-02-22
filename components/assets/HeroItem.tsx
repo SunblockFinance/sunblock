@@ -1,3 +1,8 @@
+// Copyright (c) 2022 Kenth Fagerlund
+//
+// This software is released under the MIT License.
+// https://opensource.org/licenses/MIT
+
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
 import Avatar from '@mui/material/Avatar'
 import Card from '@mui/material/Card'

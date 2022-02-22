@@ -1,3 +1,8 @@
+// Copyright (c) 2022 Kenth Fagerlund
+//
+// This software is released under the MIT License.
+// https://opensource.org/licenses/MIT
+
 import AddCircleOutlineSharpIcon from '@mui/icons-material/AddCircleOutlineSharp'
 import ListItemText from '@mui/material/ListItemText'
 import Stack from '@mui/material/Stack'
@@ -13,9 +18,3 @@ export const HistoryCell: FC<{index:number}> = (data) => {
 
     )
 }
-
-/*
-Buy shares
-Total 100 => 120 (+20)
-Incoming reward
-*/

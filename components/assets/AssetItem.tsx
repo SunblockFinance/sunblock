@@ -1,3 +1,8 @@
+// Copyright (c) 2022 Kenth Fagerlund
+//
+// This software is released under the MIT License.
+// https://opensource.org/licenses/MIT
+
 import Avatar from '@mui/material/Avatar'
 import Card from '@mui/material/Card'
 import CardHeader from '@mui/material/CardHeader'

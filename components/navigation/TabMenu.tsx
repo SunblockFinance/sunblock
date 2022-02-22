@@ -1,3 +1,8 @@
+// Copyright (c) 2022 Kenth Fagerlund
+//
+// This software is released under the MIT License.
+// https://opensource.org/licenses/MIT
+
 import { TabContext, TabList, TabPanel } from "@mui/lab"
 import Box from '@mui/material/Box'
 import Tab from '@mui/material/Tab'
