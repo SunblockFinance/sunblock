@@ -22,18 +22,32 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
+/**
+    @title Sunblock investment vehicle
+    @author Kenth Fagerlund
+    @dev This constract allows users to combined their resources to purchase a high yield investment
+    and toghether share the rewards.
+    A very simple system where each participant will buy shares at a fixed price. Each share will count
+    against the reward pool that comes from the investment. Each share is an equal part of the reward pie.
 
-
+    The investment is usually done manually since the investments are off chain or does not allow contract to contract purchase.
+    This requires A LOT of trust from each participant as as such should be used with EXTREME caution. There is no safety nest's
+    included in this version of the contract. Just keep that in mind.
+ */
 contract Sunblock is Pausable, Ownable, ReentrancyGuard {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
     using EnumerableSet for EnumerableSet.AddressSet;
 
-    // #### Investment vehicle #### //
+    /**
+        @dev Representation of what this contract invests in. Dictates what form of payment the contract
+        accept and the price per share.
+     */
     struct InvestmentVehicle {
         uint identifier; // Unique identifier for this vehicle
         IERC20 paymentInstrument; //Token used to purchase shares in this vehicle
         uint256 unitcost; // Cost of one share using token specified in paymentInstrument
+
         address investmentPool; // Wallet used to store incoming investments
     }
 
@@ -52,7 +66,8 @@ contract Sunblock is Pausable, Ownable, ReentrancyGuard {
     // #### Events #### //
     event SharesIssued (address _holder, uint _sharesIssued);
     event DepositMade(uint256 amount, address payer);
-    event Log(address holder);
+    event RewardIssued(address holder, uint256 amount);
+    event RewardsDepleted(uint256 holders, uint256 totalAmount);
 
     constructor (uint identifier,
                 address paymentInstrument,
@@ -104,6 +119,9 @@ contract Sunblock is Pausable, Ownable, ReentrancyGuard {
         emit DepositMade(_amount, msg.sender);
     }
 
+    /**
+     * @dev
+     */
     function distributeRewards() external onlyOwner {
         // How much rewards do we have to dish out?
         uint256 rewardBalance = vehicle.paymentInstrument.balanceOf(address(this));
@@ -124,7 +142,13 @@ contract Sunblock is Pausable, Ownable, ReentrancyGuard {
             uint256 rewardShare = rewardPerShare * holder.shares;
             vehicle.paymentInstrument.safeTransfer(holderAddr, rewardShare);
 
-            emit Log(holderAddr);
+            emit RewardIssued(holderAddr, rewardShare);
         }
+        emit RewardsDepleted(_holderno, rewardBalance);
     }
+
+    // #### ----------------- #### //
+    // #### UTILITY FUNCTIONS #### //
+    // #### ----------------- #### //
+
 }
