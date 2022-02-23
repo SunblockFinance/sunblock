@@ -8,6 +8,10 @@
 # Anchor
 /target
 
+# Solidity
+artifacts
+.debugger
+
 # testing
 /coverage
 

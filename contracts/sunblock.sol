@@ -1,0 +1,130 @@
+// SPDX-License-Identifier: MIT
+
+/**
+             _   _         _     ___ _
+ ___ _ _ ___| |_| |___ ___| |_  |  _|_|___ ___ ___ ___ ___
+|_ -| | |   | . | | . |  _| '_|_|  _| |   | .'|   |  _| -_|
+|___|___|_|_|___|_|___|___|_,_|_|_| |_|_|_|__,|_|_|___|___|
+
+*/
+
+// Developed by Kenth Fagerlund (https://github.com/arkalon76)
+// Inspired by the fantastic work by Dogu Deniz UGUR (https://github.com/DoguD)
+
+// contracts/sunblock.sol
+
+pragma solidity ^0.8.9;
+import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+
+
+
+contract Sunblock is Pausable, Ownable, ReentrancyGuard {
+    using SafeMath for uint256;
+    using SafeERC20 for IERC20;
+    using EnumerableSet for EnumerableSet.AddressSet;
+
+    // #### Investment vehicle #### //
+    struct InvestmentVehicle {
+        uint identifier; // Unique identifier for this vehicle
+        IERC20 paymentInstrument; //Token used to purchase shares in this vehicle
+        uint256 unitcost; // Cost of one share using token specified in paymentInstrument
+        address investmentPool; // Wallet used to store incoming investments
+    }
+
+    struct Shareholder {
+        uint shares;
+    }
+
+    // #### Variables ####
+    InvestmentVehicle public vehicle; // Specifies what investment vehicle this contract allows. DO NOT CHANGE THIS STATE!!
+    uint256 public sharesIssued;
+
+    // #### Mappings ####
+    mapping (address => Shareholder) public shareholder;
+    EnumerableSet.AddressSet private holders;
+
+    // #### Events #### //
+    event SharesIssued (address _holder, uint _sharesIssued);
+    event DepositMade(uint256 amount, address payer);
+    event Log(address holder);
+
+    constructor (uint identifier,
+                address paymentInstrument,
+                address investmentPool,
+                uint256 unitcost) {
+        vehicle = InvestmentVehicle(identifier,
+                                    IERC20(paymentInstrument),
+                                    unitcost,
+                                    investmentPool);
+    }
+
+    // buyShares allows a signer to be issued a set amount of shares (_shareAmounts) against a payment
+    // as described in the Investment Vehicle.
+    // The signer will pay (_shareAmount * InvestmentVehicle.unitcost) with the token
+    // mentioned in (InvestmentVehicle.paymentInstrument)
+    function buyShares(uint _shareAmount) external {
+        require (_shareAmount > 0, "Share amount must be 1 or more");
+        // Transfer funds into the pool
+        bool success = vehicle.paymentInstrument.transferFrom(msg.sender, vehicle.investmentPool, vehicle.unitcost.mul(_shareAmount));
+        require(success, "Failed to transfer");
+        // Issue shares to the signer.
+        Shareholder storage sh = shareholder[msg.sender];
+        sh.shares += _shareAmount;
+        EnumerableSet.add(holders, msg.sender);
+        sharesIssued += _shareAmount;
+
+        //Emit events
+        emit SharesIssued(msg.sender, _shareAmount);
+    }
+
+    // Returns amount of tokens in the investement pool that is waiting to be invested in the Investment Vehicle.
+    function investmentsHeld() external view returns (uint256) {
+        return vehicle.paymentInstrument.balanceOf(vehicle.investmentPool);
+    }
+
+    // Returns of tokens in the reward pool that is waiting to be distributed to shareholders
+    function rewardsHeld() external view returns (uint256) {
+        return vehicle.paymentInstrument.balanceOf(address(this));
+    }
+
+    // #### --------------- #### //
+    // #### ADMIN FUNCTIONS #### //
+    // #### --------------- #### //
+
+    // Will deposit any rewards in the token as dictated by the payment instrument.
+    function depositRewards(uint256 _amount) external onlyOwner {
+        require(_amount > 0, "Amount must be over 0");
+        vehicle.paymentInstrument.transferFrom(msg.sender, address(this), _amount);
+        emit DepositMade(_amount, msg.sender);
+    }
+
+    function distributeRewards() external onlyOwner {
+        // How much rewards do we have to dish out?
+        uint256 rewardBalance = vehicle.paymentInstrument.balanceOf(address(this));
+        require(rewardBalance > 0, "No rewards to distribute");
+
+        // How much reward for each share
+        uint256 rewardPerShare = rewardBalance / sharesIssued;
+
+        // Loop though all shareholders so we can issue their share
+        uint _holderno = EnumerableSet.length(holders);
+        for (uint256 i = 0; i < _holderno; ++i) {
+
+            // How many shares does the holder have?
+            address holderAddr = EnumerableSet.at(holders, i);
+            Shareholder memory holder = shareholder[holderAddr];
+
+            // How much is his/her/their share
+            uint256 rewardShare = rewardPerShare * holder.shares;
+            vehicle.paymentInstrument.safeTransfer(holderAddr, rewardShare);
+
+            emit Log(holderAddr);
+        }
+    }
+}
