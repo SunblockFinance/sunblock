@@ -47,8 +47,8 @@ contract Sunblock is Pausable, Ownable, ReentrancyGuard {
         uint identifier; // Unique identifier for this vehicle
         IERC20 paymentInstrument; //Token used to purchase shares in this vehicle
         uint256 unitcost; // Cost of one share using token specified in paymentInstrument
-
         address investmentPool; // Wallet used to store incoming investments
+        uint256 managementFee; // Fee taken from the reward prior to distribution. No fee for investment pool. EVER.
     }
 
     struct Shareholder {
@@ -73,11 +73,13 @@ contract Sunblock is Pausable, Ownable, ReentrancyGuard {
     constructor (uint identifier,
                 address paymentInstrument,
                 address investmentPool,
-                uint256 unitcost) {
+                uint256 unitcost,
+                uint256 managementFee) {
         vehicle = InvestmentVehicle(identifier,
                                     IERC20(paymentInstrument),
                                     unitcost,
-                                    investmentPool);
+                                    investmentPool,
+                                    managementFee);
     }
 
     // buyShares allows a signer to be issued a set amount of shares (_shareAmounts) against a payment
@@ -116,6 +118,7 @@ contract Sunblock is Pausable, Ownable, ReentrancyGuard {
      // Allow to withdraw any arbitrary token, should be used by
     // contract owner to recover accidentally received funds.
     function recover(address _tokenAddress, uint256 amount) external onlyOwner {
+        require(_tokenAddress != address(vehicle.paymentInstrument), "You can't recover payment instrument token"); // No stealing our investments!
         IERC20(_tokenAddress).transfer(msg.sender, amount);
         emit TokenRecovered(_tokenAddress, amount, msg.sender);
     }
