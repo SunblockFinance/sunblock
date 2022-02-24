@@ -112,6 +112,12 @@ contract Sunblock is Pausable, Ownable, ReentrancyGuard {
     // #### ADMIN FUNCTIONS #### //
     // #### --------------- #### //
 
+     // Allow to withdraw any arbitrary token, should be used by
+    // contract owner to recover accidentally received funds.
+    function recover(address _tokenAddress, uint256 amount) external onlyOwner {
+        IERC20(_tokenAddress).transfer(msg.sender, amount);
+    }
+
     // Will deposit any rewards in the token as dictated by the payment instrument.
     function depositRewards(uint256 _amount) external onlyOwner {
         require(_amount > 0, "Amount must be over 0");
