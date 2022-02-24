@@ -68,6 +68,7 @@ contract Sunblock is Pausable, Ownable, ReentrancyGuard {
     event DepositMade(uint256 amount, address payer);
     event RewardIssued(address holder, uint256 amount);
     event RewardsDepleted(uint256 holders, uint256 totalAmount);
+    event TokenRecovered(address token, uint256 amount, address recoveryAddress);
 
     constructor (uint identifier,
                 address paymentInstrument,
@@ -116,6 +117,7 @@ contract Sunblock is Pausable, Ownable, ReentrancyGuard {
     // contract owner to recover accidentally received funds.
     function recover(address _tokenAddress, uint256 amount) external onlyOwner {
         IERC20(_tokenAddress).transfer(msg.sender, amount);
+        emit TokenRecovered(_tokenAddress, amount, msg.sender);
     }
 
     // Will deposit any rewards in the token as dictated by the payment instrument.
