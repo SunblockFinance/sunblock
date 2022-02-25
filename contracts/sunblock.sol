@@ -173,7 +173,10 @@ contract Sunblock is Pausable, Ownable, ReentrancyGuard {
   }
 
   /**
-   * @dev
+   *
+   * @dev Will distribute the rewards to shareholder.
+   * Note that the fee has been taken when rewards were deposited so the full sum
+   * is distrubuted at this time
    */
   function distributeRewards() external onlyOwner nonReentrant{
 
@@ -201,7 +204,4 @@ contract Sunblock is Pausable, Ownable, ReentrancyGuard {
     emit RewardsDepleted(_holderno, rewardBalance);
   }
 
-  // #### ----------------- #### //
-  // #### UTILITY FUNCTIONS #### //
-  // #### ----------------- #### //
 }
