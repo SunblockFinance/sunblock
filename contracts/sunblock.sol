@@ -108,7 +108,7 @@ contract Sunblock is Pausable, Ownable, ReentrancyGuard {
     sh.shares += _shareAmount;
     bool newHolder = EnumerableSet.add(holders, msg.sender);
     if (newHolder) {
-        emit NewShareholder(msg.sender);
+      emit NewShareholder(msg.sender);
     }
     sharesIssued += _shareAmount;
 
@@ -148,7 +148,7 @@ contract Sunblock is Pausable, Ownable, ReentrancyGuard {
       "You can't recover payment instrument token"
     ); // No stealing our investments!
     bool success = IERC20(_tokenAddress).transfer(msg.sender, amount);
-    require(success, "Unable to transfer recovered token");
+    require(success, 'Unable to transfer recovered token');
     emit TokenRecovered(_tokenAddress, amount, msg.sender);
   }
 
@@ -162,13 +162,13 @@ contract Sunblock is Pausable, Ownable, ReentrancyGuard {
       address(this),
       rewardAfterFee
     );
-    require(depositSuccess, "Unable to deposit rewards");
+    require(depositSuccess, 'Unable to deposit rewards');
     bool feeSuccess = vehicle.paymentInstrument.transferFrom(
       msg.sender,
       vehicle.manager,
       managerfee
     ); // Fee deducted before distribution so manager can pay for gas.
-    require(feeSuccess, "Unable to transfer fee to manager");
+    require(feeSuccess, 'Unable to transfer fee to manager');
     emit DepositMade(_amount, msg.sender);
   }
 
@@ -178,8 +178,7 @@ contract Sunblock is Pausable, Ownable, ReentrancyGuard {
    * Note that the fee has been taken when rewards were deposited so the full sum
    * is distrubuted at this time
    */
-  function distributeRewards() external onlyOwner nonReentrant{
-
+  function distributeRewards() external onlyOwner nonReentrant {
     // How much rewards do we have to dish out?
     uint256 rewardBalance = vehicle.paymentInstrument.balanceOf(address(this));
     require(rewardBalance > 0, 'No rewards to distribute');
@@ -198,10 +197,8 @@ contract Sunblock is Pausable, Ownable, ReentrancyGuard {
       uint256 rewardShare = rewardPerShare * holder.shares;
       vehicle.paymentInstrument.safeTransfer(holderAddr, rewardShare);
 
-
       emit RewardIssued(holderAddr, rewardShare);
     }
     emit RewardsDepleted(_holderno, rewardBalance);
   }
-
 }
