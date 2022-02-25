@@ -13,7 +13,7 @@
 
 // contracts/sunblock.sol
 
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.7;
 import '@openzeppelin/contracts/security/Pausable.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
@@ -70,6 +70,7 @@ contract Sunblock is Pausable, Ownable, ReentrancyGuard {
   event RewardIssued(address holder, uint256 amount);
   event RewardsDepleted(uint256 holders, uint256 totalAmount);
   event TokenRecovered(address token, uint256 amount, address recoveryAddress);
+  event NewShareholder(address);
 
   constructor(
     uint256 identifier,
@@ -93,7 +94,7 @@ contract Sunblock is Pausable, Ownable, ReentrancyGuard {
   // as described in the Investment Vehicle.
   // The signer will pay (_shareAmount * InvestmentVehicle.unitcost) with the token
   // mentioned in (InvestmentVehicle.paymentInstrument)
-  function buyShares(uint256 _shareAmount) external {
+  function buyShares(uint256 _shareAmount) external nonReentrant {
     require(_shareAmount > 0, 'Share amount must be 1 or more');
     // Transfer funds into the pool
     bool success = vehicle.paymentInstrument.transferFrom(
@@ -105,7 +106,10 @@ contract Sunblock is Pausable, Ownable, ReentrancyGuard {
     // Issue shares to the signer.
     Shareholder storage sh = shareholder[msg.sender];
     sh.shares += _shareAmount;
-    EnumerableSet.add(holders, msg.sender);
+    bool newHolder = EnumerableSet.add(holders, msg.sender);
+    if (newHolder) {
+        emit NewShareholder(msg.sender);
+    }
     sharesIssued += _shareAmount;
 
     //Emit events
@@ -127,7 +131,7 @@ contract Sunblock is Pausable, Ownable, ReentrancyGuard {
   // #### --------------- #### //
 
   // Allows for the manager to be changed during the lifetime of the contract
-  function changeManager(address newManager) external onlyOwner {
+  function changeManager(address newManager) external onlyOwner nonReentrant {
     require(vehicle.manager != newManager, 'Cannot be same manager');
     vehicle.manager = newManager;
   }
@@ -137,37 +141,41 @@ contract Sunblock is Pausable, Ownable, ReentrancyGuard {
   function recoverToken(address _tokenAddress, uint256 amount)
     external
     onlyOwner
+    nonReentrant
   {
     require(
       _tokenAddress != address(vehicle.paymentInstrument),
       "You can't recover payment instrument token"
     ); // No stealing our investments!
-    IERC20(_tokenAddress).transfer(msg.sender, amount);
+    bool success = IERC20(_tokenAddress).transfer(msg.sender, amount);
+    require(success, "Unable to transfer recovered token");
     emit TokenRecovered(_tokenAddress, amount, msg.sender);
   }
 
   // Will deposit any rewards in the token as dictated by the payment instrument.
-  function depositRewards(uint256 _amount) external onlyOwner {
+  function depositRewards(uint256 _amount) external onlyOwner nonReentrant {
     require(_amount > 0, 'Amount must be over 0');
     uint256 rewardAfterFee = (_amount * (1000 - 100)) / 1000;
     uint256 managerfee = _amount - rewardAfterFee;
-    vehicle.paymentInstrument.transferFrom(
+    bool depositSuccess = vehicle.paymentInstrument.transferFrom(
       msg.sender,
       address(this),
       rewardAfterFee
     );
-    vehicle.paymentInstrument.transferFrom(
+    require(depositSuccess, "Unable to deposit rewards");
+    bool feeSuccess = vehicle.paymentInstrument.transferFrom(
       msg.sender,
       vehicle.manager,
       managerfee
     ); // Fee deducted before distribution so manager can pay for gas.
+    require(feeSuccess, "Unable to transfer fee to manager");
     emit DepositMade(_amount, msg.sender);
   }
 
   /**
    * @dev
    */
-  function distributeRewards() external onlyOwner {
+  function distributeRewards() external onlyOwner nonReentrant{
 
     // How much rewards do we have to dish out?
     uint256 rewardBalance = vehicle.paymentInstrument.balanceOf(address(this));
@@ -186,6 +194,7 @@ contract Sunblock is Pausable, Ownable, ReentrancyGuard {
       // How much is his/her/their share
       uint256 rewardShare = rewardPerShare * holder.shares;
       vehicle.paymentInstrument.safeTransfer(holderAddr, rewardShare);
+
 
       emit RewardIssued(holderAddr, rewardShare);
     }
