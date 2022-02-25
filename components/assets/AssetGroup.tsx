@@ -6,45 +6,45 @@
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import { BigNumber, ethers } from "ethers";
-import Moralis from "moralis";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { ABI_SUNBLOCK } from "../../programs/contracts";
 import { CONTRACT_ADDRESS_SUNBLOCK } from "../../programs/polygon";
 import { AssetItem } from "./AssetItem";
+
+let eth: any
 
 export const AssetGroup: FC = () => {
     const usdc = './usdc-logo.webp'
     const strong = './strong-strong-logo.webp'
 
     const [heldShares, setHeldShares] = useState(-1)
+    const provider = useRef<ethers.providers.Web3Provider>()
 
 
     useEffect(() => {
-        const enableEmitter = Moralis.onWeb3Enabled(() => {
+        eth = (window as any).ethereum
+        if (!provider.current) {
+            provider.current = new ethers.providers.Web3Provider(eth)
+        }
+        provider.current.on('accountChanged', (accounts) => {
             getHeldShares()
         })
-        const accEmitter = Moralis.onAccountChanged(() => {
-            getHeldShares()
-        })
+
+
         return () => {
-            accEmitter()
-            enableEmitter()
           }
     }, [])
 
 
     async function getHeldShares() {
-
-        const w3 = Moralis.web3!
-        const provider = new ethers.providers.Web3Provider(w3.provider, 'any')
-        const signer = w3.getSigner()
         const contract = new ethers.Contract(
           CONTRACT_ADDRESS_SUNBLOCK,
           ABI_SUNBLOCK,
-          provider
+          provider.current
         )
 
-        const amount:BigNumber = await contract.shareCount(await signer.getAddress())
+        const signAddr = await provider.current?.getSigner().getAddress()
+        const amount:BigNumber = await contract.shareCount(signAddr)
         setHeldShares(amount.toNumber())
       }
 

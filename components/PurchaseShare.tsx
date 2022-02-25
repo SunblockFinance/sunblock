@@ -9,14 +9,16 @@ import Chip from '@mui/material/Chip'
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import { BigNumber, ethers } from 'ethers'
-import Moralis from 'moralis'
 import { useSnackbar } from 'notistack'
-import { FC, useCallback, useEffect, useState } from 'react'
+import { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { ABI_ERC20, ABI_SUNBLOCK } from '../programs/contracts'
 import {
   CONTRACT_ADDRESS_SUNBLOCK,
   TOKEN_ADDRESS_DEMOERC20
 } from '../programs/polygon'
+
+let eth: any
+
 export const PurchaseShares: FC = () => {
   const DEFAULT_SHARE_VALUE = 10
   const TXT_NO_ALLOWANCE = 'No allowanced'
@@ -28,6 +30,9 @@ export const PurchaseShares: FC = () => {
   const [allowanceNeeded, setAllowanceNeeded] = useState(false)
   const [spendlimitWarning, setSpendlimitWarning] = useState(Boolean)
   const [shareAmount, setShareAmount] = useState(DEFAULT_SHARE_VALUE)
+  const provider = useRef<ethers.providers.Web3Provider>()
+
+
 
   const eventListner = useCallback(() => {
     const totalcost = shareAmount * 10 //TODO: Get shareprice from chain. Not hardcoded
@@ -39,23 +44,23 @@ export const PurchaseShares: FC = () => {
   }, [shareAmount, allowance]);
 
   useEffect(() => {
-    // setShareAmount(10)
-    const enableEmitter = Moralis.onWeb3Enabled(() => {
+    eth = (window as any).ethereum
+    eth.on('accountsChanged', function (accounts: any) {
+      console.log("Account: ", accounts[0])
       updateAllowance()
     })
-    const unsub = Moralis.onAccountChanged((account) => {
-      updateAllowance()
-    })
+    if (!provider.current) {
+      provider.current = new ethers.providers.Web3Provider(eth)
+    }
+
     return () => {
-      enableEmitter()
-      unsub()
+
     }
   }, [])
 
   async function updateAllowance(): Promise<void> {
-    const w3 = Moralis.web3!
-    const signer = w3.getSigner()
-    const walletAddress = signer.getAddress()
+    const signer = provider.current?.getSigner()
+    const walletAddress = signer?.getAddress()
     const erc20 = new ethers.Contract(
       TOKEN_ADDRESS_DEMOERC20,
       ABI_ERC20,
@@ -95,8 +100,7 @@ export const PurchaseShares: FC = () => {
   }
 
   async function addAllowance(amount: number) {
-    const w3 = await Moralis.enableWeb3()
-    const signer = w3.getSigner()
+    const signer = provider.current?.getSigner()
     const erc20 = new ethers.Contract(
       TOKEN_ADDRESS_DEMOERC20,
       ABI_ERC20,
@@ -110,14 +114,8 @@ export const PurchaseShares: FC = () => {
     const shareCostWei: BigNumber = await contract.purchaseTokensPrice(
       TOKEN_ADDRESS_DEMOERC20
     )
-    const tokenDecimals: number = await erc20.decimals()
-    const totalWei = Moralis.Units.Token(
-      shareCostWei.toNumber() * amount,
-      tokenDecimals
-    )
-    console.log(tokenDecimals)
-    console.log(shareCostWei)
-    console.log(totalWei)
+    const totalWei = ethers.utils.formatEther(shareCostWei.toNumber() * amount)
+
     await erc20.approve(CONTRACT_ADDRESS_SUNBLOCK, totalWei)
   }
 
@@ -125,8 +123,7 @@ export const PurchaseShares: FC = () => {
     //TODO: #7 Increse spendlimit if purchase is over set limit
     //TODO: #4 Validate buyshare amount with allowance
     //TODO: #5 Consume investment event from the chain
-    const w3 = await Moralis.enableWeb3()
-    const signer = w3.getSigner()
+    const signer = provider.current?.getSigner()
     const sunblockContract = new ethers.Contract(
       CONTRACT_ADDRESS_SUNBLOCK,
       ABI_SUNBLOCK,

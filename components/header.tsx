@@ -7,50 +7,69 @@ import FaceIcon from '@mui/icons-material/Face'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
 import Stack from '@mui/material/Stack'
-import Moralis from 'moralis'
+import { Contract, ethers } from 'ethers'
 import Image from 'next/image'
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
+import { ABI_ERC20 } from '../programs/contracts'
+import { TOKEN_ADDRESS_DEMOERC20 } from '../programs/polygon'
+
+let eth: any
 
 export const Header: FC = () => {
   const signMsg =
     'Just making sure you are you. No transaction is made, thus, cost no gas fee!'
 
-  const [currentAccount, setCurrentAccount] = useState('not connected')
+  const [currentAccount, setCurrentAccount] = useState('')
+  const [usdc, setUsdc] = useState('USDC')
+  const provider = useRef<ethers.providers.Web3Provider>()
 
-
+  /**
+   * Load up metamask and populate some header values
+   */
   useEffect(() => {
-
-    if (!Moralis.enableWeb3()) {
-      Moralis.enableWeb3()
+    eth = (window as any).ethereum
+    eth.on('accountsChanged', function (accounts: any) {
+      console.log("Account: ", accounts[0])
+      accounts[0] !== '' ? setCurrentAccount(accounts[0]) : setCurrentAccount('')
+      updateUSDC();
+    })
+    eth.on('disconnect', () => {
+      console.log("Disconnected")
+    });
+    if (!provider.current) {
+      provider.current = new ethers.providers.Web3Provider(eth)
+      setCurrentAddress()
     }
 
-    const enableEmitter = Moralis.onWeb3Enabled(() => {
-      setCurrentAddress()
-    })
-    const accEmitter = Moralis.onAccountChanged(() => {
-      setCurrentAddress()
-    })
-    const conEmitter = Moralis.onConnect(() => {
-      setCurrentAddress()
-    })
-    return () => {
-      accEmitter()
-      enableEmitter()
-      conEmitter()
-    }
   }, [])
 
+  /**
+   * Will get the current address of the signer
+   */
   async function setCurrentAddress(): Promise<void> {
     //TODO: Check that metamask is cocnnected here
-    const w3 = Moralis.web3!
-    const signer = w3.getSigner()
-    const longAddress = await signer.getAddress()
-    const shortAddress = longAddress.slice(0, 15  ).concat('... and so on');
-    setCurrentAccount(shortAddress)
+    const signer = await provider.current!.getSigner()
+    setCurrentAccount(await signer.getAddress())
+
+  }
+
+  /**
+   * Retreives the balance of supported token of investment vehicle
+   */
+  async function updateUSDC(): Promise<void> {
+    const signer = provider.current!.getSigner()
+    const contract = await new Contract(
+      TOKEN_ADDRESS_DEMOERC20,
+      ABI_ERC20, provider.current
+    )
+    const balance = await contract.balanceOf(await signer.getAddress())
+    let res = ethers.utils.formatEther(balance)
+    res = (+res).toFixed(4);
+    setUsdc(res)
   }
 
   async function authfunc() {
-    await Moralis.enableWeb3()
+    await provider.current!.send('eth_requestAccounts', [])
   }
 
   const authenticatebtn = (
@@ -64,13 +83,17 @@ export const Header: FC = () => {
       label={currentAccount}
       variant="filled"
       color="warning"
-      sx={{overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'}}
+      sx={{
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+      }}
     />
   )
 
   return (
     <Stack
-      direction={{xs:'column', md:'row'}}
+      direction={{ xs: 'column', md: 'row' }}
       justifyContent="space-between"
       alignItems="center"
       sx={{ width: '100%' }}
@@ -81,8 +104,8 @@ export const Header: FC = () => {
         width="263"
         height="80"
       />
-
-      {(currentAccount !== 'not connected') ? authID : authenticatebtn}
+      {usdc}
+      {currentAccount !== '' ? authID : authenticatebtn}
     </Stack>
   )
 }
