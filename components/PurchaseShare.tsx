@@ -10,8 +10,12 @@ import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import { BigNumber, ethers } from 'ethers'
 import { useSnackbar } from 'notistack'
-import { FC, useCallback, useEffect, useRef, useState } from 'react'
-import { ABI_ERC20, ABI_SUNBLOCK } from '../programs/contracts'
+import { FC, useEffect, useRef, useState } from 'react'
+import {
+  ABI_ERC20,
+  ABI_SUNBLOCK,
+  InvestmentVehicle
+} from '../programs/contracts'
 import {
   CONTRACT_ADDRESS_SUNBLOCK,
   TOKEN_ADDRESS_DEMOERC20
@@ -26,41 +30,39 @@ export const PurchaseShares: FC = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
   // What is the users current allowance
-  const [allowance, setAllowance] = useState('')
+  const [allowance, setAllowance] = useState(0)
   const [allowanceNeeded, setAllowanceNeeded] = useState(false)
   const [spendlimitWarning, setSpendlimitWarning] = useState(Boolean)
   const [shareAmount, setShareAmount] = useState(DEFAULT_SHARE_VALUE)
+  const [basketPrice, setBasketPrice] = useState('TESTING')
+  const [investmentVehicle, setInvestmentVehicle] =
+    useState<InvestmentVehicle>()
   const provider = useRef<ethers.providers.Web3Provider>()
-
-
-
-  const eventListner = useCallback(() => {
-    const totalcost = shareAmount * 10 //TODO: Get shareprice from chain. Not hardcoded
-    const numAllowance = Number.parseInt(allowance)
-    if (totalcost>numAllowance) {
-      setSpendlimitWarning(true)
-
-    }
-  }, [shareAmount, allowance]);
 
   useEffect(() => {
     eth = (window as any).ethereum
-    eth.on('accountsChanged', function (accounts: any) {
-      console.log("Account: ", accounts[0])
+    eth.on('accountsChanged', () =>  {
       updateAllowance()
     })
+
     if (!provider.current) {
       provider.current = new ethers.providers.Web3Provider(eth)
     }
-
-    return () => {
-
-    }
+    updateAllowance()
+    updateInvestmentVehicle()
+    return () => {}
   }, [])
 
   async function updateAllowance(): Promise<void> {
     const signer = provider.current?.getSigner()
-    const walletAddress = signer?.getAddress()
+    const walletAddress = await signer?.getAddress().catch((err) => {
+      setAllowance(0)
+      setSpendlimitWarning(false)
+      return
+    })
+    // If we get undefined here then the user is very likely not logged in to metamask
+    if (walletAddress === undefined) return
+
     const erc20 = new ethers.Contract(
       TOKEN_ADDRESS_DEMOERC20,
       ABI_ERC20,
@@ -74,25 +76,32 @@ export const PurchaseShares: FC = () => {
     const allowanceWai = amount
     const tokenAmount = ethers.utils.formatEther(allowanceWai)
     const tokenNumber = Number.parseInt(tokenAmount)
+    setAllowance(tokenNumber)
     try {
-      if ( tokenNumber > Number.MAX_SAFE_INTEGER) {
-        setAllowance('Allowance is too damn high!')
+      if (tokenNumber > Number.MAX_SAFE_INTEGER) {
         setSpendlimitWarning(true)
         setAllowanceNeeded(false)
       } else if (tokenNumber === 0) {
-        setAllowance(`Spendlimit is ${tokenAmount} USDC. 💔`)
         setSpendlimitWarning(true)
         setAllowanceNeeded(true)
       } else {
-        setAllowance(`Spendlimit set to ${tokenAmount} USDC`)
         setSpendlimitWarning(false)
         setAllowanceNeeded(false)
       }
     } catch (error) {
-      console.log(error)
-      setAllowance('Allowance is too damn high!')
+      setAllowance(-1)
       setSpendlimitWarning(true)
     }
+  }
+
+  async function updateInvestmentVehicle() {
+    const contract = new ethers.Contract(
+      CONTRACT_ADDRESS_SUNBLOCK,
+      ABI_SUNBLOCK,
+      provider.current
+    )
+    const vehicle: InvestmentVehicle = await contract.vehicle()
+    setInvestmentVehicle(vehicle)
   }
 
   function removeAllowance() {
@@ -100,29 +109,38 @@ export const PurchaseShares: FC = () => {
   }
 
   async function addAllowance(amount: number) {
-    const signer = provider.current?.getSigner()
+    const signer = provider.current!.getSigner()
+    const add = await signer.getAddress()
+
+    // If we get undefined here then the user is very likely not logged in to metamask
+    if (add === undefined) return
+
     const erc20 = new ethers.Contract(
       TOKEN_ADDRESS_DEMOERC20,
       ABI_ERC20,
       signer
     )
+
     const contract = new ethers.Contract(
       CONTRACT_ADDRESS_SUNBLOCK,
       ABI_SUNBLOCK,
       signer
     )
-    const shareCostWei: BigNumber = await contract.purchaseTokensPrice(
-      TOKEN_ADDRESS_DEMOERC20
-    )
-    const totalWei = ethers.utils.formatEther(shareCostWei.toNumber() * amount)
 
-    await erc20.approve(CONTRACT_ADDRESS_SUNBLOCK, totalWei)
+    const vehicle: InvestmentVehicle = await contract.vehicle()
+    const sum = vehicle.unitcost.mul(amount)
+    await erc20.approve(CONTRACT_ADDRESS_SUNBLOCK, sum)
+    erc20.on('Approval', (to, spender, value) => {
+      updateAllowance()
+      enqueueSnackbar(`👍 Done! Allowance is now ${allowance}. Thanks for the trust!`, {
+        variant: 'success',
+        anchorOrigin: { horizontal: 'center', vertical: 'top' },
+      })
+    })
   }
 
   async function purchaseShare(amount: number) {
-    //TODO: #7 Increse spendlimit if purchase is over set limit
-    //TODO: #4 Validate buyshare amount with allowance
-    //TODO: #5 Consume investment event from the chain
+
     const signer = provider.current?.getSigner()
     const sunblockContract = new ethers.Contract(
       CONTRACT_ADDRESS_SUNBLOCK,
@@ -163,7 +181,7 @@ export const PurchaseShares: FC = () => {
   )
   const allowanceButton = (
     <Button
-      onClick={() => addAllowance(shareAmount)}
+      onClick={() => addAllowance((shareAmount*2))}
       size="small"
       variant="contained"
     >
@@ -178,17 +196,33 @@ export const PurchaseShares: FC = () => {
           id="outlined-helperText"
           label="Shares"
           defaultValue={shareAmount.toString()}
-          onChange={(v) => setShareAmount(Number.parseInt(v.target.value))}
+          onChange={(v) => {
+            const numValue = Number.parseInt(v.target.value)
+            const weiSize = investmentVehicle?.unitcost.mul(numValue)
+            const ethSize = ethers.utils.formatEther(weiSize!)
+            const basketNum = Number.parseInt(ethSize)
+            setBasketPrice(ethSize)
+
+            //Check if we have enough allowance to make the purchase
+            if (basketNum > allowance) {
+              setAllowanceNeeded(true)
+              setSpendlimitWarning(true)
+            } else {
+              setAllowanceNeeded(false)
+              setSpendlimitWarning(false)
+            }
+          }}
           type="number"
+          helperText={`Cost: ${basketPrice}`}
         />
         {allowanceNeeded ? allowanceButton : purchaseButton}
       </Stack>
       <Box sx={{ paddingTop: 2 }}>
         <Chip
           title="Revoke allowance for sunblock"
-          label={allowance === '0' ? TXT_NO_ALLOWANCE : allowance}
-          clickable={allowance === '0' ? true : false}
-          onDelete={allowance === '0' ? undefined : removeAllowance}
+          label={allowance === 0 ? TXT_NO_ALLOWANCE : `Your allowance to us is ${allowance} USDC`}
+          clickable={allowance === 0 ? true : false}
+          onDelete={allowance === 0 ? undefined : removeAllowance}
           color={spendlimitWarning ? 'error' : 'default'}
         />
       </Box>

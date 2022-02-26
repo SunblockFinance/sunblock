@@ -28,18 +28,17 @@ export const Header: FC = () => {
    */
   useEffect(() => {
     eth = (window as any).ethereum
+
     eth.on('accountsChanged', function (accounts: any) {
-      console.log("Account: ", accounts[0])
       accounts[0] !== '' ? setCurrentAccount(accounts[0]) : setCurrentAccount('')
       updateUSDC();
     })
-    eth.on('disconnect', () => {
-      console.log("Disconnected")
-    });
+
     if (!provider.current) {
       provider.current = new ethers.providers.Web3Provider(eth)
       setCurrentAddress()
     }
+    updateUSDC();
 
   }, [])
 
@@ -47,9 +46,13 @@ export const Header: FC = () => {
    * Will get the current address of the signer
    */
   async function setCurrentAddress(): Promise<void> {
+
     //TODO: Check that metamask is cocnnected here
     const signer = await provider.current!.getSigner()
-    setCurrentAccount(await signer.getAddress())
+    const add = await signer.getAddress().catch((err) => {
+      return
+    })
+    setCurrentAccount(add?add:'Not logged in')
 
   }
 
@@ -62,7 +65,11 @@ export const Header: FC = () => {
       TOKEN_ADDRESS_DEMOERC20,
       ABI_ERC20, provider.current
     )
-    const balance = await contract.balanceOf(await signer.getAddress())
+    const add = await signer.getAddress().catch((err) => {
+      return
+    })
+    if (add === undefined) return
+    const balance = await contract.balanceOf(add)
     let res = ethers.utils.formatEther(balance)
     res = (+res).toFixed(4);
     setUsdc(res)
