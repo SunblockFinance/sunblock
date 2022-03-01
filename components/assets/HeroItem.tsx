@@ -3,11 +3,11 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
 import Avatar from '@mui/material/Avatar'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import CardHeader from '@mui/material/CardHeader'
+import Image from 'next/image'
 import { FC } from 'react'
 
 export const HeroItem: FC<{
@@ -35,7 +35,7 @@ export const HeroItem: FC<{
       <CardHeader
         avatar={
           <Avatar sx={{ backgroundColor: 'whitesmoke' }}>
-            <AccountBalanceWalletIcon />
+            <Image src='/crypto-icons/usdc.svg' alt='usdc' width='100px' height='100px'/>
           </Avatar>
         }
         title={data.title}

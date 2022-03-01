@@ -179,7 +179,7 @@ function useInvestmentVehicle() {
       if(signer === undefined)return
       const address = await signer!.getAddress()
       const sunblock = new ethers.Contract(CONTRACT_ADDRESS_SUNBLOCK, ABI_SUNBLOCK, signer);
-      const vehicle: InvestmentVehicle = await sunblock.vehicle()
+      const vehicle: InvestmentVehicle = await sunblock.vehicle().catch((error:Error) => console.log(error))
         console.log(vehicle)
         setVehicle(vehicle)
     }
