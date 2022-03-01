@@ -5,10 +5,8 @@
 
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
-import { BigNumber, ethers } from "ethers";
+import { ethers } from "ethers";
 import { FC, useEffect, useRef, useState } from "react";
-import { ABI_SUNBLOCK } from "../../programs/contracts";
-import { CONTRACT_ADDRESS_SUNBLOCK } from "../../programs/polygon";
 import { AssetItem } from "./AssetItem";
 
 let eth: any
@@ -37,15 +35,15 @@ export const AssetGroup: FC = () => {
 
 
     async function getHeldShares() {
-        const contract = new ethers.Contract(
-          CONTRACT_ADDRESS_SUNBLOCK,
-          ABI_SUNBLOCK,
-          provider.current
-        )
+        // const contract = new ethers.Contract(
+        //   CONTRACT_ADDRESS_SUNBLOCK,
+        //   ABI_SUNBLOCK,
+        //   provider.current
+        // )
 
-        const signAddr = await provider.current?.getSigner().getAddress()
-        const amount:BigNumber = await contract.shareCount(signAddr)
-        setHeldShares(amount.toNumber())
+        // const signAddr = await provider.current?.getSigner().getAddress()
+        // const amount:BigNumber = await contract.shareCount(signAddr)
+        // setHeldShares(amount.toNumber())
       }
 
 

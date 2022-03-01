@@ -7,87 +7,47 @@ import FaceIcon from '@mui/icons-material/Face'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
 import Stack from '@mui/material/Stack'
-import { Contract, ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import Image from 'next/image'
-import { FC, useEffect, useRef, useState } from 'react'
-import { ABI_ERC20 } from '../programs/contracts'
+import { FC, useEffect, useState } from 'react'
+import { hooks, metaMask } from '../connectors/metamask'
+import { ERC20 } from '../contracts/abi/erc20'
 import { TOKEN_ADDRESS_DEMOERC20 } from '../programs/polygon'
+import { formatWeiToString } from '../utils/formaters'
 
 let eth: any
+const { useAccounts, useError, useIsActive, useProvider } = hooks
 
 export const Header: FC = () => {
+  const accounts = useAccounts()
+  const isActive = useIsActive()
+  const error = useError()
+
+
   const signMsg =
     'Just making sure you are you. No transaction is made, thus, cost no gas fee!'
 
   const [currentAccount, setCurrentAccount] = useState('')
-  const [usdc, setUsdc] = useState('USDC')
-  const provider = useRef<ethers.providers.Web3Provider>()
+  const [usdc, setUsdc] = useState(0)
 
-  /**
-   * Load up metamask and populate some header values
-   */
   useEffect(() => {
-    eth = (window as any).ethereum
-
-    eth.on('accountsChanged', function (accounts: any) {
-      accounts[0] !== '' ? setCurrentAccount(accounts[0]) : setCurrentAccount('')
-      updateUSDC();
-    })
-
-    if (!provider.current) {
-      provider.current = new ethers.providers.Web3Provider(eth)
-      setCurrentAddress()
-    }
-    updateUSDC();
-
+    void metaMask.connectEagerly()
   }, [])
 
-  /**
-   * Will get the current address of the signer
-   */
-  async function setCurrentAddress(): Promise<void> {
-
-    //TODO: Check that metamask is cocnnected here
-    const signer = await provider.current!.getSigner()
-    const add = await signer.getAddress().catch((err) => {
-      return
-    })
-    setCurrentAccount(add?add:'Not logged in')
-
-  }
-
-  /**
-   * Retreives the balance of supported token of investment vehicle
-   */
-  async function updateUSDC(): Promise<void> {
-    const signer = provider.current!.getSigner()
-    const contract = await new Contract(
-      TOKEN_ADDRESS_DEMOERC20,
-      ABI_ERC20, provider.current
-    )
-    const add = await signer.getAddress().catch((err) => {
-      return
-    })
-    if (add === undefined) return
-    const balance = await contract.balanceOf(add)
-    let res = ethers.utils.formatEther(balance)
-    res = (+res).toFixed(4);
-    setUsdc(res)
-  }
-
-  async function authfunc() {
-    await provider.current!.send('eth_requestAccounts', [])
-  }
-
   const authenticatebtn = (
-    <Button onClick={authfunc} variant="contained">
+    <Button
+      onClick={async () => {
+        metaMask.activate(80001) //TODO: Parameter this bad boy
+      }}
+      variant="contained"
+    >
       Connect to wallet
     </Button>
   )
   const authID = (
     <Chip
       icon={<FaceIcon />}
-      label={currentAccount}
+      label={accounts}
       variant="filled"
       color="warning"
       sx={{
@@ -111,8 +71,8 @@ export const Header: FC = () => {
         width="263"
         height="80"
       />
-      {usdc}
-      {currentAccount !== '' ? authID : authenticatebtn}
+
+      {isActive ? authID : authenticatebtn}
     </Stack>
   )
 }

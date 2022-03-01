@@ -19,3 +19,10 @@ a {
 * {
   box-sizing: border-box;
 }
+
+highlight {
+  background: linear-gradient(120deg, #e4a0a1 0%, #e4a0a1 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 40%;
+  background-position: 0 90%;
+}
