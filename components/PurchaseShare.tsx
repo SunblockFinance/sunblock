@@ -234,7 +234,9 @@ function useTokenBalance() {
     if (isActive) {
       getBalance()
     } else setBalance('')
-    return () => {}
+    return () => {
+      setBalance('')
+    }
   }, [provider, isActive])
   return balance
 }

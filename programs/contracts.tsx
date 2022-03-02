@@ -1,8 +1,4 @@
 import { BigNumber } from "ethers";
-import { hooks } from "../connectors/metamask";
-
-const { useProvider } = hooks
-
 
 
 export type InvestmentVehicle = {

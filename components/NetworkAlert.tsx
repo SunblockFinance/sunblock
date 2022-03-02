@@ -1,12 +1,12 @@
 // Copyright 2022 Kenth Fagerlund.
 
 import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle
 } from '@mui/material'
 import { BigNumber } from 'ethers'
 import { hexStripZeros } from 'ethers/lib/utils'
@@ -32,6 +32,9 @@ const NetworkAlert: FC = () => {
             metaMask.connectEagerly()
             setOpen(false)
         }
+    }
+    return() => {
+      setOpen(false)
     }
 
   }, [chainID, open])

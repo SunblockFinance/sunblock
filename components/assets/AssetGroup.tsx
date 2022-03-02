@@ -5,33 +5,36 @@
 
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
-import { ethers } from "ethers";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useState } from "react";
+import { hooks } from '../../connectors/metamask';
 import { AssetItem } from "./AssetItem";
 
 let eth: any
+const {useProvider} = hooks
+
 
 export const AssetGroup: FC = () => {
+    const provider = useProvider()
     const usdc = './usdc-logo.webp'
     const strong = './strong-strong-logo.webp'
 
     const [heldShares, setHeldShares] = useState(-1)
-    const provider = useRef<ethers.providers.Web3Provider>()
+
 
 
     useEffect(() => {
         eth = (window as any).ethereum
-        if (!provider.current) {
-            provider.current = new ethers.providers.Web3Provider(eth)
-        }
-        provider.current.on('accountChanged', (accounts) => {
+
+        const accChangeListner = (accounts:any) => {
             getHeldShares()
-        })
+        }
+        provider?.on('accountChanged', accChangeListner)
 
 
         return () => {
+            provider?.removeListener('accountChanged', accChangeListner)
           }
-    }, [])
+    }, [provider])
 
 
     async function getHeldShares() {

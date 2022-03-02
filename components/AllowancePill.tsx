@@ -26,6 +26,7 @@ const { useAccounts, useProvider } = hooks
 
 const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
   const provider = useProvider()
+
   const erc20 = new ethers.Contract(
     TOKEN_ADDRESS_DEMOERC20,
     ABI_ERC20,
@@ -114,6 +115,10 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
 
   React.useEffect(() => {
     updateAllowance()
+    return () => {
+      setAllowance(-1)
+      setSpendlimitWarning(false)
+    }
   })
 
   return (
