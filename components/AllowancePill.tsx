@@ -115,9 +115,11 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
 
   React.useEffect(() => {
     updateAllowance()
+    console.log("Pill Effect");
+
     return () => {
-      setAllowance(-1)
-      setSpendlimitWarning(false)
+      // setAllowance(-1)
+      // setSpendlimitWarning(false)
     }
   })
 
