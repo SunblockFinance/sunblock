@@ -4,41 +4,60 @@
 // https://opensource.org/licenses/MIT
 
 import { Stack } from '@mui/material'
-import { FC } from 'react'
+import Image from 'next/image'
+import { FC, useEffect, useState } from 'react'
+import { getStrongBalance } from '../../blockchain/query'
 import { hooks } from '../../connectors/metamask'
 import { PurchaseShares } from '../PurchaseShare'
 import { HeroItem } from './HeroItem'
 
-const {useProvider} = hooks
+const { useProvider } = hooks
 
 export const HeroRow: FC = () => {
-  // const [strongAmount, setStrongAmount] = useState(0)
-  // const provider = useProvider()
-  // if (provider) {
-  //  async ( ) => {
-  //   const strongBalance = await getStrongBalance(provider)
-  //   if (strongBalance) setStrongAmount(strongBalance)
-  //  }
-  // }
+  const [strongAmount, setStrongAmount] = useState(0)
+  const [strongNodes, setStrongNodes] = useState(0)
+  const [userShares, setUserShares] = useState(0)
+  const [earnings, setEarnings] = useState(0)
+  const provider = useProvider()
+
+  const strongLogo = <Image src='/crypto-icons/strong.svg' alt='usdc' width='30px' height='30px'/>
+
+  useEffect(() => {
+    if (provider) {
+     getStrongBalance(provider).then((balance) => {
+      console.log("We got balance ", balance);
+      setStrongAmount(balance)
+     })
+
+    }
+    return () => {
+      setStrongAmount(0)
+    }
+  }, [provider])
 
   return (
+    <Stack
+      direction={{ xs: 'column', md: 'row' }}
+      spacing={2}
+      justifyContent="space-between"
+    >
+      <HeroItem title="Next payday" subtitle="Distributed one time per week">
+        <span style={{ fontWeight: 'bold', fontSize: 31 }}>Waiting for first node ⏳</span>
+      </HeroItem>
+      <HeroItem title="Pending reward" subtitle={`${strongNodes} nodes owned by us`}>
+        <span style={{ fontWeight: 'bold', fontSize: 31 }}>{strongLogo}{` ${strongAmount} STRONG`}</span>
+      </HeroItem>
 
-    <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}  justifyContent='space-between' >
-      <HeroItem title="Next payday" subtitle='Distributed one time per week'>
-        <span style={{ fontWeight: 'bold', fontSize: 31 }}>TBC</span>
+      <HeroItem title="Estimated earning" subtitle={`${userShares} shares owned by you`}>
+        <span style={{ fontWeight: 'bold', fontSize: 31 }}>{`~${earnings} USDC`}</span>
       </HeroItem>
-      <HeroItem title="Pending reward" subtitle='22 shares'>
-        <span style={{ fontWeight: 'bold', fontSize: 31 }}>{`0 STRONG`}</span>
-      </HeroItem>
-
-      <HeroItem title="Pending reward" subtitle='22 shares'>
-        <span style={{ fontWeight: 'bold', fontSize: 31 }}>~23.22 USDC</span>
-      </HeroItem>
-      <HeroItem title="Purchase shares" subtitle='Each share is 10 USDC' promote >
+      <HeroItem
+        title="Purchase shares"
+        subtitle="Each share is 10 USDC"
+        promote
+      >
         <PurchaseShares />
       </HeroItem>
     </Stack>
-
-
-
-  )}
+  )
+}
