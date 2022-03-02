@@ -67,16 +67,15 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
     erc20signed.on('Approval', (to, spender, value) => {
       setAllowance(formatWeiToNumber(value))
       // NotifyAllowanceIncreased
-    }).catch((error:Error) => console.log(error))
+    })
   }
 
   async function removeAllowance(): Promise<void> {
     try {
-      const signer = await provider?.getSigner()
-      const add = await signer!.getAddress()
-      // If we get undefined here then the user is very likely not logged in to metamask
-      if (add === undefined) return
-      await erc20?.approve(CONTRACT_ADDRESS_SUNBLOCK, BigNumber.from(0)).catch((error:Error) => console.log(error))
+      const signer = provider?.getSigner()
+      if (signer === undefined) return
+      const rwContract:Contract = erc20.connect(signer)
+      await rwContract.approve(CONTRACT_ADDRESS_SUNBLOCK, BigNumber.from(0)).catch((error:Error) => console.log(error))
       erc20?.on('Approval', (to, spender, value) => {
         const ethValue = Number.parseFloat(ethers.utils.formatEther(value))
         setAllowance(ethValue)

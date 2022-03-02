@@ -37,13 +37,6 @@ const NetworkAlert: FC = () => {
   }, [chainID, open])
 
 
-//   provider?.on("network", (newNetwork, oldNetwork) => {
-//     console.log("Network changed to ", newNetwork);
-
-//   if (oldNetwork) {
-//       window.location.reload();
-//   }
-// });
 
   const handleClickOpen = () => {
     setOpen(true)
