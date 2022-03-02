@@ -7,19 +7,16 @@ import FaceIcon from '@mui/icons-material/Face'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
 import Stack from '@mui/material/Stack'
-import { BigNumber, ethers } from 'ethers'
 import Image from 'next/image'
 import { FC, useEffect, useState } from 'react'
 import { hooks, metaMask } from '../connectors/metamask'
-import { ERC20 } from '../contracts/abi/erc20'
-import { TOKEN_ADDRESS_DEMOERC20 } from '../programs/polygon'
-import { formatWeiToString } from '../utils/formaters'
+import { shortenAddress } from '../utils/formaters'
 
 let eth: any
-const { useAccounts, useError, useIsActive, useProvider } = hooks
+const { useAccount, useError, useIsActive, useProvider } = hooks
 
 export const Header: FC = () => {
-  const accounts = useAccounts()
+  const account = useAccount()
   const isActive = useIsActive()
   const error = useError()
 
@@ -45,9 +42,10 @@ export const Header: FC = () => {
     </Button>
   )
   const authID = (
+    <>
     <Chip
       icon={<FaceIcon />}
-      label={accounts}
+      label={`${shortenAddress(account!)} `}
       variant="filled"
       color="warning"
       sx={{
@@ -56,6 +54,8 @@ export const Header: FC = () => {
         whiteSpace: 'nowrap',
       }}
     />
+    </>
+
   )
 
   return (

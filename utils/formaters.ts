@@ -21,5 +21,12 @@ export const formatWeiToNumber = (wei:BigNumber): number => {
        console.log(error)
    }
     return 0
+}
 
+export const shortenAddress = (address:string): string => {
+    if (address === undefined) {return ''}
+    const result = address.substring(0, 6) + '...' +  address.substring(address.length - 4);
+    console.log('Result :',result);
+
+    return result
 }

@@ -12,6 +12,7 @@ import { HeroRow } from '../components/assets/HeroRow'
 import { Footer } from '../components/Footer'
 import { Header } from '../components/header'
 import { TabMenu } from '../components/navigation/TabMenu'
+import NetworkAlert from '../components/NetworkAlert'
 
 
 const Home: NextPage = () => {
@@ -20,7 +21,7 @@ const Home: NextPage = () => {
   return (
     <div
       style={{
-        backgroundImage: 'url(/background-neon.jpeg)',
+        backgroundImage: 'url(/background-neon.webp)',
         backgroundPosition:'fixed',
         backgroundSize:'100%',
         backgroundRepeat:'no-repeat',
@@ -45,7 +46,7 @@ const Home: NextPage = () => {
             <Header />
             <HeroRow />
             <TabMenu />
-
+          <NetworkAlert/>
           </Stack>
           <Container>
             <Footer />
