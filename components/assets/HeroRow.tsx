@@ -6,7 +6,7 @@
 import { Stack } from '@mui/material'
 import Image from 'next/image'
 import { FC, useEffect, useState } from 'react'
-import { getStrongBalance } from '../../blockchain/query'
+import { getHeldShares, getStrongBalance } from '../../blockchain/query'
 import { hooks } from '../../connectors/metamask'
 import { PurchaseShares } from '../PurchaseShare'
 import { HeroItem } from './HeroItem'
@@ -18,20 +18,27 @@ export const HeroRow: FC = () => {
   const [strongNodes, setStrongNodes] = useState(0)
   const [userShares, setUserShares] = useState(0)
   const [earnings, setEarnings] = useState(0)
+  const [investFund, setInvestFund] = useState(0)
   const provider = useProvider()
 
-  const strongLogo = <Image src='/crypto-icons/strong.svg' alt='usdc' width='30px' height='30px'/>
+
+
+
+  const strongLogo = <Image src='/strong-strong-logo.webp' alt='usdc' width='30px' height='30px'/>
 
   useEffect(() => {
     if (provider) {
      getStrongBalance(provider).then((balance) => {
-      console.log("We got balance ", balance);
       setStrongAmount(balance)
+     })
+     getHeldShares(provider).then((shares) => {
+       setUserShares(shares)
      })
 
     }
     return () => {
       setStrongAmount(0)
+      setUserShares(0)
     }
   }, [provider])
 
@@ -45,7 +52,7 @@ export const HeroRow: FC = () => {
         <span style={{ fontWeight: 'bold', fontSize: 31 }}>Waiting for first node ⏳</span>
       </HeroItem>
       <HeroItem title="Pending reward" subtitle={`${strongNodes} nodes owned by us`}>
-        <span style={{ fontWeight: 'bold', fontSize: 31 }}>{strongLogo}{` ${strongAmount} STRONG`}</span>
+        <span style={{ fontWeight: 'bold', fontSize: 31 }}>{` ${strongAmount} STRONG`}</span>
       </HeroItem>
 
       <HeroItem title="Estimated earning" subtitle={`${userShares} shares owned by you`}>

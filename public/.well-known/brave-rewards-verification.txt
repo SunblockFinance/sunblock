@@ -1,0 +1,4 @@
+This is a Brave Rewards publisher verification file.
+
+Domain: sunblock.finance
+Token: 89bf79163a3ddf66cf398d2751df1d9440e374c9e772b970b3601f371a90fcd1
