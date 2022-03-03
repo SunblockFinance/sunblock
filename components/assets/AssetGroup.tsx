@@ -67,7 +67,6 @@ export const AssetGroup: FC = () => {
   useEffect(() => {
     const CoinGeckoClient = new CoinGecko();
     CoinGeckoClient.simple.price({ids:'strong', vs_currencies:'usd', include_24hr_change:true}).then((data:CoinGeckoPrice) => {
-      console.log(data);
       setStrongPrice(data.data.strong.usd)
       setStrongChange(data.data.strong.usd_24h_change)
 
@@ -79,8 +78,6 @@ export const AssetGroup: FC = () => {
   },[])
 
   useEffect(() => {
-    console.log("loop?");
-
     if (investmentVehicle) {
       const unitCost = formatWeiToNumber(investmentVehicle!.unitcost)
       setTotalInvestment(unitCost * sharesIssued)

@@ -11,7 +11,7 @@ import CoinGecko from 'coingecko-api'
 import Image from 'next/image'
 import { FC, useEffect, useState } from 'react'
 import { CoinGeckoPrice } from '../../blockchain/coingecko'
-import { getHeldShares, getInvestmentFund, getStrongBalance } from '../../blockchain/query'
+import { getHeldShares, getInvestmentFund, getRewardFund, getSharesIssued, getStrongBalance } from '../../blockchain/query'
 import { hooks } from '../../connectors/metamask'
 import { PurchaseShares } from '../PurchaseShare'
 import { HeroItem } from './HeroItem'
@@ -22,8 +22,10 @@ export const HeroRow: FC = () => {
   const [strongAmount, setStrongAmount] = useState(0)
   const [strongNodes, setStrongNodes] = useState(0)
   const [userShares, setUserShares] = useState(0)
+  const [sharesIssued, setSharesIssued] = useState(0)
   const [earnings, setEarnings] = useState(0)
   const [investFund, setInvestFund] = useState(0)
+  const [rewardFund, setRewardFund] = useState(0)
   const [nodeProgress, setNodeProgress] = useState(0)
   const provider = useProvider()
 
@@ -47,17 +49,27 @@ export const HeroRow: FC = () => {
       getInvestmentFund(provider).then((balance) => {
         setInvestFund(balance)
       })
+      getRewardFund(provider).then((balance) => {
+        setRewardFund(balance)
+      })
+      getSharesIssued(provider).then((amount) => {
+        setSharesIssued(amount)
+      })
     }
     return () => {
       setStrongAmount(0)
       setUserShares(0)
       setInvestFund(0)
+      setRewardFund(0)
+      setSharesIssued(0)
     }
   }, [provider])
 
 
+  /**
+   * Calculate the progress we made to buying a node in percent
+   */
   useEffect(() => {
-    console.log('Loop check')
     const cg = new CoinGecko()
     cg.simple
       .price({ ids: 'strong', vs_currencies: 'usd', include_24hr_change: true })
@@ -65,14 +77,34 @@ export const HeroRow: FC = () => {
         const strongprice:number = data.data.strong.usd
         const np = strongprice*10
         const tp = (100 * investFund) / np
-        console.log("TP:",tp);
-        console.log("IF:",investFund);
-        console.log("NP:",np);
-
         setNodeProgress(tp)
       })
+      return () => {
+        setNodeProgress(0)
+      }
   }, [investFund])
 
+  /**
+   * Estimate the reward the user should expect next
+   */
+  useEffect(() => {
+    const CoinGeckoClient = new CoinGecko();
+    CoinGeckoClient.simple.price({ids:'strong', vs_currencies:'usd', include_24hr_change:true}).then((data:CoinGeckoPrice) => {
+      const strongPrice = data.data.strong.usd
+      const rewardPerShare = (rewardFund * strongPrice) / sharesIssued
+      const userEarningEstimate = rewardPerShare * userShares
+      setEarnings(userEarningEstimate)
+    })
+
+    return () => {
+      setEarnings(0)
+    }
+
+  },[rewardFund,userShares, sharesIssued])
+
+  /**
+   * Pretty Progress bar for the node progress
+   */
   const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
     height: 10,
     borderRadius: 5,
