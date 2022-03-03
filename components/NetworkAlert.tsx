@@ -11,7 +11,7 @@ import {
 import { BigNumber } from 'ethers'
 import { hexStripZeros } from 'ethers/lib/utils'
 import { FC, useEffect, useState } from 'react'
-import { hooks, metaMask } from '../connectors/metamask'
+import { hooks } from '../connectors/metamask'
 
 const { useProvider, useChainId } = hooks
 
@@ -24,20 +24,13 @@ const NetworkAlert: FC = () => {
   useEffect(() => {
     if (chainID != 80001 && chainID != undefined) {
       setOpen(true)
-    } else {
-      if (open) {
-        metaMask.connectEagerly()
-        setOpen(false)
-      }
     }
     return () => {
       setOpen(false)
     }
-  }, [chainID, open])
+  }, [chainID])
 
-  const handleClickOpen = () => {
-    setOpen(true)
-  }
+
 
   const handleNetworkSwitch = async () => {
     try {
