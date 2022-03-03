@@ -3,13 +3,19 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-import PieChartOutlineIcon from '@mui/icons-material/PieChartOutline'
+import GroupIcon from '@mui/icons-material/Group'
+import PieChartTwoToneIcon from '@mui/icons-material/PieChartTwoTone'
 import Container from '@mui/material/Container'
 import Stack from '@mui/material/Stack'
+import CoinGecko from 'coingecko-api'
 import { FC, useEffect, useState } from 'react'
-import { getInvestmentFund, getSharesIssued } from '../../blockchain/query'
+import { CoinGeckoPrice } from '../../blockchain/coingecko'
+import { getInvestmentFund, getInvestmentVehicle, getRewardFund, getSharesIssued } from '../../blockchain/query'
 import { hooks } from '../../connectors/metamask'
+import { InvestmentVehicle } from '../../programs/contracts'
+import { formatWeiToNumber } from '../../utils/formaters'
 import { AssetItem } from './AssetItem'
+
 
 let eth: any
 const { useProvider } = hooks
@@ -19,9 +25,19 @@ export const AssetGroup: FC = () => {
   const usdc = './usdc-logo.webp'
   const strong = './strong-strong-logo.webp'
 
+  /**
+   * Token prices
+   */
+  const [strongPrice, setStrongPrice] = useState(0)
+  const [strongChange, setStrongChange] = useState(0)
+
+
   const [heldShares, setHeldShares] = useState(0)
   const [investFund, setInvestFund] = useState(0)
+  const [rewardFund, setRewardFund] = useState(0)
   const [sharesIssued, setSharesIssued] = useState(0)
+  const [totalInvestment, setTotalInvestment] = useState(0)
+  const [investmentVehicle, setInvestmentVehicle] = useState<InvestmentVehicle>()
 
   useEffect(() => {
     if (provider) {
@@ -31,13 +47,50 @@ export const AssetGroup: FC = () => {
       getSharesIssued(provider).then((shares) => {
         setSharesIssued(shares)
       })
+      getInvestmentVehicle(provider).then((vehicle) => {
+          setInvestmentVehicle(vehicle)
+      })
+      getRewardFund(provider).then((reward) => {
+        setRewardFund(reward)
+      })
     }
 
     return () => {
         setInvestFund(0)
         setSharesIssued(0)
+        setInvestmentVehicle(undefined)
+        setTotalInvestment(0)
+        setRewardFund(0)
     }
   }, [provider])
+
+  useEffect(() => {
+    const CoinGeckoClient = new CoinGecko();
+    CoinGeckoClient.simple.price({ids:'strong', vs_currencies:'usd', include_24hr_change:true}).then((data:CoinGeckoPrice) => {
+      console.log(data);
+      setStrongPrice(data.data.strong.usd)
+      setStrongChange(data.data.strong.usd_24h_change)
+
+    })
+    return () => {
+      setStrongPrice(0)
+      setStrongChange(0)
+    }
+  },[])
+
+  useEffect(() => {
+    console.log("loop?");
+
+    if (investmentVehicle) {
+      const unitCost = formatWeiToNumber(investmentVehicle!.unitcost)
+      setTotalInvestment(unitCost * sharesIssued)
+    }
+
+    return () => {
+      setTotalInvestment(0)
+    }
+  }, [investmentVehicle, sharesIssued])
+
 
   return (
     <>
@@ -59,63 +112,43 @@ export const AssetGroup: FC = () => {
             justifyContent="space-between"
           >
             <AssetItem
-              title="Funds waiting to be invested"
+              title="Capital waiting to be invested"
               value={`${investFund.toString()} USDC`}
               avatar={usdc}
             />
             <AssetItem
+              title="Rewards accumulated"
+              value={`${rewardFund.toString()} STRONG `}
+              avatar={strong}
+            />
+            <AssetItem
+              title="Total lifetime investment"
+              value={`${totalInvestment.toString()} USDC`}
+              avatar={usdc}
+            />
+          </Stack>
+          <Stack
+            direction={{ xs: 'column', md: 'row' }}
+            spacing={2}
+            justifyContent="space-between"
+          >
+            <AssetItem
               title="Total amount of shares issued"
               value={`${sharesIssued.toString()} shares`}
-              icon={PieChartOutlineIcon}
+              icon={<PieChartTwoToneIcon fontSize="large"/>}
             />
-            <AssetItem
-              title="Total investment"
-              value="$123,000"
-              avatar={usdc}
-            />
-          </Stack>
-          <Stack
-            direction={{ xs: 'column', md: 'row' }}
-            spacing={2}
-            justifyContent="space-between"
-          >
             <AssetItem
               title="Community shareholders"
-              value="125"
-              avatar={usdc}
+              value={`666 Sunbathers`}
+              icon={<GroupIcon fontSize='large' color='error'/>}
             />
             <AssetItem
-              title="Capital Waiting To Be Invested"
-              value="$122"
-              avatar={usdc}
-            />
-            <AssetItem
-              title="Rewards accumulated"
-              value="122.223 STRONG"
+              title="Strong price"
+              value={`${strongPrice}`}
               avatar={strong}
             />
           </Stack>
-          <Stack
-            direction={{ xs: 'column', md: 'row' }}
-            spacing={2}
-            justifyContent="space-between"
-          >
-            <AssetItem
-              title="Community shareholders"
-              value="125"
-              avatar={usdc}
-            />
-            <AssetItem
-              title="Capital Waiting To Be Invested"
-              value="$122"
-              avatar={usdc}
-            />
-            <AssetItem
-              title="Rewards accumulated"
-              value="122.223 STRONG"
-              avatar={strong}
-            />
-          </Stack>
+
         </Stack>
       </Container>
     </>
