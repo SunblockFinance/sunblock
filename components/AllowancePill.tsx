@@ -3,6 +3,7 @@
 
 import { Chip } from '@mui/material'
 import { BigNumber, Contract, ethers } from 'ethers'
+import { useSnackbar } from 'notistack'
 import React, { FC, useState } from 'react'
 import { hooks } from '../connectors/metamask'
 import { ABI_SUNBLOCK } from '../contracts/abi/sunblock'
@@ -24,9 +25,10 @@ const TXT_NO_ALLOWANCE = 'No allowance given'
 let eth
 const { useAccounts, useProvider } = hooks
 
+
 const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
   const provider = useProvider()
-
+  const {enqueueSnackbar} = useSnackbar()
   const erc20 = new ethers.Contract(
     TOKEN_ADDRESS_DEMOERC20,
     ABI_ERC20,
@@ -55,7 +57,7 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
 
     const signer = provider?.getSigner()
     if (signer === undefined) return
-    const add = await signer.getAddress()
+    const signerAddress = await signer.getAddress()
 
     const vehicle: InvestmentVehicle = await new Contract(CONTRACT_ADDRESS_SUNBLOCK, ABI_SUNBLOCK, signer).vehicle()
     const sum = vehicle.unitcost.mul(amount)
@@ -66,10 +68,20 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
     )
     await erc20signed.approve(CONTRACT_ADDRESS_SUNBLOCK, sum).catch((error:Error) => console.log(error))
     erc20signed.on('Approval', (to, spender, value) => {
-      setAllowance(formatWeiToNumber(value))
-      // NotifyAllowanceIncreased
+      if (spender !== CONTRACT_ADDRESS_SUNBLOCK) {
+        console.log(`Ignoring approval for ${spender}. We expect it for ${CONTRACT_ADDRESS_SUNBLOCK}`)
+      } else {
+        const allowanceNumber = formatWeiToNumber(value)
+        setAllowance(allowanceNumber)
+        enqueueSnackbar(`📣 Update! Allowance to Sunblock is now ${allowanceNumber} USDC.`, {
+          variant: 'success',
+          anchorOrigin: { horizontal: 'center', vertical: 'top' },
+        })
+      }
     })
+
   }
+
 
   async function removeAllowance(): Promise<void> {
     try {

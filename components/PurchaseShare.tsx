@@ -122,6 +122,18 @@ export const PurchaseShares: FC = () => {
     }
   }
 
+  useEffect(() => {
+      if (vehicle) {
+        const totalWeiCost = vehicle.unitcost.mul(DEFAULT_SHARE_VALUE)
+        setBasketPrice(formatWeiToNumber(totalWeiCost!))
+      }
+
+    return () => {
+      setBasketPrice(0)
+    }
+  }, [vehicle])
+
+
   return (
     <Stack direction="column">
       <Stack direction="row" spacing={2}>
@@ -195,6 +207,8 @@ function useInvestmentVehicle() {
         .vehicle()
         .catch((error: Error) => console.log(error))
       setVehicle(vehicle)
+
+
     }
     if (isActive) {
       getVehicle()

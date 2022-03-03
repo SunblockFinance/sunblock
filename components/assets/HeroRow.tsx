@@ -106,8 +106,8 @@ export const HeroRow: FC = () => {
    * Pretty Progress bar for the node progress
    */
   const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
-    height: 10,
-    borderRadius: 5,
+    height: 15,
+    borderRadius: 10,
     [`&.${linearProgressClasses.colorPrimary}`]: {
       backgroundColor:
         theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
@@ -132,13 +132,14 @@ export const HeroRow: FC = () => {
         subtitle={`${strongNodes} nodes owned by us`}
       >
         <Stack direction="column" alignItems="center" spacing={2}>
-          <span style={{ fontWeight: 'bold', fontSize: 31 }}>Nodes: 0</span>
+
           Left until new node:
           <BorderLinearProgress
             sx={{ minWidth: 200 }}
             variant="determinate"
             value={nodeProgress}
           />
+          <span style={{ fontWeight: 'bold', fontSize: 31 }}>Nodes: 0</span>
         </Stack>
       </HeroItem>
 
@@ -148,7 +149,7 @@ export const HeroRow: FC = () => {
       >
         <span
           style={{ fontWeight: 'bold', fontSize: 31 }}
-        >{`~ ${earnings} USDC`}</span>
+        >{`~ ${earnings.toFixed(2)} USDC`}</span>
       </HeroItem>
       <HeroItem
         title="Purchase shares"
