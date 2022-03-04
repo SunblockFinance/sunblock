@@ -65,7 +65,7 @@ contract Sunblock is Pausable, Ownable, ReentrancyGuard {
   EnumerableSet.AddressSet private holders;
 
   // #### Events #### //
-  event SharesIssued(address _holder, uint256 _sharesIssued);
+  event SharesIssued(address holder, uint256 sharesIssued);
   event DepositMade(uint256 amount, address payer);
   event RewardIssued(address holder, uint256 amount);
   event RewardsDepleted(uint256 holders, uint256 totalAmount);
@@ -88,6 +88,10 @@ contract Sunblock is Pausable, Ownable, ReentrancyGuard {
       manager,
       managementFee
     );
+  }
+
+  function shareHolderCount() external view returns(uint256){
+     return EnumerableSet.length(holders);
   }
 
   // buyShares allows a signer to be issued a set amount of shares (_shareAmounts) against a payment

@@ -484,6 +484,15 @@
     "@ethersproject/properties" "^5.5.0"
     "@ethersproject/transactions" "^5.5.0"
 
+"@ethersproject/experimental@^5.5.0":
+  version "5.5.0"
+  resolved "https://registry.yarnpkg.com/@ethersproject/experimental/-/experimental-5.5.0.tgz#3fdf8d51112c1074f401ef3c6c9e57f8a3cf12e3"
+  integrity sha512-Q62IjbhlgVmeFHRI6JSU/mZbtVGd8mNgkuIU0IxyTVszUzNblocVctIngAiWm8gGqr/ytj7hN1FRadCRMY4zIA==
+  dependencies:
+    "@ethersproject/web" "^5.5.0"
+    ethers "^5.5.0"
+    scrypt-js "3.0.1"
+
 "@ethersproject/hash@5.5.0", "@ethersproject/hash@>=5.0.0-beta.128", "@ethersproject/hash@^5.5.0":
   version "5.5.0"
   resolved "https://registry.npmjs.org/@ethersproject/hash/-/hash-5.5.0.tgz"
@@ -1424,6 +1433,15 @@
     "@metamask/detect-provider" "^1.2.0"
     "@web3-react/types" "^8.0.5-beta.0"
 
+"@web3-react/network@8.0.14-beta.0":
+  version "8.0.14-beta.0"
+  resolved "https://registry.yarnpkg.com/@web3-react/network/-/network-8.0.14-beta.0.tgz#e18b8cf49bb04d2b0a721e5163445745fe6b9321"
+  integrity sha512-KAWm34omWVqvn2CknuUk5G0P35gwFMvVLnd98qK8W6AXlAGuwiVZqp3emwEF7yIW8J61iFtUkaKYhjdi1XoPaQ==
+  dependencies:
+    "@ethersproject/experimental" "^5.5.0"
+    "@ethersproject/providers" "^5.5.1"
+    "@web3-react/types" "^8.0.10-beta.0"
+
 "@web3-react/store@8.0.7-beta.0", "@web3-react/store@^8.0.7-beta.0":
   version "8.0.7-beta.0"
   resolved "https://registry.npmjs.org/@web3-react/store/-/store-8.0.7-beta.0.tgz"
@@ -1439,6 +1457,13 @@
   integrity sha512-9xJG5ssWddRQn8woGL3ipKRe/clvglJmXN8nfmCI1JXdOdruudY1xUOfnNeM2oobp6hHs9OywrD3KVMDX/sySw==
   dependencies:
     zustand "^4.0.0-beta.1"
+
+"@web3-react/types@^8.0.10-beta.0":
+  version "8.0.10-beta.0"
+  resolved "https://registry.yarnpkg.com/@web3-react/types/-/types-8.0.10-beta.0.tgz#8ed9f1b5e40dcbe2a08be5ce9dd9e3ef2b2a6908"
+  integrity sha512-HitBmoKHyLDeRrJgtkImPddb8nzsb/FroAdiaYA15gAwAE3Y/p7Nd/TN8IANlgKcMkuyGyUjPD27fE7Mvw9rEA==
+  dependencies:
+    zustand "^4.0.0-beta.2"
 
 "@yarnpkg/lockfile@^1.1.0":
   version "1.1.0"
@@ -4212,7 +4237,7 @@ ethereumjs-wallet@0.6.5:
     utf8 "^3.0.0"
     uuid "^3.3.2"
 
-ethers@^5.0.1, ethers@^5.0.2, ethers@^5.5.2, ethers@^5.5.4:
+ethers@^5.0.1, ethers@^5.0.2, ethers@^5.5.0, ethers@^5.5.2, ethers@^5.5.4:
   version "5.5.4"
   resolved "https://registry.npmjs.org/ethers/-/ethers-5.5.4.tgz"
   integrity sha512-N9IAXsF8iKhgHIC6pquzRgPBJEzc9auw3JoRkaKe+y4Wl/LFBtDDunNe7YmdomontECAcC5APaAgWZBiu1kirw==
@@ -7482,6 +7507,13 @@ react-transition-group@^4.4.2:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
+react-twitter-embed@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/react-twitter-embed/-/react-twitter-embed-4.0.4.tgz#4a6b8354acc266876ff1110b9f648518ea20db6d"
+  integrity sha512-2JIL7qF+U62zRzpsh6SZDXNI3hRNVYf5vOZ1WRcMvwKouw+xC00PuFaD0aEp2wlyGaZ+f4x2VvX+uDadFQ3HVA==
+  dependencies:
+    scriptjs "^2.5.9"
+
 react-window@^1.8.6:
   version "1.8.6"
   resolved "https://registry.npmjs.org/react-window/-/react-window-1.8.6.tgz"
@@ -7845,6 +7877,11 @@ scheduler@^0.20.2:
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
+
+scriptjs@^2.5.9:
+  version "2.5.9"
+  resolved "https://registry.yarnpkg.com/scriptjs/-/scriptjs-2.5.9.tgz#343915cd2ec2ed9bfdde2b9875cd28f59394b35f"
+  integrity sha512-qGVDoreyYiP1pkQnbnFAUIS5AjenNwwQBdl7zeos9etl+hYKWahjRTfzAZZYBv5xNHx7vNKCmaLDQZ6Fr2AEXg==
 
 scrypt-js@3.0.1, scrypt-js@^3.0.0, scrypt-js@^3.0.1:
   version "3.0.1"
@@ -9600,7 +9637,7 @@ yn@3.1.1:
   resolved "https://registry.npmjs.org/yn/-/yn-3.1.1.tgz"
   integrity sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==
 
-zustand@^4.0.0-beta.1:
+zustand@^4.0.0-beta.1, zustand@^4.0.0-beta.2:
   version "4.0.0-beta.2"
   resolved "https://registry.npmjs.org/zustand/-/zustand-4.0.0-beta.2.tgz"
   integrity sha512-aJ5ypnOwPIa/uSjdZv/oHChTWPplpFOG/hvWwzkR5ahFiPI5R6ifyObf8Fz1Vi6Obz2wY1N32fT2pNrpT2hzPw==
