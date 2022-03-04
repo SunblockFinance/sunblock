@@ -10,7 +10,7 @@ import Stack from '@mui/material/Stack'
 import CoinGecko from 'coingecko-api'
 import { FC, useEffect, useState } from 'react'
 import { CoinGeckoPrice } from '../../blockchain/coingecko'
-import { getInvestmentFund, getInvestmentVehicle, getRewardFund, getSharesIssued } from '../../blockchain/query'
+import { getInvestmentFund, getInvestmentVehicle, getRewardFund, getShareholderCount, getSharesIssued } from '../../blockchain/query'
 import { hooks } from '../../connectors/metamask'
 import { InvestmentVehicle } from '../../programs/contracts'
 import { formatWeiToNumber } from '../../utils/formaters'
@@ -33,6 +33,7 @@ export const AssetGroup: FC = () => {
 
 
   const [heldShares, setHeldShares] = useState(0)
+  const [investorCount, setInvestorCount] = useState(0)
   const [investFund, setInvestFund] = useState(0)
   const [rewardFund, setRewardFund] = useState(0)
   const [sharesIssued, setSharesIssued] = useState(0)
@@ -53,6 +54,9 @@ export const AssetGroup: FC = () => {
       getRewardFund(provider).then((reward) => {
         setRewardFund(reward)
       })
+      getShareholderCount(provider).then((count) => {
+        setInvestorCount(count)
+      })
     }
 
     return () => {
@@ -61,6 +65,7 @@ export const AssetGroup: FC = () => {
         setInvestmentVehicle(undefined)
         setTotalInvestment(0)
         setRewardFund(0)
+        setInvestorCount(0)
     }
   }, [provider])
 
@@ -132,12 +137,12 @@ export const AssetGroup: FC = () => {
             <AssetItem
               title="Total amount of shares issued"
               value={`${sharesIssued.toString()} shares`}
-              icon={<PieChartTwoToneIcon fontSize="large"/>}
+              icon={<PieChartTwoToneIcon fontSize="large" color='info'/>}
             />
             <AssetItem
               title="Community shareholders"
-              value={`666 Sunbathers`}
-              icon={<GroupIcon fontSize='large' color='error'/>}
+              value={`${investorCount} Sunbathers`}
+              icon={<GroupIcon fontSize='large' color='info'/>}
             />
             <AssetItem
               title="Strong price"

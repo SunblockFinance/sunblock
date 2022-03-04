@@ -105,3 +105,18 @@ export async function getInvestmentVehicle(
     return undefined
   }
 }
+
+export async function getShareholderCount(provider: ethers.providers.Web3Provider): Promise<number> {
+  try {
+    const contract = new ethers.Contract(
+      CONTRACT_ADDRESS_SUNBLOCK,
+      ABI_SUNBLOCK,
+      provider
+    )
+    const amount: BigNumber = await contract.shareHolderCount().catch(console.error())
+    return amount.toNumber()
+  } catch (error) {
+    console.log(error);
+    return 0
+  }
+}
