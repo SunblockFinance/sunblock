@@ -138,6 +138,7 @@ export const HeroRow: FC = () => {
             sx={{ minWidth: 200 }}
             variant="determinate"
             value={nodeProgress}
+
           />
           <span style={{ fontWeight: 'bold', fontSize: 31 }}>Nodes: 0</span>
         </Stack>
