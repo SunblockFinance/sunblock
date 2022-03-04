@@ -62,7 +62,7 @@ export const PurchaseShares: FC = () => {
   const [balance, setBalance] = useState(0)
 
 
-  const isUnderfunded = shareAmount > Number(balance)
+  const isUnderfunded = basketPrice > Number(balance)
 
   async function purchaseShare(amount: number) {
     if (provider === undefined) return
@@ -120,6 +120,11 @@ export const PurchaseShares: FC = () => {
       return
     }
     const totalWeiCost = vehicle.unitcost.mul(sharesNum)
+    console.log("WEI COST:", totalWeiCost);
+    console.log('basket price:', formatUSDCWeiToNumber(totalWeiCost!));
+    console.log('Share amount:', sharesNum);
+
+
 
     setBasketPrice(formatUSDCWeiToNumber(totalWeiCost!))
     setShareAmount(sharesNum)
@@ -174,7 +179,7 @@ export const PurchaseShares: FC = () => {
           }}
           size="small"
           variant="contained"
-          disabled={true}//{isUnderfunded || shareAmount === 0}
+          disabled={isUnderfunded || shareAmount === 0}
         >
           {isUnderfunded ? `Low funds 🙁` : `Buy shares`}
         </Button>
