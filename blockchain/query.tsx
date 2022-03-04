@@ -12,7 +12,7 @@ import {
   REWARD_WALLET,
   TOKEN_ADDRESS_USDC
 } from '../programs/polygon'
-import { formatUSDCWeiToNumber, formatWeiToNumber } from '../utils/formaters'
+import { formatUSDCWeiToNumber } from '../utils/formaters'
 
 
 export async function getUSDCBalance(provider: ethers.providers.Web3Provider): Promise<number> {
@@ -38,7 +38,7 @@ export async function getStrongBalance(provider: ethers.providers.Web3Provider):
   const erc20 = new ethers.Contract(TOKEN_ADDRESS_USDC, ABI_ERC20, signer)
 
   const contractBalance = await erc20.balanceOf(signerAddress).catch(console.error())
-  return formatWeiToNumber(contractBalance)
+  return formatUSDCWeiToNumber(contractBalance)
   } catch (error) {
     console.log(error);
     return 0
@@ -84,7 +84,7 @@ export async function getInvestmentFund(provider: ethers.providers.Web3Provider)
       provider
     )
     const amount: BigNumber = await contract.balanceOf(INVESTMENT_WALLET).catch(console.error())
-    return formatWeiToNumber(amount)
+    return formatUSDCWeiToNumber(amount)
   } catch (error) {
     console.log(error);
     return 0
@@ -99,7 +99,7 @@ export async function getRewardFund(provider: ethers.providers.Web3Provider): Pr
       provider
     )
     const amount: BigNumber = await contract.balanceOf(REWARD_WALLET)
-    return formatWeiToNumber(amount)
+    return formatUSDCWeiToNumber(amount)
   } catch (error) {
     console.log(error);
     return 0
