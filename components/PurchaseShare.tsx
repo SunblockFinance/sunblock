@@ -27,7 +27,7 @@ import {
 import {
   CONTRACT_ADDRESS_SUNBLOCK
 } from '../programs/polygon'
-import { formatUSDCWeiToNumber, formatWeiToNumber } from '../utils/formaters'
+import { formatUSDCWeiToNumber } from '../utils/formaters'
 import AllowancePill from './AllowancePill'
 
 
@@ -140,7 +140,7 @@ export const PurchaseShares: FC = () => {
   useEffect(() => {
       if (vehicle) {
         const totalWeiCost = vehicle.unitcost.mul(DEFAULT_SHARE_VALUE)
-        setBasketPrice(formatWeiToNumber(totalWeiCost!))
+        setBasketPrice(formatUSDCWeiToNumber(totalWeiCost!))
       }
 
     return () => {

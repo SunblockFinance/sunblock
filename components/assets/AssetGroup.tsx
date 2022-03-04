@@ -13,7 +13,7 @@ import { CoinGeckoPrice } from '../../blockchain/coingecko'
 import { getInvestmentFund, getInvestmentVehicle, getRewardFund, getShareholderCount, getSharesIssued } from '../../blockchain/query'
 import { hooks } from '../../connectors/metamask'
 import { InvestmentVehicle } from '../../programs/contracts'
-import { formatWeiToNumber } from '../../utils/formaters'
+import { formatUSDCWeiToNumber } from '../../utils/formaters'
 import { AssetItem } from './AssetItem'
 
 
@@ -84,7 +84,7 @@ export const AssetGroup: FC = () => {
 
   useEffect(() => {
     if (investmentVehicle) {
-      const unitCost = formatWeiToNumber(investmentVehicle!.unitcost)
+      const unitCost = formatUSDCWeiToNumber(investmentVehicle!.unitcost)
       setTotalInvestment(unitCost * sharesIssued)
     }
 
