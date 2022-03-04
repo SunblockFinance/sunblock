@@ -93,7 +93,12 @@ export const HeroRow: FC = () => {
       const strongPrice = data.data.strong.usd
       const rewardPerShare = (rewardFund * strongPrice) / sharesIssued
       const userEarningEstimate = rewardPerShare * userShares
-      setEarnings(userEarningEstimate)
+      if (Number.isNaN(userEarningEstimate)) {
+        setEarnings(0)
+      } else {
+        setEarnings(userEarningEstimate)
+      }
+
     })
 
     return () => {
