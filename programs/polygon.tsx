@@ -2,7 +2,7 @@
 /**
  * Address to main contract for sunblock
  */
-export const CONTRACT_ADDRESS_SUNBLOCK = '0xBF901Eb7354a22a8746c91E80d1e5D34C4D0596a'
+export const CONTRACT_ADDRESS_SUNBLOCK = '0x19b20dfF4cf302d217A30ADa7954c7d2D0131179'
 
 /**
  * Adress to DEMO ERC20 Token on testnet
