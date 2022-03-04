@@ -7,6 +7,7 @@ import FaceIcon from '@mui/icons-material/Face'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
 import Stack from '@mui/material/Stack'
+import { track } from 'insights-js'
 import Image from 'next/image'
 import { FC, useEffect, useState } from 'react'
 import { hooks, metaMask } from '../connectors/metamask'
@@ -76,6 +77,9 @@ export const Header: FC = () => {
         <Button
           onClick={() => {
             setOpenHelp(true)
+            track({
+              id: "open-help",
+            })
           }}
           color="warning"
         >
@@ -84,6 +88,9 @@ export const Header: FC = () => {
         <Button
           onClick={() => {
             setOpenContract(true)
+            track({
+              id: "open-contract",
+            })
           }}
         >
           Contracts and addresses

@@ -5277,6 +5277,11 @@ inherits@2, inherits@2.0.4, inherits@^2.0.1, inherits@^2.0.3, inherits@^2.0.4, i
   resolved "https://registry.npmjs.org/inherits/-/inherits-2.0.4.tgz"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
 
+insights-js@^1.2.11:
+  version "1.2.11"
+  resolved "https://registry.yarnpkg.com/insights-js/-/insights-js-1.2.11.tgz#73188b919b57faedffe5585f77df80f7265ac62a"
+  integrity sha512-rmNnMM2LnOmKVJAZOMmeZ6GYMm98ztGMC4nA7KUOTBoPBpce8uUx++ZPJDnU02ORH6lCzBCy0AOLwsC/v1dp1Q==
+
 internal-slot@^1.0.3:
   version "1.0.3"
   resolved "https://registry.npmjs.org/internal-slot/-/internal-slot-1.0.3.tgz"

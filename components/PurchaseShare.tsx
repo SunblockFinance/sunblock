@@ -15,6 +15,7 @@ import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import { BigNumber, ethers } from 'ethers'
+import { track } from 'insights-js'
 import { useSnackbar } from 'notistack'
 import React, { FC, useEffect, useState } from 'react'
 import { hooks } from '../connectors/metamask'
@@ -93,6 +94,14 @@ export const PurchaseShares: FC = () => {
         variant: 'success',
         anchorOrigin: { horizontal: 'center', vertical: 'top' },
       })
+      track({
+        id: "share-issued",
+        parameters: {
+          contract: CONTRACT_ADDRESS_SUNBLOCK,
+          amount: amount,
+        }
+      })
+
     })
   }
 

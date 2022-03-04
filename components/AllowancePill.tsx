@@ -3,6 +3,7 @@
 
 import { Chip } from '@mui/material'
 import { BigNumber, Contract, ethers } from 'ethers'
+import { track } from 'insights-js'
 import { useSnackbar } from 'notistack'
 import React, { FC, useState } from 'react'
 import { hooks } from '../connectors/metamask'
@@ -77,6 +78,9 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
           variant: 'success',
           anchorOrigin: { horizontal: 'center', vertical: 'top' },
         })
+        track({
+          id: "approval-added",
+        })
       }
     })
 
@@ -92,7 +96,9 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
       erc20?.on('Approval', (to, spender, value) => {
         const ethValue = Number.parseFloat(ethers.utils.formatEther(value))
         setAllowance(ethValue)
-        // NotifyAllowanceRemoved
+        track({
+          id: "approval-removed",
+        })
       }).catch((error:Error) => console.log(error))
     } catch (error) {}
   }

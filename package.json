@@ -30,6 +30,7 @@
     "@web3-react/types": "8.0.5-beta.0",
     "base64-cryptocurrency-icons": "^1.1.20",
     "coingecko-api": "^1.0.10",
+    "insights-js": "^1.2.11",
     "next": "latest",
     "notistack": "^2.0.3",
     "preact": "^10.6.6",

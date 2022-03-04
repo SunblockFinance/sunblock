@@ -3,11 +3,12 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
-import { AppProps } from 'next/app';
-import { SnackbarProvider } from 'notistack';
-import React, { FC, useEffect, useState } from 'react';
-import { metaMask } from '../connectors/metamask';
+import { createTheme, CssBaseline, ThemeProvider } from '@mui/material'
+import { init, trackPages } from "insights-js"
+import { AppProps } from 'next/app'
+import { SnackbarProvider } from 'notistack'
+import React, { FC, useEffect, useState } from 'react'
+import { metaMask } from '../connectors/metamask'
 
 
 const App: FC<AppProps> = ({ Component, pageProps }) => {
@@ -17,6 +18,9 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
    */
    useEffect(() => {
     void metaMask.connectEagerly()
+    const insightkey = process.env.INSIGHT_KEY
+    if (insightkey) init(insightkey)
+    trackPages()
   }, [])
 
 

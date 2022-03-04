@@ -10,6 +10,7 @@ import {
 } from '@mui/material'
 import { BigNumber } from 'ethers'
 import { hexStripZeros } from 'ethers/lib/utils'
+import { track } from 'insights-js'
 import { FC, useEffect, useState } from 'react'
 import { hooks } from '../connectors/metamask'
 import { CHAINID } from '../programs/polygon'
@@ -25,6 +26,12 @@ const NetworkAlert: FC = () => {
   useEffect(() => {
     if (chainID != CHAINID && chainID != undefined) {
       setOpen(true)
+      track({
+        id: "network-wrong",
+        parameters: {
+          userChain: chainID.toString()
+        }
+      })
     }
     return () => {
       setOpen(false)
@@ -41,6 +48,9 @@ const NetworkAlert: FC = () => {
       await provider?.send('wallet_switchEthereumChain', [
         { chainId: formattedChainId },
       ])
+      track({
+        id: "network-switch",
+      })
     } catch (switchError: any) {
       // This error code indicates that the chain has not been added to MetaMask.
       if (switchError.code === 4902) {
