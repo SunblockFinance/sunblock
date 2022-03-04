@@ -27,7 +27,7 @@ import {
 import {
   CONTRACT_ADDRESS_SUNBLOCK
 } from '../programs/polygon'
-import { formatWeiToNumber } from '../utils/formaters'
+import { formatUSDCWeiToNumber, formatWeiToNumber } from '../utils/formaters'
 import AllowancePill from './AllowancePill'
 
 
@@ -121,7 +121,7 @@ export const PurchaseShares: FC = () => {
     }
     const totalWeiCost = vehicle.unitcost.mul(sharesNum)
 
-    setBasketPrice(formatWeiToNumber(totalWeiCost!))
+    setBasketPrice(formatUSDCWeiToNumber(totalWeiCost!))
     setShareAmount(sharesNum)
 
     // Check if price is over wallet holding. Disable if to expensive
@@ -174,7 +174,7 @@ export const PurchaseShares: FC = () => {
           }}
           size="small"
           variant="contained"
-          disabled={isUnderfunded || shareAmount === 0}
+          disabled={true}//{isUnderfunded || shareAmount === 0}
         >
           {isUnderfunded ? `Low funds 🙁` : `Buy shares`}
         </Button>
