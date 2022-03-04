@@ -12,6 +12,7 @@ import { BigNumber } from 'ethers'
 import { hexStripZeros } from 'ethers/lib/utils'
 import { FC, useEffect, useState } from 'react'
 import { hooks } from '../connectors/metamask'
+import { CHAINID } from '../programs/polygon'
 
 const { useProvider, useChainId } = hooks
 
@@ -22,7 +23,7 @@ const NetworkAlert: FC = () => {
   const chainID = useChainId()
 
   useEffect(() => {
-    if (chainID != 80001 && chainID != undefined) {
+    if (chainID != CHAINID && chainID != undefined) {
       setOpen(true)
     }
     return () => {
@@ -35,7 +36,7 @@ const NetworkAlert: FC = () => {
   const handleNetworkSwitch = async () => {
     try {
       const formattedChainId = hexStripZeros(
-        BigNumber.from(80001).toHexString()
+        BigNumber.from(CHAINID).toHexString()
       )
       await provider?.send('wallet_switchEthereumChain', [
         { chainId: formattedChainId },
