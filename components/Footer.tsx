@@ -4,12 +4,13 @@
 // https://opensource.org/licenses/MIT
 
 import GitHubIcon from '@mui/icons-material/GitHub'
+import TelegramIcon from '@mui/icons-material/Telegram'
 import TwitterIcon from '@mui/icons-material/Twitter'
 import { IconButton, Stack } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import Image from 'next/image'
 import { FC } from 'react'
-
+//https://t.me/sunblock_finance
 export const Footer: FC = ({ children }) => {
   return (
     <>
@@ -21,6 +22,10 @@ export const Footer: FC = ({ children }) => {
         <IconButton href="https://twitter.com/SunblockFinance" target="_blank">
           {' '}
           <TwitterIcon color="action" />
+        </IconButton>
+        <IconButton href="https://t.me/sunblock_finance" target="_blank">
+          {' '}
+          <TelegramIcon color="action" />
         </IconButton>
         <IconButton target="_blank" href="https://discord.gg/6x2ndn5anT">
           <Image
