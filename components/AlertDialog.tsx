@@ -174,22 +174,22 @@ export const WhoAreWe = (
           <p>
             <ol>
               <li>
-                <Link href="" target="_blank">
+                <Link href="https://polygonscan.com/address/0xBF901Eb7354a22a8746c91E80d1e5D34C4D0596a" target="_blank">
                   Sunblock Contract
                 </Link>
               </li>
               <li>
-                <Link href="" target="_blank">
+                <Link href="https://polygonscan.com/address/0x1FFe3875819d27EFD9b0ece0E3E0C8a87e3E73cb" target="_blank">
                   Investment Wallet
                 </Link>
               </li>
               <li>
-                <Link href="" target="_blank">
+                <Link href="https://polygonscan.com/address/0x19697686F5aC6d5e55E0DE72214471599245D230" target="_blank">
                   Reward wallet
                 </Link>
               </li>
               <li>
-                <Link href="" target="_blank">
+                <Link href="https://polygonscan.com/address/0xfE9Ae6A05dE748F9175c71a87AC0f9dfcE9A43c6" target="_blank">
                   Manager wallet
                 </Link>
               </li>
