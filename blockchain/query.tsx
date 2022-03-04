@@ -10,16 +10,32 @@ import {
   CONTRACT_ADDRESS_SUNBLOCK,
   INVESTMENT_WALLET,
   REWARD_WALLET,
-  TOKEN_ADDRESS_DEMOERC20
+  TOKEN_ADDRESS_USDC
 } from '../programs/polygon'
-import { formatWeiToNumber } from '../utils/formaters'
+import { formatUSDCWeiToNumber, formatWeiToNumber } from '../utils/formaters'
+
+
+export async function getUSDCBalance(provider: ethers.providers.Web3Provider): Promise<number> {
+  try {
+    const signer = provider.getSigner()
+  if (signer === undefined) return 0
+  const signerAddress = await signer.getAddress()
+  const erc20 = new ethers.Contract(TOKEN_ADDRESS_USDC, ABI_ERC20, signer)
+
+  const contractBalance = await erc20.balanceOf(signerAddress).catch(console.error())
+  return formatUSDCWeiToNumber(contractBalance)
+  } catch (error) {
+    console.log(error);
+    return 0
+  }
+}
 
 export async function getStrongBalance(provider: ethers.providers.Web3Provider): Promise<number> {
   try {
     const signer = provider.getSigner()
   if (signer === undefined) return 0
   const signerAddress = await signer.getAddress()
-  const erc20 = new ethers.Contract(TOKEN_ADDRESS_DEMOERC20, ABI_ERC20, signer)
+  const erc20 = new ethers.Contract(TOKEN_ADDRESS_USDC, ABI_ERC20, signer)
 
   const contractBalance = await erc20.balanceOf(signerAddress).catch(console.error())
   return formatWeiToNumber(contractBalance)
@@ -63,7 +79,7 @@ export async function getSharesIssued(provider: ethers.providers.Web3Provider): 
 export async function getInvestmentFund(provider: ethers.providers.Web3Provider): Promise<number> {
   try {
     const contract = new ethers.Contract(
-      TOKEN_ADDRESS_DEMOERC20,
+      TOKEN_ADDRESS_USDC,
       ABI_ERC20,
       provider
     )
@@ -78,7 +94,7 @@ export async function getInvestmentFund(provider: ethers.providers.Web3Provider)
 export async function getRewardFund(provider: ethers.providers.Web3Provider): Promise<number> {
   try {
     const contract = new ethers.Contract(
-      TOKEN_ADDRESS_DEMOERC20,
+      TOKEN_ADDRESS_USDC,
       ABI_ERC20,
       provider
     )

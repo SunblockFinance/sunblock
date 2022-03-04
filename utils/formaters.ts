@@ -13,6 +13,26 @@ export const formatWeiToString = (wei:BigNumber): string => {
     return ""
 }
 
+export const formatUSDCWeiToString = (wei:BigNumber): string => {
+    try {
+        const eth = ethers.utils.formatUnits(wei,6)
+        return (+eth).toFixed(4)
+    } catch (error:any) {
+        console.log(error)
+    }
+    return ""
+}
+
+export const formatUSDCWeiToNumber = (wei:BigNumber): number => {
+    try {
+     const weiString = formatUSDCWeiToString(wei)
+     return Number(weiString)
+    } catch (error:any) {
+        console.log(error)
+    }
+     return 0
+ }
+
 export const formatWeiToNumber = (wei:BigNumber): number => {
    try {
     const weiString = formatWeiToString(wei)

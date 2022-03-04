@@ -11,7 +11,7 @@ import { ABI_SUNBLOCK } from '../contracts/abi/sunblock'
 import { ABI_ERC20, InvestmentVehicle } from '../programs/contracts'
 import {
   CONTRACT_ADDRESS_SUNBLOCK,
-  TOKEN_ADDRESS_DEMOERC20
+  TOKEN_ADDRESS_USDC
 } from '../programs/polygon'
 import { formatWeiToNumber } from '../utils/formaters'
 
@@ -31,7 +31,7 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
   const provider = useProvider()
   const {enqueueSnackbar} = useSnackbar()
   const erc20 = new ethers.Contract(
-    TOKEN_ADDRESS_DEMOERC20,
+    TOKEN_ADDRESS_USDC,
     ABI_ERC20,
     provider
   )
@@ -63,7 +63,7 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
     const vehicle: InvestmentVehicle = await new Contract(CONTRACT_ADDRESS_SUNBLOCK, ABI_SUNBLOCK, signer).vehicle()
     const sum = vehicle.unitcost.mul(amount)
     const erc20signed = new ethers.Contract(
-      TOKEN_ADDRESS_DEMOERC20,
+      TOKEN_ADDRESS_USDC,
       ABI_ERC20,
       signer
     )

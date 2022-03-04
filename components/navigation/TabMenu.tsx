@@ -46,6 +46,10 @@ export const TabMenu: FC = () => {
           {' '}
           <History />
         </TabPanel>
+        <TabPanel value="4">
+          {' '}
+          <History />
+        </TabPanel>
       </TabContext>
     </Box>
   )

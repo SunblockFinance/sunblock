@@ -14,22 +14,22 @@ import {
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
-import { BigNumber, ethers } from 'ethers'
+import { ethers } from 'ethers'
 import { track } from 'insights-js'
 import { useSnackbar } from 'notistack'
 import React, { FC, useEffect, useState } from 'react'
+import { getUSDCBalance } from '../blockchain/query'
 import { hooks } from '../connectors/metamask'
 import {
-  ABI_ERC20,
   ABI_SUNBLOCK,
   InvestmentVehicle
 } from '../programs/contracts'
 import {
-  CONTRACT_ADDRESS_SUNBLOCK,
-  TOKEN_ADDRESS_DEMOERC20
+  CONTRACT_ADDRESS_SUNBLOCK
 } from '../programs/polygon'
-import { formatWeiToNumber, formatWeiToString } from '../utils/formaters'
+import { formatWeiToNumber } from '../utils/formaters'
 import AllowancePill from './AllowancePill'
+
 
 const { useProvider, useAccount, useIsActive } = hooks
 
@@ -59,7 +59,8 @@ export const PurchaseShares: FC = () => {
   const [stopPurchase, setStopPurchase] = useState(false)
   const [shareAmount, setShareAmount] = useState(DEFAULT_SHARE_VALUE)
   const [basketPrice, setBasketPrice] = useState(0)
-  const balance = useTokenBalance()
+  const [balance, setBalance] = useState(0)
+
 
   const isUnderfunded = shareAmount > Number(balance)
 
@@ -142,6 +143,18 @@ export const PurchaseShares: FC = () => {
     }
   }, [vehicle])
 
+  useEffect(() => {
+    if(provider){
+      getUSDCBalance(provider).then((amount) => {
+        console.log("Setting balance to ", amount);
+        setBalance(amount)
+      })
+    }
+    return () => {
+      setBalance(0)
+    }
+
+  },[provider])
 
   return (
     <Stack direction="column">
@@ -186,7 +199,7 @@ export const PurchaseShares: FC = () => {
             target="_blank"
             rel="noopener"
             variant="outlined"
-            href={`https://mumbai.polygonscan.com/tx/${activeTx?.hash}`}
+            href={`https://polygonscan.com/tx/${activeTx?.hash}`}
           >
             See on polyscan
           </Button>
@@ -227,43 +240,48 @@ function useInvestmentVehicle() {
   return vehicle
 }
 
-function useTokenBalance() {
-  const isActive = useIsActive()
+// function useTokenBalance() {
+//   const isActive = useIsActive()
 
-  const [balance, setBalance] = useState('')
-  const provider = useProvider()
+//   const [balance, setBalance] = useState('')
+//   const provider = useProvider()
 
-  useEffect(() => {
-    const getBalance = async () => {
-      try {
-        const signer = provider?.getSigner()
-        if (signer === undefined) return
-        const signerAddress = await signer.getAddress()
-        const erc20 = new ethers.Contract(
-          TOKEN_ADDRESS_DEMOERC20,
-          ABI_ERC20,
-          signer
-        )
-        const amount: BigNumber = await erc20.balanceOf(signerAddress)
-        erc20.on('Transfer', (from, to, amount, event) => {
-          if (from == signerAddress && to == CONTRACT_ADDRESS_SUNBLOCK) {
-            ;async () => {
-              const newBalance = await erc20.balanceOf(signerAddress)
-              newBalance(newBalance)
-            }
-          }
-        })
-        setBalance(formatWeiToString(amount))
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    if (isActive) {
-      getBalance()
-    } else setBalance('')
-    return () => {
-      setBalance('')
-    }
-  }, [provider, isActive])
-  return balance
-}
+//   useEffect(() => {
+//     // const getBalance = async () => {
+//     //   try {
+//     //     const signer = provider?.getSigner()
+//     //     if (signer === undefined) return
+//     //     const signerAddress = await signer.getAddress()
+
+//     //     const erc20 = new ethers.Contract(
+//     //       TOKEN_ADDRESS_USDC,
+//     //       ABI_ERC20,
+//     //       provider
+//     //     )
+//     //     const amount: BigNumber = await erc20.balanceOf(signerAddress)
+//     //     erc20.on('Transfer', (from, to, amount, event) => {
+//     //       if (from == signerAddress && to == CONTRACT_ADDRESS_SUNBLOCK) {
+//     //         ;async () => {
+//     //           const newBalance = await erc20.balanceOf(signerAddress)
+//     //           newBalance(newBalance)
+//     //         }
+//     //       }
+//     //     })
+//     //     console.log("Balance is ", formatWeiToString(amount));
+
+//     //     setBalance(formatWeiToString(amount))
+//     //   } catch (error) {
+//     //     console.log(error)
+//     //   }
+//     // }
+//     if (isActive) {
+//       getUSDCBalance(provider).then((amount) => {
+//         setBalance(amount)
+//       })
+//     } else setBalance('')
+//     return () => {
+//       setBalance('')
+//     }
+//   }, [provider, isActive])
+//   return balance
+// }
