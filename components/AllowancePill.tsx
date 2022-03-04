@@ -13,7 +13,7 @@ import {
   CONTRACT_ADDRESS_SUNBLOCK,
   TOKEN_ADDRESS_USDC
 } from '../programs/polygon'
-import { formatWeiToNumber } from '../utils/formaters'
+import { formatUSDCWeiToNumber } from '../utils/formaters'
 
 /**
  * CONSTANTS
@@ -72,7 +72,7 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
       if (spender !== CONTRACT_ADDRESS_SUNBLOCK) {
         console.log(`Ignoring approval for ${spender}. We expect it for ${CONTRACT_ADDRESS_SUNBLOCK}`)
       } else {
-        const allowanceNumber = formatWeiToNumber(value)
+        const allowanceNumber = formatUSDCWeiToNumber(value)
         setAllowance(allowanceNumber)
         enqueueSnackbar(`📣 Update! Allowance to Sunblock is now ${allowanceNumber} USDC.`, {
           variant: 'success',
@@ -94,7 +94,7 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
       const rwContract:Contract = erc20.connect(signer)
       await rwContract.approve(CONTRACT_ADDRESS_SUNBLOCK, BigNumber.from(0)).catch((error:Error) => console.log(error))
       erc20?.on('Approval', (to, spender, value) => {
-        const ethValue = Number.parseFloat(ethers.utils.formatEther(value))
+        const ethValue = formatUSDCWeiToNumber(value)
         setAllowance(ethValue)
         track({
           id: "approval-removed",
@@ -115,7 +115,7 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
       walletAddress,
       CONTRACT_ADDRESS_SUNBLOCK
     ).catch((error:Error) => console.log(error))
-    const tokenNumber = formatWeiToNumber(amount)
+    const tokenNumber = formatUSDCWeiToNumber(amount)
     setAllowance(tokenNumber)
     try {
       if (tokenNumber > Number.MAX_SAFE_INTEGER) {
