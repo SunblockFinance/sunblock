@@ -11,6 +11,7 @@ import { track } from 'insights-js'
 import Image from 'next/image'
 import { FC, useEffect, useState } from 'react'
 import { hooks, metaMask } from '../connectors/metamask'
+import { CHAINID } from '../programs/polygon'
 import { shortenAddress } from '../utils/formaters'
 import { AlertDialog, Contracts, WhoAreWe } from './AlertDialog'
 
@@ -37,7 +38,7 @@ export const Header: FC = () => {
   const authenticatebtn = (
     <Button
       onClick={async () => {
-        metaMask.activate(80001) //TODO: Parameter this bad boy
+        metaMask.activate(CHAINID) //TODO: Parameter this bad boy
       }}
       variant="contained"
     >
