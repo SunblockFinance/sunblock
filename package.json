@@ -3,10 +3,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "hbuild": "hardhat compile",
-    "htest:light": "hardhat test",
-    "htest": "hardhat coverage"
+    "start": "next start"
   },
   "dependencies": {
     "@emotion/react": "^11.8.1",

@@ -17,5 +17,4 @@
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "scripts/deploy.js"],
   "exclude": ["node_modules"],
-  "files": ["./hardhat.config.ts"]
 }
