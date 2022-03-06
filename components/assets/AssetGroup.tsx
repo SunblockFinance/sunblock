@@ -47,7 +47,8 @@ export const AssetGroup: FC = () => {
       })
       getSharesIssued(provider).then((shares) => {
         setSharesIssued(shares)
-      })
+      }).catch((e) => console.log(e)
+      )
       getInvestmentVehicle(provider).then((vehicle) => {
           setInvestmentVehicle(vehicle)
       })

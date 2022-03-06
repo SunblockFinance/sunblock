@@ -21,7 +21,7 @@ const Home: NextPage = () => {
   return (
     <div
       style={{
-        // backgroundImage: 'url(/background-neon.webp)',
+        backgroundImage: 'url(/background-neon.webp)',
         backgroundPosition:'fixed',
         backgroundSize:'100%',
         backgroundRepeat:'no-repeat',
