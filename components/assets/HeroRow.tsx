@@ -3,6 +3,9 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
+import EventOutlinedIcon from '@mui/icons-material/EventOutlined'
+import MonetizationOnOutlinedIcon from '@mui/icons-material/MonetizationOnOutlined'
+import PollOutlinedIcon from '@mui/icons-material/PollOutlined'
 import { Stack, styled } from '@mui/material'
 import LinearProgress, {
   linearProgressClasses
@@ -129,29 +132,31 @@ export const HeroRow: FC = () => {
       spacing={2}
       justifyContent="space-between"
     >
-      <HeroItem title="Next payday" subtitle="Distributed one time per week">
-        <span style={{ fontWeight: 'bold', fontSize: 31 }}>No nodes, yet!</span>
+      <HeroItem icon={<EventOutlinedIcon fontSize='medium'/>} title="Next payday" subtitle="Distributed one time per week">
+        <span style={{ fontWeight: 'bold', fontSize: 31 }}>No investment<br/> yet!</span>
       </HeroItem>
       <HeroItem
-        title="Strong nodes"
-        subtitle={`${strongNodes} nodes owned by us`}
+        title="Next investment"
+        subtitle={`Target cost: 10 STRONG`}
+        icon={<PollOutlinedIcon fontSize='medium'/>}
       >
         <Stack direction="column" alignItems="center" spacing={2}>
-
-          Left until new node:
+        <span style={{ fontWeight: 'bold', fontSize: 31 }}>Strong node</span>
+          Progress to next investment:
           <BorderLinearProgress
             sx={{ minWidth: 200 }}
             variant="determinate"
             value={nodeProgress}
 
           />
-          <span style={{ fontWeight: 'bold', fontSize: 31 }}>Nodes: 0</span>
+
         </Stack>
       </HeroItem>
 
       <HeroItem
         title="Estimated earning"
         subtitle={`${userShares} shares owned by you`}
+        icon={<MonetizationOnOutlinedIcon fontSize='medium'/>}
       >
         <span
           style={{ fontWeight: 'bold', fontSize: 31 }}
@@ -160,6 +165,7 @@ export const HeroRow: FC = () => {
       <HeroItem
         title="Purchase shares"
         subtitle="Each share is 10 USDC"
+        avatar='./usdc-logo.webp'
         promote
       >
         <PurchaseShares />

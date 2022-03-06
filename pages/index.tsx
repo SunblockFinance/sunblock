@@ -9,7 +9,6 @@ import { NextPage } from 'next'
 import Head from 'next/head'
 import React from 'react'
 import { HeroRow } from '../components/assets/HeroRow'
-import BasicMenu from '../components/BasicMenu'
 import { Footer } from '../components/Footer'
 import { Header } from '../components/header'
 import { TabMenu } from '../components/navigation/TabMenu'
@@ -22,11 +21,11 @@ const Home: NextPage = () => {
   return (
     <div
       style={{
-        backgroundImage: 'url(/background-neon.webp)',
+        // backgroundImage: 'url(/background-neon.webp)',
         backgroundPosition:'fixed',
         backgroundSize:'100%',
         backgroundRepeat:'no-repeat',
-        backgroundColor:"#252e83"
+        backgroundColor:"#100624"
       }}
     >
       <Head>

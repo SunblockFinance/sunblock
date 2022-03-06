@@ -7,13 +7,9 @@ import Avatar from '@mui/material/Avatar'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import CardHeader from '@mui/material/CardHeader'
-import Image from 'next/image'
 import { FC } from 'react'
 
-export const HeroItem: FC<{
-  title: string
-  subtitle?: string
-  promote?: boolean
+export const HeroItem: FC<{title: string, subtitle?: string, promote?: boolean, avatar?:string, icon?:any,
 }> = (data) => {
   const standard = {
     borderRadius: '15px',
@@ -34,8 +30,8 @@ export const HeroItem: FC<{
     <Card variant="outlined" sx={style}>
       <CardHeader
         avatar={
-          <Avatar sx={{ backgroundColor: 'whitesmoke' }}>
-            <Image src='/crypto-icons/usdc.svg' alt='usdc' width='100px' height='100px'/>
+          <Avatar src={data.avatar} sx={{ backgroundColor: '#100624', color:'lightgray' }}>
+            {data.icon}
           </Avatar>
         }
         title={data.title}
