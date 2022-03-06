@@ -939,14 +939,14 @@
     "@typescript-eslint/types" "5.13.0"
     eslint-visitor-keys "^3.0.0"
 
-"@web3-react/core@^8.0.10-beta.0":
-  version "8.0.10-beta.0"
-  resolved "https://registry.yarnpkg.com/@web3-react/core/-/core-8.0.10-beta.0.tgz#c34742437e3f3621e148991b28d4655aa0fd9da4"
-  integrity sha512-uZacY6uCWCTJ3fIV4SR0Uyg3L8YUOLRM0CFWN+aP4dLs7hjRhb734hzCN0PPGztWlJKME9nwTcJZqpp8tDnkYA==
+"@web3-react/core@^8.0.18-beta.0":
+  version "8.0.18-beta.0"
+  resolved "https://registry.yarnpkg.com/@web3-react/core/-/core-8.0.18-beta.0.tgz#be4cb5e7f42eca52171c64a352fcf740b48e1f64"
+  integrity sha512-SX1jVnLctkhWD+h1s7RCYUnS/qD6iVLWjzX5l7ZehwlJQw4++W5026BOclS2z/esVR7NrDOTXfp0Q2GimEgQxw==
   dependencies:
-    "@web3-react/store" "^8.0.5-beta.0"
-    "@web3-react/types" "^8.0.3-beta.0"
-    zustand "^4.0.0-beta.0"
+    "@web3-react/store" "^8.0.13-beta.0"
+    "@web3-react/types" "^8.0.10-beta.0"
+    zustand "^4.0.0-beta.2"
   optionalDependencies:
     "@ethersproject/providers" "^5.5.1"
 
@@ -976,28 +976,12 @@
     "@web3-react/types" "^8.0.10-beta.0"
     zustand "^4.0.0-beta.2"
 
-"@web3-react/store@^8.0.5-beta.0":
-  version "8.0.5-beta.0"
-  resolved "https://registry.yarnpkg.com/@web3-react/store/-/store-8.0.5-beta.0.tgz#321817844e9f0f54dbefe0bc47e877f5b3ed96dc"
-  integrity sha512-UpeOhIJ4PemdgaOQNhOv1lHPYoizp1KAROse0ReaJ1KZ1gGTjv9z1rVC7k6gT8oHAWgsFUEEQYkQSy60Gai13A==
-  dependencies:
-    "@ethersproject/address" "^5.4.0"
-    "@web3-react/types" "^8.0.3-beta.0"
-    zustand "^4.0.0-beta.0"
-
 "@web3-react/types@^8.0.10-beta.0":
   version "8.0.10-beta.0"
   resolved "https://registry.yarnpkg.com/@web3-react/types/-/types-8.0.10-beta.0.tgz#8ed9f1b5e40dcbe2a08be5ce9dd9e3ef2b2a6908"
   integrity sha512-HitBmoKHyLDeRrJgtkImPddb8nzsb/FroAdiaYA15gAwAE3Y/p7Nd/TN8IANlgKcMkuyGyUjPD27fE7Mvw9rEA==
   dependencies:
     zustand "^4.0.0-beta.2"
-
-"@web3-react/types@^8.0.3-beta.0":
-  version "8.0.3-beta.0"
-  resolved "https://registry.yarnpkg.com/@web3-react/types/-/types-8.0.3-beta.0.tgz#544e6c933615faf4084fd1f69a609ef3eb0944d9"
-  integrity sha512-yrwKw8+i3xWH3Faue4+TISkQ3B4g9w8ibW5OMQjeBA1J9s7GPZcElvKnyL0HjTmTml4ie7X51ktGqd2Lk06m1w==
-  dependencies:
-    zustand "^4.0.0-beta.0"
 
 acorn-jsx@^5.3.1:
   version "5.3.2"
@@ -3040,7 +3024,7 @@ yn@3.1.1:
   resolved "https://registry.yarnpkg.com/yn/-/yn-3.1.1.tgz#1e87401a09d767c1d5eab26a6e4c185182d2eb50"
   integrity sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==
 
-zustand@^4.0.0-beta.0, zustand@^4.0.0-beta.2:
+zustand@^4.0.0-beta.2:
   version "4.0.0-beta.2"
   resolved "https://registry.yarnpkg.com/zustand/-/zustand-4.0.0-beta.2.tgz#27fdc32b62225cc18976c0cf8866ecee9a9f4a98"
   integrity sha512-aJ5ypnOwPIa/uSjdZv/oHChTWPplpFOG/hvWwzkR5ahFiPI5R6ifyObf8Fz1Vi6Obz2wY1N32fT2pNrpT2hzPw==
