@@ -9,10 +9,7 @@ import React, { FC, useState } from 'react'
 import { hooks } from '../connectors/metamask'
 import { ABI_SUNBLOCK } from '../contracts/abi/sunblock'
 import { ABI_ERC20, InvestmentVehicle } from '../programs/contracts'
-import {
-  CONTRACT_ADDRESS_SUNBLOCK,
-  TOKEN_ADDRESS_USDC
-} from '../programs/polygon'
+import { BlockChainNetwork, useBlockchainSettings } from '../programs/polygon'
 import { formatUSDCWeiToNumber } from '../utils/formaters'
 
 /**
@@ -28,6 +25,7 @@ const { useAccounts, useProvider } = hooks
 
 
 const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
+  const {TOKEN_ADDRESS_USDC, CONTRACT_ADDRESS_SUNBLOCK} = useBlockchainSettings(BlockChainNetwork.PolygonMain)
   const provider = useProvider()
   const {enqueueSnackbar} = useSnackbar()
   const erc20 = new ethers.Contract(

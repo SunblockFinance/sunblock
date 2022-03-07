@@ -18,15 +18,13 @@ import { ethers } from 'ethers'
 import { track } from 'insights-js'
 import { useSnackbar } from 'notistack'
 import React, { FC, useEffect, useState } from 'react'
-import { getUSDCBalance } from '../blockchain/query'
+import { GetUSDCBalance } from '../blockchain/query'
 import { hooks } from '../connectors/metamask'
 import {
   ABI_SUNBLOCK,
   InvestmentVehicle
 } from '../programs/contracts'
-import {
-  CONTRACT_ADDRESS_SUNBLOCK
-} from '../programs/polygon'
+import { BlockChainNetwork, useBlockchainSettings } from '../programs/polygon'
 import { formatUSDCWeiToNumber } from '../utils/formaters'
 import AllowancePill from './AllowancePill'
 
@@ -36,6 +34,7 @@ const { useProvider, useAccount, useIsActive } = hooks
 let eth: any
 
 export const PurchaseShares: FC = () => {
+  const {CONTRACT_ADDRESS_SUNBLOCK,} = useBlockchainSettings(BlockChainNetwork.PolygonMain)
   const closeSpinner = () => {
     setOpen(false)
   }
@@ -150,7 +149,7 @@ export const PurchaseShares: FC = () => {
 
   useEffect(() => {
     if(provider){
-      getUSDCBalance(provider).then((amount) => {
+      GetUSDCBalance(provider).then((amount) => {
         console.log("Setting balance to ", amount);
         setBalance(amount)
       })
@@ -216,11 +215,14 @@ export const PurchaseShares: FC = () => {
 //TODO: URL HARDCODED ABOVE!!
 
 function useInvestmentVehicle() {
+
   const isActive = useIsActive()
   const provider = useProvider()
   const [vehicle, setVehicle] = useState<InvestmentVehicle>()
+  const {CONTRACT_ADDRESS_SUNBLOCK,} = useBlockchainSettings(BlockChainNetwork.PolygonMain)
 
   useEffect(() => {
+
     const getVehicle = async () => {
       const signer = provider?.getSigner()
       if (signer === undefined) return
@@ -241,7 +243,7 @@ function useInvestmentVehicle() {
       getVehicle()
     } else setVehicle(undefined)
     return () => {}
-  }, [provider, isActive])
+  }, [provider, isActive, CONTRACT_ADDRESS_SUNBLOCK])
   return vehicle
 }
 

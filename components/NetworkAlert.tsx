@@ -13,12 +13,13 @@ import { hexStripZeros } from 'ethers/lib/utils'
 import { track } from 'insights-js'
 import { FC, useEffect, useState } from 'react'
 import { hooks } from '../connectors/metamask'
-import { CHAINID } from '../programs/polygon'
+import { BlockChainNetwork, useBlockchainSettings } from '../programs/polygon'
 
 const { useProvider, useChainId } = hooks
 
 // SPDX-License-Identifier: MIT
 const NetworkAlert: FC = () => {
+  const {CHAINID} = useBlockchainSettings(BlockChainNetwork.PolygonMain)
   const [open, setOpen] = useState(false)
   const provider = useProvider()
   const chainID = useChainId()
@@ -36,7 +37,7 @@ const NetworkAlert: FC = () => {
     return () => {
       setOpen(false)
     }
-  }, [chainID])
+  }, [chainID, CHAINID])
 
 
 

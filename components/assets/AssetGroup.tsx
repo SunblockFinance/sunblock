@@ -10,7 +10,7 @@ import Stack from '@mui/material/Stack'
 import CoinGecko from 'coingecko-api'
 import { FC, useEffect, useState } from 'react'
 import { CoinGeckoPrice } from '../../blockchain/coingecko'
-import { getInvestmentFund, getInvestmentVehicle, getRewardFund, getShareholderCount, getSharesIssued } from '../../blockchain/query'
+import { GetInvestmentFund, GetInvestmentVehicle, GetRewardFund, GetShareholderCount, GetSharesIssued } from '../../blockchain/query'
 import { hooks } from '../../connectors/metamask'
 import { InvestmentVehicle } from '../../programs/contracts'
 import { formatUSDCWeiToNumber } from '../../utils/formaters'
@@ -42,19 +42,19 @@ export const AssetGroup: FC = () => {
 
   useEffect(() => {
     if (provider) {
-      getInvestmentFund(provider).then((balance) => {
+      GetInvestmentFund(provider).then((balance) => {
         setInvestFund(balance)
       })
-      getSharesIssued(provider).then((shares) => {
+      GetSharesIssued(provider).then((shares) => {
         setSharesIssued(shares)
       })
-      getInvestmentVehicle(provider).then((vehicle) => {
+      GetInvestmentVehicle(provider).then((vehicle) => {
           setInvestmentVehicle(vehicle)
       })
-      getRewardFund(provider).then((reward) => {
+      GetRewardFund(provider).then((reward) => {
         setRewardFund(reward)
       })
-      getShareholderCount(provider).then((count) => {
+      GetShareholderCount(provider).then((count) => {
         setInvestorCount(count)
       })
     }

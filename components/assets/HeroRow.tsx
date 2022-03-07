@@ -11,7 +11,7 @@ import CoinGecko from 'coingecko-api'
 import Image from 'next/image'
 import { FC, useEffect, useState } from 'react'
 import { CoinGeckoPrice } from '../../blockchain/coingecko'
-import { getHeldShares, getInvestmentFund, getRewardFund, getSharesIssued, getStrongBalance } from '../../blockchain/query'
+import { GetHeldShares, GetInvestmentFund, GetRewardFund, GetSharesIssued, GetStrongBalance } from '../../blockchain/query'
 import { hooks } from '../../connectors/metamask'
 import { PurchaseShares } from '../PurchaseShare'
 import { HeroItem } from './HeroItem'
@@ -40,19 +40,19 @@ export const HeroRow: FC = () => {
 
   useEffect(() => {
     if (provider) {
-      getStrongBalance(provider).then((balance) => {
+      GetStrongBalance(provider).then((balance) => {
         setStrongAmount(balance)
       })
-      getHeldShares(provider).then((shares) => {
+      GetHeldShares(provider).then((shares) => {
         setUserShares(shares)
       })
-      getInvestmentFund(provider).then((balance) => {
+      GetInvestmentFund(provider).then((balance) => {
         setInvestFund(balance)
       })
-      getRewardFund(provider).then((balance) => {
+      GetRewardFund(provider).then((balance) => {
         setRewardFund(balance)
       })
-      getSharesIssued(provider).then((amount) => {
+      GetSharesIssued(provider).then((amount) => {
         setSharesIssued(amount)
       })
     }

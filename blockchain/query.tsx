@@ -6,16 +6,19 @@ import {
   ABI_SUNBLOCK,
   InvestmentVehicle
 } from '../programs/contracts'
-import {
-  CONTRACT_ADDRESS_SUNBLOCK,
-  INVESTMENT_WALLET,
-  REWARD_WALLET,
-  TOKEN_ADDRESS_USDC
-} from '../programs/polygon'
+import { BlockChainNetwork, useBlockchainSettings } from '../programs/polygon'
+// import {
+//   CONTRACT_ADDRESS_SUNBLOCK,
+//   INVESTMENT_WALLET,
+//   REWARD_WALLET,
+//   TOKEN_ADDRESS_USDC
+// } from '../programs/polygon'
 import { formatUSDCWeiToNumber } from '../utils/formaters'
 
 
-export async function getUSDCBalance(provider: ethers.providers.Web3Provider): Promise<number> {
+
+export async function GetUSDCBalance(provider: ethers.providers.Web3Provider): Promise<number> {
+  const {TOKEN_ADDRESS_USDC} = useBlockchainSettings(BlockChainNetwork.PolygonMain)
   try {
     const signer = provider.getSigner()
   if (signer === undefined) return 0
@@ -30,7 +33,8 @@ export async function getUSDCBalance(provider: ethers.providers.Web3Provider): P
   }
 }
 
-export async function getStrongBalance(provider: ethers.providers.Web3Provider): Promise<number> {
+export async function GetStrongBalance(provider: ethers.providers.Web3Provider): Promise<number> {
+  const {TOKEN_ADDRESS_USDC} = useBlockchainSettings(BlockChainNetwork.PolygonMain)
   try {
     const signer = provider.getSigner()
   if (signer === undefined) return 0
@@ -45,7 +49,8 @@ export async function getStrongBalance(provider: ethers.providers.Web3Provider):
   }
 }
 
-export async function getHeldShares(provider: ethers.providers.Web3Provider): Promise<number> {
+export async function GetHeldShares(provider: ethers.providers.Web3Provider): Promise<number> {
+  const {CONTRACT_ADDRESS_SUNBLOCK} = useBlockchainSettings(BlockChainNetwork.PolygonMain)
   try {
     const contract = new ethers.Contract(
       CONTRACT_ADDRESS_SUNBLOCK,
@@ -61,7 +66,8 @@ export async function getHeldShares(provider: ethers.providers.Web3Provider): Pr
   }
 }
 
-export async function getSharesIssued(provider: ethers.providers.Web3Provider): Promise<number> {
+export async function GetSharesIssued(provider: ethers.providers.Web3Provider): Promise<number> {
+  const {CONTRACT_ADDRESS_SUNBLOCK} = useBlockchainSettings(BlockChainNetwork.PolygonMain)
   try {
     const contract = new ethers.Contract(
       CONTRACT_ADDRESS_SUNBLOCK,
@@ -76,7 +82,8 @@ export async function getSharesIssued(provider: ethers.providers.Web3Provider): 
   }
 }
 
-export async function getInvestmentFund(provider: ethers.providers.Web3Provider): Promise<number> {
+export async function GetInvestmentFund(provider: ethers.providers.Web3Provider): Promise<number> {
+  const {TOKEN_ADDRESS_USDC, INVESTMENT_WALLET} = useBlockchainSettings(BlockChainNetwork.PolygonMain)
   try {
     const contract = new ethers.Contract(
       TOKEN_ADDRESS_USDC,
@@ -91,7 +98,8 @@ export async function getInvestmentFund(provider: ethers.providers.Web3Provider)
   }
 }
 
-export async function getRewardFund(provider: ethers.providers.Web3Provider): Promise<number> {
+export async function GetRewardFund(provider: ethers.providers.Web3Provider): Promise<number> {
+  const {TOKEN_ADDRESS_USDC, REWARD_WALLET} = useBlockchainSettings(BlockChainNetwork.PolygonMain)
   try {
     const contract = new ethers.Contract(
       TOKEN_ADDRESS_USDC,
@@ -106,9 +114,10 @@ export async function getRewardFund(provider: ethers.providers.Web3Provider): Pr
   }
 }
 
-export async function getInvestmentVehicle(
+export async function GetInvestmentVehicle(
   provider: ethers.providers.Web3Provider
 ): Promise<InvestmentVehicle | undefined> {
+  const {CONTRACT_ADDRESS_SUNBLOCK} = useBlockchainSettings(BlockChainNetwork.PolygonMain)
   try {
     const contract = new ethers.Contract(
       CONTRACT_ADDRESS_SUNBLOCK,
@@ -122,7 +131,8 @@ export async function getInvestmentVehicle(
   }
 }
 
-export async function getShareholderCount(provider: ethers.providers.Web3Provider): Promise<number> {
+export async function GetShareholderCount(provider: ethers.providers.Web3Provider): Promise<number> {
+  const {CONTRACT_ADDRESS_SUNBLOCK} = useBlockchainSettings(BlockChainNetwork.PolygonMain)
   try {
     const contract = new ethers.Contract(
       CONTRACT_ADDRESS_SUNBLOCK,
