@@ -69,10 +69,10 @@ export const Header: FC = () => {
       sx={{ width: '100%' }}
     >
       <Image
-        src="/Sunblock-logos/Sunblock-logos_white.png"
+        src="/Sunblock.svg"
         alt="Sunblock logo"
         width="263"
-        height="80"
+        height="100"
       />
       <Stack direction="row">
         <Button
