@@ -22,7 +22,7 @@ export async function getUSDCBalance(provider: ethers.providers.Web3Provider): P
   const signerAddress = await signer.getAddress()
   const erc20 = new ethers.Contract(TOKEN_ADDRESS_USDC, ABI_ERC20, signer)
 
-  const contractBalance = await erc20.balanceOf(signerAddress).catch(console.error())
+  const contractBalance = await erc20.balanceOf(signerAddress)
   return formatUSDCWeiToNumber(contractBalance)
   } catch (error) {
     console.log(error);
@@ -37,7 +37,7 @@ export async function getStrongBalance(provider: ethers.providers.Web3Provider):
   const signerAddress = await signer.getAddress()
   const erc20 = new ethers.Contract(TOKEN_ADDRESS_USDC, ABI_ERC20, signer)
 
-  const contractBalance = await erc20.balanceOf(signerAddress).catch(console.error())
+  const contractBalance = await erc20.balanceOf(signerAddress)
   return formatUSDCWeiToNumber(contractBalance)
   } catch (error) {
     console.log(error);
@@ -53,7 +53,7 @@ export async function getHeldShares(provider: ethers.providers.Web3Provider): Pr
       provider
     )
     const signAddr = await provider.getSigner().getAddress()
-    const amount: BigNumber = await contract.shareholder(signAddr).catch(console.error())
+    const amount: BigNumber = await contract.shareholder(signAddr)
     return amount.toNumber()
   } catch (error) {
     console.log(error);
@@ -68,7 +68,7 @@ export async function getSharesIssued(provider: ethers.providers.Web3Provider): 
       ABI_SUNBLOCK,
       provider
     )
-    const amount: BigNumber = await contract.sharesIssued().catch(console.error())
+    const amount: BigNumber = await contract.sharesIssued()
     return amount.toNumber()
   } catch (error) {
     console.log(error);
@@ -83,7 +83,7 @@ export async function getInvestmentFund(provider: ethers.providers.Web3Provider)
       ABI_ERC20,
       provider
     )
-    const amount: BigNumber = await contract.balanceOf(INVESTMENT_WALLET).catch(console.error())
+    const amount: BigNumber = await contract.balanceOf(INVESTMENT_WALLET)
     return formatUSDCWeiToNumber(amount)
   } catch (error) {
     console.log(error);
@@ -115,7 +115,7 @@ export async function getInvestmentVehicle(
       ABI_SUNBLOCK,
       provider
     )
-    const vehicle: InvestmentVehicle = await contract.vehicle().catch(console.error())
+    const vehicle: InvestmentVehicle = await contract.vehicle()
     return vehicle
   } catch (error) {
     return undefined
@@ -129,7 +129,7 @@ export async function getShareholderCount(provider: ethers.providers.Web3Provide
       ABI_SUNBLOCK,
       provider
     )
-    const amount: BigNumber = await contract.shareHolderCount().catch(console.error())
+    const amount: BigNumber = await contract.shareHolderCount()
     return amount.toNumber()
   } catch (error) {
     console.log(error);

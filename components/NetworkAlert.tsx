@@ -39,7 +39,6 @@ const NetworkAlert: FC = () => {
   }, [chainID])
 
 
-
   const handleNetworkSwitch = async () => {
     try {
       const formattedChainId = hexStripZeros(
