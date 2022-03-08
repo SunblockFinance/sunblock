@@ -494,8 +494,8 @@
       ]
     },
     "/Users/kenth/code/sunblock-frontend/contracts/sunblockInvestmentVehicle_v1.sol": {
-      "lastModificationDate": 1646734415189,
-      "contentHash": "3ced926a2fecd0ea338a1312e12403df",
+      "lastModificationDate": 1646746904008,
+      "contentHash": "66c4ca7390ea24cd928607ccdadaa85d",
       "sourceName": "contracts/sunblockInvestmentVehicle_v1.sol",
       "solcConfig": {
         "version": "0.8.9",
@@ -1179,10 +1179,10 @@
         "StorageSlotUpgradeable"
       ]
     },
-    "/Users/kenth/code/sunblock-frontend/contracts/USDCToken.sol": {
-      "lastModificationDate": 1646727510053,
-      "contentHash": "fa58a0e3b45ef0aec4c25802e35fe0fe",
-      "sourceName": "contracts/USDCToken.sol",
+    "/Users/kenth/code/sunblock-frontend/contracts/Tether.sol": {
+      "lastModificationDate": 1646780268448,
+      "contentHash": "6f76b8c2b738b4dff703524f1914ffd4",
+      "sourceName": "contracts/Tether.sol",
       "solcConfig": {
         "version": "0.8.9",
         "settings": {
@@ -1216,7 +1216,7 @@
         "^0.8.4"
       ],
       "artifacts": [
-        "USDCToken"
+        "Tether"
       ]
     }
   }

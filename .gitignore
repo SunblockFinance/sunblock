@@ -11,7 +11,7 @@
 # Solidity
 artifacts
 .debugger
-cache
+/cache
 
 # testing
 /coverage
@@ -46,3 +46,4 @@ yarn-error.log*
 .openzeppelin/unknown-31337.json
 cache/solidity-files-cache.json
 .gitignore
+test/InvestmentVehicle/transfer-test.js

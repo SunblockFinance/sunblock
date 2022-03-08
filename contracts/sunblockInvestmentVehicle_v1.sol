@@ -19,7 +19,7 @@ contract InvestmentVehicle is
   bytes32 public constant UPGRADER_ROLE = keccak256('UPGRADER_ROLE');
   bytes32 public constant MANAGER_ROLE = keccak256('MANAGER_ROLE');
 
-  IERC20 paymentInstrument; // Token used to be used for investment and reward. This will be later bridged and swapped to vehicle token
+  IERC20 public paymentInstrument; // Token used to be used for investment and reward. This will be later bridged and swapped to vehicle token
   uint256 public managementFee; // Fee taken from the reward prior to distribution. No fee for investment pool. EVER.
 
   // ========= EVENTS =========== //

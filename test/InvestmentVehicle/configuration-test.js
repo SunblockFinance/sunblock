@@ -4,7 +4,7 @@ const { expect } = require('chai')
 const { ethers, upgrades } = require('hardhat')
 
 let vehicleContract
-let usdcContract
+let usdtContract
 let owner
 let addr1
 let addr2
@@ -20,21 +20,21 @@ beforeEach(async function () {
   UPGRADER_ROLE = ethers.utils.id('UPGRADER_ROLE')
   PAUSER_ROLE = ethers.utils.id('PAUSER_ROLE')
 
-  const USDC = await ethers.getContractFactory('USDCToken')
-  usdcContract = await USDC.deploy()
-  await usdcContract.deployed()
+  const USDT = await ethers.getContractFactory('Tether')
+  usdtContract = await USDT.deploy()
+  await usdtContract.deployed()
 
   // Get the ContractFactory and Signers here.
   const Vehicle = await ethers.getContractFactory('InvestmentVehicle')
   vehicleContract = await upgrades.deployProxy(
     Vehicle,
-    [usdcContract.address, 100],
+    [usdtContract.address, 100],
     { initializer: 'initialize', kind: 'uups' }
   )
   await vehicleContract.deployed()
 })
 
-describe('InvestmentVehicle tests', function () {
+describe('InvestmentVehicle initialize test', function () {
   it('Should have creator as manager role', async () => {
     expect(await vehicleContract.hasRole(MANAGER_ROLE, owner.address)).to.equal(
       true
@@ -52,6 +52,20 @@ describe('InvestmentVehicle tests', function () {
       true
     )
   })
+
+  it('Should have 100 as management fee', async () => {
+    expect(await vehicleContract.managementFee()).to.equal(
+      100
+    )
+  })
+
+  it(`Should have paymentInstrument set to USDT` , async () => {
+    expect(await vehicleContract.paymentInstrument()).to.equal(
+        usdtContract.address
+    )
+  })
+
+
 })
 
 // let tx: ContractTransaction = await myToken.connect(accounts[0]).transfer(accounts[1].address, 1);
