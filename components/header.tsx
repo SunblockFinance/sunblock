@@ -69,7 +69,7 @@ export const Header: FC = () => {
       sx={{ width: '100%' }}
     >
       <Image
-        src="/Sunblock.svg"
+        src="/sunblock-logo/sunblock-text-side-transparent.svg"
         alt="Sunblock logo"
         width="263"
         height="100"
@@ -96,6 +96,7 @@ export const Header: FC = () => {
         >
           Contracts and addresses
         </Button>
+
         <AlertDialog active={openHelp} title="What is Sunblock" content={WhoAreWe} />
         <AlertDialog active={openContract} title="Contracts and wallets" content={Contracts} />
       </Stack>

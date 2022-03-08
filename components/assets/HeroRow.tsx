@@ -16,6 +16,7 @@ import { FC, useEffect, useState } from 'react'
 import { CoinGeckoPrice } from '../../blockchain/coingecko'
 import { getHeldShares, getInvestmentFund, getRewardFund, getSharesIssued, getStrongBalance } from '../../blockchain/query'
 import { hooks } from '../../connectors/metamask'
+import InvestmentQueue from '../InvestmentQueue'
 import { PurchaseShares } from '../PurchaseShare'
 import { HeroItem } from './HeroItem'
 
@@ -137,18 +138,11 @@ export const HeroRow: FC = () => {
       </HeroItem>
       <HeroItem
         title="Next investment"
-        subtitle={`Target cost: 10 STRONG`}
+        subtitle={`Investments in queue: 5`}
         icon={<PollOutlinedIcon fontSize='medium'/>}
       >
         <Stack direction="column" alignItems="center" spacing={2}>
-        <span style={{ fontWeight: 'bold', fontSize: 31 }}>Strong node</span>
-          Progress to next investment:
-          <BorderLinearProgress
-            sx={{ minWidth: 200 }}
-            variant="determinate"
-            value={nodeProgress}
-
-          />
+        <InvestmentQueue/>
 
         </Stack>
       </HeroItem>
