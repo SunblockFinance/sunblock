@@ -22,8 +22,8 @@ const { useProvider } = hooks
 
 export const AssetGroup: FC = () => {
   const provider = useProvider()
-  const usdc = './usdc-logo.webp'
-  const strong = './strong-strong-logo.webp'
+  const usdc = './crypto-icons/usdc.svg'
+  const strong = './crypto-icons/strong.webp'
 
   /**
    * Token prices
