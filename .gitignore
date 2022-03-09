@@ -43,7 +43,5 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-.openzeppelin/unknown-31337.json
-cache/solidity-files-cache.json
-.gitignore
-test/InvestmentVehicle/transfer-test.js
+.openzeppelin
+cache

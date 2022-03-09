@@ -21,10 +21,11 @@ contract InvestmentVehicle is
 
   IERC20 public paymentInstrument; // Token used to be used for investment and reward. This will be later bridged and swapped to vehicle token
   uint256 public managementFee; // Fee taken from the reward prior to distribution. No fee for investment pool. EVER.
+  uint256 public investmentPool; // Current stored investment in the pool
 
   // ========= EVENTS =========== //
   event InvestmentDeposited(address from, address by, uint256 amount);
-
+  event InvestmentWithdrawn(address to, address by, uint256 amount);
   /// @custom:oz-upgrades-unsafe-allow constructor
   constructor() initializer {}
 
@@ -46,10 +47,17 @@ contract InvestmentVehicle is
   function depositInvestment(address invPool, uint256 amount) external  onlyRole(MANAGER_ROLE) returns(bool) {
       bool success = paymentInstrument.transferFrom(invPool, address(this), amount);
       require(success, "Unable to deposit funds to contract");
+      investmentPool += amount;
       emit InvestmentDeposited(invPool, msg.sender, amount);
       return success;
   }
-  function withdrawInvestment() external onlyRole(MANAGER_ROLE) {}
+  function withdrawInvestment(address receiver, uint256 amount) external onlyRole(MANAGER_ROLE) returns(bool) {
+    bool success = paymentInstrument.transfer(receiver, amount);
+      require(success, "Unable to deposit funds to contract");
+      investmentPool -= amount;
+      emit InvestmentWithdrawn(receiver, msg.sender, amount);
+      return success;
+  }
   function depositReward() external onlyRole(MANAGER_ROLE) {}
   function withdrawReward() external onlyRole(MANAGER_ROLE) {}
   function _extractFee() internal {}
