@@ -22,10 +22,14 @@ contract InvestmentVehicle is
   IERC20 public paymentInstrument; // Token used to be used for investment and reward. This will be later bridged and swapped to vehicle token
   uint256 public managementFee; // Fee taken from the reward prior to distribution. No fee for investment pool. EVER.
   uint256 public investmentPool; // Current stored investment in the pool
+  uint256 public rewardPool; // Current stored rewards in the pool
+  uint256 public feePool; // This pool collects the fees owed to the manager of the investment vehicle
 
   // ========= EVENTS =========== //
   event InvestmentDeposited(address from, address by, uint256 amount);
   event InvestmentWithdrawn(address to, address by, uint256 amount);
+  event RewardDeposited(address from, address by, uint256 amount);
+  event RewardWithdrawn(address to, address by, uint256 amount);
   /// @custom:oz-upgrades-unsafe-allow constructor
   constructor() initializer {}
 
@@ -45,23 +49,35 @@ contract InvestmentVehicle is
 
 
   function depositInvestment(address invPool, uint256 amount) external  onlyRole(MANAGER_ROLE) returns(bool) {
-      bool success = paymentInstrument.transferFrom(invPool, address(this), amount);
-      require(success, "Unable to deposit funds to contract");
-      investmentPool += amount;
-      emit InvestmentDeposited(invPool, msg.sender, amount);
-      return success;
+    bool success = paymentInstrument.transferFrom(invPool, address(this), amount);
+    require(success, "Unable to deposit funds to contract");
+    investmentPool += amount;
+    emit InvestmentDeposited(invPool, msg.sender, amount);
+    return success;
   }
   function withdrawInvestment(address receiver, uint256 amount) external onlyRole(MANAGER_ROLE) returns(bool) {
     bool success = paymentInstrument.transfer(receiver, amount);
-      require(success, "Unable to deposit funds to contract");
-      investmentPool -= amount;
-      emit InvestmentWithdrawn(receiver, msg.sender, amount);
-      return success;
+    require(success, "Unable to withdraw funds from contract");
+    investmentPool -= amount;
+    emit InvestmentWithdrawn(receiver, msg.sender, amount);
+    return success;
   }
-  function depositReward() external onlyRole(MANAGER_ROLE) {}
+  function depositReward(address _rewardPool, uint256 _amount) external onlyRole(MANAGER_ROLE) returns(bool) {
+    require(_amount > 0, 'Amount must be over 0');
+    uint256 rewardAfterFee = _extractFee(_amount);
+    bool success = paymentInstrument.transferFrom(_rewardPool, address(this), rewardAfterFee);
+    require(success, 'Unable to deposit rewards');
+    emit RewardDeposited(_rewardPool, msg.sender, _amount);
+    return success;
+  }
   function withdrawReward() external onlyRole(MANAGER_ROLE) {}
-  function _extractFee() internal {}
-
+  function withdrawManagerFee() external onlyRole(MANAGER_ROLE) {}
+  function _extractFee(uint256 _amount) internal returns(uint256) {
+    uint256 rewardAfterFee = (_amount * (1000 - 100)) / 1000;
+    uint256 managerfee = _amount - rewardAfterFee;
+    feePool += managerfee;
+    return rewardAfterFee;
+  }
 
   function pause() public onlyRole(PAUSER_ROLE) {
     _pause();
