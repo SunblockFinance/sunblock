@@ -7,7 +7,7 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+  font-family: 'SF UI Display Ultralight', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
@@ -25,4 +25,9 @@ highlight {
   background-repeat: no-repeat;
   background-size: 100% 40%;
   background-position: 0 90%;
+}
+@font-face {
+  font-family: "SF UI Display Ultralight";
+  src: url("/fonts/textfont.ttf");
+  font-display: swap;
 }

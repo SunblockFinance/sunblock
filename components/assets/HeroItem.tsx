@@ -30,7 +30,7 @@ export const HeroItem: FC<{title: string, subtitle?: string, promote?: boolean, 
     <Card variant="outlined" sx={style}>
       <CardHeader
         avatar={
-          <Avatar src={data.avatar} sx={{ backgroundColor: '#100624', color:'lightgray' }}>
+          <Avatar src={data.avatar} sx={{ backgroundColor: 'transparent', color:'inherit' }}>
             {data.icon}
           </Avatar>
         }

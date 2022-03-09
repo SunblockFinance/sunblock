@@ -43,10 +43,11 @@ contract InvestmentVehicle is
   }
 
 
-  function depositInvestment(address invPool, uint256 amount) external onlyRole(MANAGER_ROLE) {
+  function depositInvestment(address invPool, uint256 amount) external  onlyRole(MANAGER_ROLE) returns(bool) {
       bool success = paymentInstrument.transferFrom(invPool, address(this), amount);
-      require(success);
+      require(success, "Unable to deposit funds to contract");
       emit InvestmentDeposited(invPool, msg.sender, amount);
+      return success;
   }
   function withdrawInvestment() external onlyRole(MANAGER_ROLE) {}
   function depositReward() external onlyRole(MANAGER_ROLE) {}

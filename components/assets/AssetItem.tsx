@@ -14,7 +14,7 @@ export const AssetItem: FC<{avatar?:string, icon?:any, title:string, value:React
   return (
     <Card sx={{ width: '100%' }}>
       <CardHeader
-        avatar={ <Avatar src={data.avatar} sx={{ bgcolor: avatarbg }} aria-label="recipe">{data.icon}</Avatar>}
+        avatar={ <Avatar src={data.avatar} sx={{ bgcolor: 'transparent' }} aria-label="recipe">{data.icon}</Avatar>}
         title={data.title}
         subheader={data.value}
       />

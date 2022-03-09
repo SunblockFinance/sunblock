@@ -35,7 +35,7 @@ export const HeroRow: FC = () => {
 
   const strongLogo = (
     <Image
-      src="/strong-strong-logo.webp"
+      src="/crypto-logo/strong.webp"
       alt="usdc"
       width="30px"
       height="30px"
@@ -133,13 +133,13 @@ export const HeroRow: FC = () => {
       spacing={2}
       justifyContent="space-between"
     >
-      <HeroItem icon={<EventOutlinedIcon fontSize='medium'/>} title="Next payday" subtitle="Distributed one time per week">
+      <HeroItem icon={<EventOutlinedIcon fontSize='large'/>} title="Next payday" subtitle="Distributed one time per week">
         <span style={{ fontWeight: 'bold', fontSize: 31 }}>No investment<br/> yet!</span>
       </HeroItem>
       <HeroItem
         title="Next investment"
         subtitle={`Investments in queue: 5`}
-        icon={<PollOutlinedIcon fontSize='medium'/>}
+        icon={<PollOutlinedIcon fontSize='large'/>}
       >
         <Stack direction="column" alignItems="center" spacing={2}>
         <InvestmentQueue/>
@@ -150,7 +150,7 @@ export const HeroRow: FC = () => {
       <HeroItem
         title="Estimated earning"
         subtitle={`${userShares} shares owned by you`}
-        icon={<MonetizationOnOutlinedIcon fontSize='medium'/>}
+        icon={<MonetizationOnOutlinedIcon fontSize='large'/>}
       >
         <span
           style={{ fontWeight: 'bold', fontSize: 31 }}
@@ -159,7 +159,7 @@ export const HeroRow: FC = () => {
       <HeroItem
         title="Purchase shares"
         subtitle="Each share is 10 USDC"
-        avatar='./usdc-logo.webp'
+        avatar='./crypto-icons/usdt.svg'
         promote
       >
         <PurchaseShares />
