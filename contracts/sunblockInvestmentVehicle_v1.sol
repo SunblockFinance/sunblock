@@ -65,8 +65,9 @@ contract InvestmentVehicle is
   function depositReward(address _rewardPool, uint256 _amount) external onlyRole(MANAGER_ROLE) returns(bool) {
     require(_amount > 0, 'Amount must be over 0');
     uint256 rewardAfterFee = _extractFee(_amount);
-    bool success = paymentInstrument.transferFrom(_rewardPool, address(this), rewardAfterFee);
+    bool success = paymentInstrument.transferFrom(_rewardPool, address(this), _amount);
     require(success, 'Unable to deposit rewards');
+    rewardPool += rewardAfterFee;
     emit RewardDeposited(_rewardPool, msg.sender, _amount);
     return success;
   }

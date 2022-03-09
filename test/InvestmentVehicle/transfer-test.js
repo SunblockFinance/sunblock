@@ -36,7 +36,7 @@ beforeEach(async function () {
   await vehicleContract.deployed()
 })
 
-describe('InvestmentVehicle.depositInvestment tests', function () {
+describe('InvestmentVehicle.depositInvestment', function () {
   it('Should update balance on deposit', async () => {
     await usdtContract.approve(vehicleContract.address, 2000)
     expect(await usdtContract.allowance(owner.address, vehicleContract.address)).to.equal(2000);
@@ -66,7 +66,7 @@ describe('InvestmentVehicle.depositInvestment tests', function () {
   })
 })
 
-describe('InvestmentVehicle.withdrawInvestment tests', () => {
+describe('InvestmentVehicle.withdrawInvestment', () => {
   it('Should update balance on withdrawal', async () => {
     await usdtContract.approve(vehicleContract.address, 2000)
     expect(await usdtContract.allowance(owner.address, vehicleContract.address)).to.equal(2000);
@@ -92,5 +92,26 @@ describe('InvestmentVehicle.withdrawInvestment tests', () => {
     await expect(() => vehicleContract.depositInvestment(owner.address, 200)).to.changeTokenBalance(usdtContract, vehicleContract, 200)
     expect(vehicleContract.withdrawInvestment(owner.address, 150))
     expect(await vehicleContract.investmentPool()).to.be.equal(50)
+  })
+})
+
+describe('InvestmentVehicle.depositRewards', () => {
+  it('Should update reward balance on deposit', async () => {
+    await usdtContract.approve(vehicleContract.address, 2000)
+    expect(await usdtContract.allowance(owner.address, vehicleContract.address)).to.equal(2000);
+    await expect(() => vehicleContract.depositReward(owner.address, 123)).to.changeTokenBalance(usdtContract, vehicleContract, 123)
+    expect(await vehicleContract.feePool()).to.be.equal(13)
+  })
+
+  it('Should have reward and investment pool match balance', async () => {
+    await usdtContract.approve(vehicleContract.address, 2000)
+    expect(await usdtContract.allowance(owner.address, vehicleContract.address)).to.equal(2000);
+    await expect(() => vehicleContract.depositInvestment(owner.address, 100)).to.changeTokenBalance(usdtContract, vehicleContract, 100)
+    await expect(() => vehicleContract.depositReward(owner.address, 200)).to.changeTokenBalance(usdtContract, vehicleContract, 200)
+    const invPool = await vehicleContract.investmentPool()
+    const rewPool = await vehicleContract.rewardPool()
+    const feePool = await vehicleContract.feePool()
+    const balance = await usdtContract.balanceOf(vehicleContract.address)
+    expect(balance).to.equal(Number(invPool)+Number(rewPool)+Number(feePool))
   })
 })

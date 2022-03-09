@@ -34,7 +34,7 @@ beforeEach(async function () {
   await vehicleContract.deployed()
 })
 
-describe('InvestmentVehicle initialize test', function () {
+describe('InvestmentVehicle.initialize', function () {
   it('Should have creator as manager role', async () => {
     expect(await vehicleContract.hasRole(MANAGER_ROLE, owner.address)).to.equal(
       true
@@ -64,9 +64,9 @@ describe('InvestmentVehicle initialize test', function () {
         usdtContract.address
     )
   })
-
-
 })
+
+
 
 // let tx: ContractTransaction = await myToken.connect(accounts[0]).transfer(accounts[1].address, 1);
 
