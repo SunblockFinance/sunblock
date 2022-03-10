@@ -30,6 +30,7 @@ contract InvestmentVehicle is
   event InvestmentWithdrawn(address to, address by, uint256 amount);
   event RewardDeposited(address from, address by, uint256 amount);
   event RewardWithdrawn(address to, address by, uint256 amount);
+  event FeeWithdrawn(address to, address by, uint256 amount);
   /// @custom:oz-upgrades-unsafe-allow constructor
   constructor() initializer {}
 
@@ -56,8 +57,9 @@ contract InvestmentVehicle is
     return success;
   }
   function withdrawInvestment(address receiver, uint256 amount) external onlyRole(MANAGER_ROLE) returns(bool) {
+    require(investmentPool >= amount,'Not enough balance in investment pool for withdrawal');
     bool success = paymentInstrument.transfer(receiver, amount);
-    require(success, "Unable to withdraw funds from contract");
+    require(success, "Unable to withdraw investment funds from contract");
     investmentPool -= amount;
     emit InvestmentWithdrawn(receiver, msg.sender, amount);
     return success;
@@ -71,10 +73,24 @@ contract InvestmentVehicle is
     emit RewardDeposited(_rewardPool, msg.sender, _amount);
     return success;
   }
-  function withdrawReward() external onlyRole(MANAGER_ROLE) {}
-  function withdrawManagerFee() external onlyRole(MANAGER_ROLE) {}
+  function withdrawReward(address receiver, uint256 _amount) external onlyRole(MANAGER_ROLE) returns(bool) {
+   require(rewardPool >= _amount, "Not enough balance in reward pool for withdrawal");
+    bool success = paymentInstrument.transfer(receiver, _amount);
+    require(success, "Unable to withdraw reward funds from contract");
+    rewardPool -= _amount;
+    emit RewardWithdrawn(receiver, msg.sender, _amount);
+    return success;
+  }
+  function withdrawManagerFee(address receiver, uint256 _amount) external onlyRole(MANAGER_ROLE) returns(bool){
+    require(feePool >= _amount, "Not enough balance in fee pool for withdrawal");
+    bool success = paymentInstrument.transfer(receiver, _amount);
+    require(success, "Unable to withdraw reward funds from contract");
+    feePool -= _amount;
+    emit FeeWithdrawn(receiver, msg.sender, _amount);
+    return success;
+  }
   function _extractFee(uint256 _amount) internal returns(uint256) {
-    uint256 rewardAfterFee = (_amount * (1000 - 100)) / 1000;
+    uint256 rewardAfterFee = (_amount * (1000 - managementFee)) / 1000;
     uint256 managerfee = _amount - rewardAfterFee;
     feePool += managerfee;
     return rewardAfterFee;
