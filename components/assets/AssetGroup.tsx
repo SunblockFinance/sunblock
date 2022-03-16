@@ -10,10 +10,9 @@ import Stack from '@mui/material/Stack'
 import CoinGecko from 'coingecko-api'
 import { FC, useEffect, useState } from 'react'
 import { CoinGeckoPrice } from '../../blockchain/coingecko'
-import { getInvestmentFund, getInvestmentVehicle, getRewardFund, getShareholderCount, getSharesIssued } from '../../blockchain/query'
+import { getInvestmentFund, getRewardFund, getShareholderCount, getSharePrice, getSharesIssued } from '../../blockchain/query'
 import { hooks } from '../../connectors/metamask'
-import { InvestmentVehicle } from '../../programs/contracts'
-import { formatUSDCWeiToNumber } from '../../utils/formaters'
+import { formatWeiToNumber } from '../../utils/formaters'
 import { AssetItem } from './AssetItem'
 
 
@@ -38,7 +37,7 @@ export const AssetGroup: FC = () => {
   const [rewardFund, setRewardFund] = useState(0)
   const [sharesIssued, setSharesIssued] = useState(0)
   const [totalInvestment, setTotalInvestment] = useState(0)
-  const [investmentVehicle, setInvestmentVehicle] = useState<InvestmentVehicle>()
+  const [sharePrice, setSharePrice] = useState(0)
 
   useEffect(() => {
     if (provider) {
@@ -49,8 +48,8 @@ export const AssetGroup: FC = () => {
         setSharesIssued(shares)
       }).catch((e) => console.log(e)
       )
-      getInvestmentVehicle(provider).then((vehicle) => {
-          setInvestmentVehicle(vehicle)
+      getSharePrice(provider).then((price) => {
+          setSharePrice(formatWeiToNumber(price))
       })
       getRewardFund(provider).then((reward) => {
         setRewardFund(reward)
@@ -63,7 +62,7 @@ export const AssetGroup: FC = () => {
     return () => {
         setInvestFund(0)
         setSharesIssued(0)
-        setInvestmentVehicle(undefined)
+        setSharePrice(0)
         setTotalInvestment(0)
         setRewardFund(0)
         setInvestorCount(0)
@@ -84,15 +83,11 @@ export const AssetGroup: FC = () => {
   },[])
 
   useEffect(() => {
-    if (investmentVehicle) {
-      const unitCost = formatUSDCWeiToNumber(investmentVehicle!.unitcost)
-      setTotalInvestment(unitCost * sharesIssued)
-    }
-
+      setTotalInvestment(sharePrice * sharesIssued)
     return () => {
       setTotalInvestment(0)
     }
-  }, [investmentVehicle, sharesIssued])
+  }, [sharePrice, sharesIssued])
 
 
   return (

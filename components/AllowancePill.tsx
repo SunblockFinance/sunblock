@@ -8,9 +8,9 @@ import { useSnackbar } from 'notistack'
 import React, { FC, useState } from 'react'
 import { hooks } from '../connectors/metamask'
 import { ABI_SUNBLOCK } from '../contracts/abi/sunblock'
-import { ABI_ERC20, InvestmentVehicle } from '../programs/contracts'
+import { ABI_ERC20 } from '../programs/contracts'
 import {
-  CONTRACT_ADDRESS_SUNBLOCK,
+  CONTRACT_ADDRESS_CUBE,
   TOKEN_ADDRESS_USDC
 } from '../programs/polygon'
 import { formatUSDCWeiToNumber } from '../utils/formaters'
@@ -36,7 +36,7 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
     provider
   )
   const sunblock = new ethers.Contract(
-    CONTRACT_ADDRESS_SUNBLOCK,
+    CONTRACT_ADDRESS_CUBE,
     ABI_SUNBLOCK,
     provider
   )
@@ -60,17 +60,20 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
     if (signer === undefined) return
     const signerAddress = await signer.getAddress()
 
-    const vehicle: InvestmentVehicle = await new Contract(CONTRACT_ADDRESS_SUNBLOCK, ABI_SUNBLOCK, signer).vehicle()
-    const sum = vehicle.unitcost.mul(amount)
+    const contract = await new Contract(CONTRACT_ADDRESS_CUBE, ABI_SUNBLOCK, signer)
+    const cost:BigNumber = await contract.unitcost()
+    console.log(cost);
+
+    const sum = cost.mul(amount)
     const erc20signed = new ethers.Contract(
       TOKEN_ADDRESS_USDC,
       ABI_ERC20,
       signer
     )
-    await erc20signed.approve(CONTRACT_ADDRESS_SUNBLOCK, sum).catch((error:Error) => console.log(error))
+    await erc20signed.approve(CONTRACT_ADDRESS_CUBE, sum).catch((error:Error) => console.log(error))
     erc20signed.on('Approval', (to, spender, value) => {
-      if (spender !== CONTRACT_ADDRESS_SUNBLOCK) {
-        console.log(`Ignoring approval for ${spender}. We expect it for ${CONTRACT_ADDRESS_SUNBLOCK}`)
+      if (spender !== CONTRACT_ADDRESS_CUBE) {
+        console.log(`Ignoring approval for ${spender}. We expect it for ${CONTRACT_ADDRESS_CUBE}`)
       } else {
         const allowanceNumber = formatUSDCWeiToNumber(value)
         setAllowance(allowanceNumber)
@@ -92,7 +95,7 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
       const signer = provider?.getSigner()
       if (signer === undefined) return
       const rwContract:Contract = erc20.connect(signer)
-      await rwContract.approve(CONTRACT_ADDRESS_SUNBLOCK, BigNumber.from(0)).catch((error:Error) => console.log(error))
+      await rwContract.approve(CONTRACT_ADDRESS_CUBE, BigNumber.from(0)).catch((error:Error) => console.log(error))
       erc20?.on('Approval', (to, spender, value) => {
         const ethValue = formatUSDCWeiToNumber(value)
         setAllowance(ethValue)
@@ -113,7 +116,7 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
 
     const amount: BigNumber = await erc20?.allowance(
       walletAddress,
-      CONTRACT_ADDRESS_SUNBLOCK
+      CONTRACT_ADDRESS_CUBE
     ).catch((error:Error) => console.log(error))
     const tokenNumber = formatUSDCWeiToNumber(amount)
     setAllowance(tokenNumber)

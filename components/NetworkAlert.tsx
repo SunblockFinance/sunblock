@@ -1,5 +1,5 @@
 // Copyright 2022 Kenth Fagerlund.
-
+// SPDX-License-Identifier: MIT
 import {
   Button,
   Dialog,
@@ -17,7 +17,6 @@ import { CHAINID } from '../programs/polygon'
 
 const { useProvider, useChainId } = hooks
 
-// SPDX-License-Identifier: MIT
 const NetworkAlert: FC = () => {
   const [open, setOpen] = useState(false)
   const provider = useProvider()
