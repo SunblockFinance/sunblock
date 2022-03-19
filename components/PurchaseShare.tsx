@@ -22,7 +22,7 @@ import { getSharePrice, getUSDCBalance } from '../blockchain/query'
 import { hooks } from '../connectors/metamask'
 import {
   ABI_SUNBLOCK_CUBE
-} from '../programs/contracts'
+} from '../contracts/abi/sunblock'
 import {
   CONTRACT_ADDRESS_CUBE
 } from '../programs/polygon'

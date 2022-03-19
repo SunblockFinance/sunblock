@@ -5,41 +5,36 @@ import Box from '@mui/material/Box'
 import ListItem from '@mui/material/ListItem'
 import ListItemText from '@mui/material/ListItemText'
 import * as React from 'react'
-import { FixedSizeList, ListChildComponentProps } from 'react-window'
+import { useEffect, useState } from 'react'
+import { getCurrentTargetAmount, getInvestmentFund } from '../blockchain/query'
+import { hooks } from '../connectors/metamask'
 import styles from './InvestmentQueue.module.css'
 
-
-const promoted = {
-  backgroundColor: 'rgba(77,156,175,0.8)',
-  backdropFilter: 'blur(10px)',
-  boxShadow: '0px 0px 20px 10px #7b4add',
-}
-
-
-function renderRow(props: ListChildComponentProps) {
-  const { index, style } = props
-
-  return (
-
-    <ListItem style={style} alignItems="flex-start"  >
-      <ListItemAvatar>
-        <Avatar className={(index === 0)?styles.inprogress:''}  alt="Asset logo" src="/crypto-icons/strong.webp" />
-      </ListItemAvatar>
-      <ListItemText
-        primary={(index ===0)?`Strong node - in progress`:`Strong node`}
-        secondary={
-          <Box sx={{ width: '100%' }}>
-            <LinearProgress variant="determinate" value={44} />
-            212.44 / 3434.22 USDT
-          </Box>
-        }
-      />
-    </ListItem>
-
-  )
-}
+// Web3 Provider
+const { useProvider } = hooks
 
 export default function InvestmentQueue() {
+  const provider = useProvider()
+  // State
+  const [currentTargetAmount, setCurrentTargetAmount] = useState(0)
+  const [investmentFund, setInvestmentFund] = useState(0)
+
+
+  useEffect(() => {
+    if(provider){
+      getCurrentTargetAmount(provider).then((amount) => {
+        setCurrentTargetAmount(amount)
+      })
+      getInvestmentFund(provider).then((amount) => {
+        setInvestmentFund(amount)
+      })
+    }
+    return () => {
+      setCurrentTargetAmount(0)
+    }
+  }, [provider])
+
+
   return (
     <Box
       sx={{
@@ -51,15 +46,35 @@ export default function InvestmentQueue() {
         backdropFilter: 'blur(10px)',
       }}
     >
-      <FixedSizeList
-        height={140}
-        width={300}
-        itemSize={80}
-        itemCount={200}
-        overscanCount={5}
-      >
-        {renderRow}
-      </FixedSizeList>
+      <ListItem  alignItems="flex-start"  >
+      <ListItemAvatar>
+        <Avatar className={styles.inprogress}  alt="Asset logo" src="/crypto-icons/strong.webp" />
+      </ListItemAvatar>
+      <ListItemText
+        primary={`Strong node - in progress`}
+        secondary={
+          <Box sx={{ width: '100%' }}>
+            <LinearProgress variant="determinate" value={Math.round((currentTargetAmount/investmentFund)*10)} />
+            {investmentFund} / {currentTargetAmount} USDT
+          </Box>
+        }
+      />
+    </ListItem>
+    <ListItem alignItems="flex-start"  >
+      <ListItemAvatar>
+        <Avatar   alt="Asset logo" src="/crypto-icons/strong.webp" />
+      </ListItemAvatar>
+      <ListItemText
+        primary={`Strong node`}
+        secondary={
+          <Box sx={{ width: '100%' }}>
+            <LinearProgress variant="determinate" value={44} />
+            212.44 / 3434.22 USDT
+          </Box>
+        }
+      />
+    </ListItem>
+
     </Box>
   )
 }

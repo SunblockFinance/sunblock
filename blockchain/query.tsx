@@ -2,13 +2,29 @@
 // SPDX-License-Identifier: MIT
 import { BigNumber, ethers } from 'ethers'
 import {
-  ABI_ERC20,
   ABI_SUNBLOCK_CUBE
-} from '../programs/contracts'
+} from '../contracts/abi/sunblock'
+import { ABI_ERC20 } from '../programs/contracts'
 import {
   CONTRACT_ADDRESS_CUBE, TOKEN_ADDRESS_USDC
 } from '../programs/polygon'
 import { formatUSDCWeiToNumber } from '../utils/formaters'
+
+
+export async function getCurrentTargetAmount(provider: ethers.providers.Web3Provider): Promise<number> {
+  try {
+    const signer = provider.getSigner()
+  if (signer === undefined) return 0
+
+  const cube = new ethers.Contract(CONTRACT_ADDRESS_CUBE, ABI_SUNBLOCK_CUBE, provider)
+
+  const targetAmount = await cube.currentTargetAmount()
+  return formatUSDCWeiToNumber(targetAmount)
+  } catch (error) {
+    console.log(error);
+    return 0
+  }
+}
 
 
 export async function getUSDCBalance(provider: ethers.providers.Web3Provider): Promise<number> {

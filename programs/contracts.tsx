@@ -12,7 +12,7 @@ export type InvestmentVehicle = {
 /**
  * ABI for main contract on sunblock
  */
-export const ABI_SUNBLOCK_CUBE = [
+ const ABI_SUNBLOCK_CUBE = [
     {
       "anonymous": false,
       "inputs": [

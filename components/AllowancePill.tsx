@@ -7,7 +7,7 @@ import { track } from 'insights-js'
 import { useSnackbar } from 'notistack'
 import React, { FC, useState } from 'react'
 import { hooks } from '../connectors/metamask'
-import { ABI_SUNBLOCK } from '../contracts/abi/sunblock'
+import { ABI_SUNBLOCK_CUBE } from '../contracts/abi/sunblock'
 import { ABI_ERC20 } from '../programs/contracts'
 import {
   CONTRACT_ADDRESS_CUBE,
@@ -37,7 +37,7 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
   )
   const sunblock = new ethers.Contract(
     CONTRACT_ADDRESS_CUBE,
-    ABI_SUNBLOCK,
+    ABI_SUNBLOCK_CUBE,
     provider
   )
   /**
@@ -60,7 +60,7 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
     if (signer === undefined) return
     const signerAddress = await signer.getAddress()
 
-    const contract = await new Contract(CONTRACT_ADDRESS_CUBE, ABI_SUNBLOCK, signer)
+    const contract = await new Contract(CONTRACT_ADDRESS_CUBE, ABI_SUNBLOCK_CUBE, signer)
     const cost:BigNumber = await contract.unitcost()
     console.log(cost);
 

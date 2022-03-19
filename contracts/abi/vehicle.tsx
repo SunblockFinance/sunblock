@@ -1,6 +1,11 @@
 // Copyright 2022 Kenth Fagerlund.
 // SPDX-License-Identifier: MIT
-export const ABI_SUNBLOCK_CUBE = [
+export const ABI_VEHICLE = [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
     {
       "anonymous": false,
       "inputs": [
@@ -39,7 +44,13 @@ export const ABI_SUNBLOCK_CUBE = [
         {
           "indexed": false,
           "internalType": "address",
-          "name": "collector",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "by",
           "type": "address"
         },
         {
@@ -47,15 +58,9 @@ export const ABI_SUNBLOCK_CUBE = [
           "internalType": "uint256",
           "name": "amount",
           "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "vehicle",
-          "type": "address"
         }
       ],
-      "name": "CollectedReward",
+      "name": "FeeWithdrawn",
       "type": "event"
     },
     {
@@ -64,11 +69,48 @@ export const ABI_SUNBLOCK_CUBE = [
         {
           "indexed": false,
           "internalType": "address",
-          "name": "shareholder",
+          "name": "from",
           "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "by",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
         }
       ],
-      "name": "NewShareholder",
+      "name": "InvestmentDeposited",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "by",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "InvestmentWithdrawn",
       "type": "event"
     },
     {
@@ -90,17 +132,23 @@ export const ABI_SUNBLOCK_CUBE = [
         {
           "indexed": false,
           "internalType": "address",
-          "name": "holderAddress",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "by",
           "type": "address"
         },
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "rewardShare",
+          "name": "amount",
           "type": "uint256"
         }
       ],
-      "name": "RewardIssued",
+      "name": "RewardDeposited",
       "type": "event"
     },
     {
@@ -108,18 +156,24 @@ export const ABI_SUNBLOCK_CUBE = [
       "inputs": [
         {
           "indexed": false,
-          "internalType": "uint256",
-          "name": "_holderno",
-          "type": "uint256"
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "by",
+          "type": "address"
         },
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "rewardBalance",
+          "name": "amount",
           "type": "uint256"
         }
       ],
-      "name": "RewardsDepleted",
+      "name": "RewardWithdrawn",
       "type": "event"
     },
     {
@@ -203,44 +257,6 @@ export const ABI_SUNBLOCK_CUBE = [
         {
           "indexed": false,
           "internalType": "address",
-          "name": "holder",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "sharesIssued",
-          "type": "uint256"
-        }
-      ],
-      "name": "SharesIssued",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "targetVehicle",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "targetAmount",
-          "type": "uint256"
-        }
-      ],
-      "name": "TargetVehicleFunded",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
           "name": "account",
           "type": "address"
         }
@@ -264,19 +280,6 @@ export const ABI_SUNBLOCK_CUBE = [
     {
       "inputs": [],
       "name": "DEFAULT_ADMIN_ROLE",
-      "outputs": [
-        {
-          "internalType": "bytes32",
-          "name": "",
-          "type": "bytes32"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "GOVERNOR_ROLE",
       "outputs": [
         {
           "internalType": "bytes32",
@@ -329,21 +332,8 @@ export const ABI_SUNBLOCK_CUBE = [
     {
       "inputs": [
         {
-          "internalType": "uint256",
-          "name": "_shareAmount",
-          "type": "uint256"
-        }
-      ],
-      "name": "buyShares",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "address",
-          "name": "_vehicle",
+          "name": "invPool",
           "type": "address"
         },
         {
@@ -352,14 +342,32 @@ export const ABI_SUNBLOCK_CUBE = [
           "type": "uint256"
         }
       ],
-      "name": "collectRewards",
+      "name": "depositInvestment",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_rewardPool",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "depositReward",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
     },
     {
       "inputs": [],
-      "name": "currentTargetAmount",
+      "name": "feePool",
       "outputs": [
         {
           "internalType": "uint256",
@@ -368,26 +376,6 @@ export const ABI_SUNBLOCK_CUBE = [
         }
       ],
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "currentVehicle",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "distributeRewards",
-      "outputs": [],
-      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -454,13 +442,18 @@ export const ABI_SUNBLOCK_CUBE = [
     {
       "inputs": [
         {
+          "internalType": "bytes32",
+          "name": "_name",
+          "type": "bytes32"
+        },
+        {
           "internalType": "address",
-          "name": "_fundingInstrument",
+          "name": "instrument",
           "type": "address"
         },
         {
           "internalType": "uint256",
-          "name": "_unitcost",
+          "name": "fee",
           "type": "uint256"
         }
       ],
@@ -471,7 +464,7 @@ export const ABI_SUNBLOCK_CUBE = [
     },
     {
       "inputs": [],
-      "name": "investmentHeld",
+      "name": "investmentPool",
       "outputs": [
         {
           "internalType": "uint256",
@@ -484,25 +477,12 @@ export const ABI_SUNBLOCK_CUBE = [
     },
     {
       "inputs": [],
-      "name": "nextTargetAmount",
+      "name": "managementFee",
       "outputs": [
         {
           "internalType": "uint256",
           "name": "",
           "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "nextVehicle",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
         }
       ],
       "stateMutability": "view",
@@ -523,6 +503,19 @@ export const ABI_SUNBLOCK_CUBE = [
           "internalType": "bool",
           "name": "",
           "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "paymentInstrument",
+      "outputs": [
+        {
+          "internalType": "contract IERC20",
+          "name": "",
+          "type": "address"
         }
       ],
       "stateMutability": "view",
@@ -579,70 +572,7 @@ export const ABI_SUNBLOCK_CUBE = [
     },
     {
       "inputs": [],
-      "name": "rewardsHeld",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_target",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "setInvestmentTarget",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "shareHolderCount",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "name": "shareholder",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "shares",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "sharesIssued",
+      "name": "rewardPool",
       "outputs": [
         {
           "internalType": "uint256",
@@ -667,26 +597,6 @@ export const ABI_SUNBLOCK_CUBE = [
           "internalType": "bool",
           "name": "",
           "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "triggerFundingCheck",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "unitcost",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -728,6 +638,73 @@ export const ABI_SUNBLOCK_CUBE = [
       "name": "upgradeToAndCall",
       "outputs": [],
       "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "vehicleName",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "receiver",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "withdrawInvestment",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "receiver",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "withdrawManagerFee",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "receiver",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "withdrawReward",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     }
   ]
