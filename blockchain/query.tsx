@@ -26,6 +26,21 @@ export async function getCurrentTargetAmount(provider: ethers.providers.Web3Prov
   }
 }
 
+export async function getNextTargetAmount(provider: ethers.providers.Web3Provider): Promise<number> {
+  try {
+    const signer = provider.getSigner()
+  if (signer === undefined) return 0
+
+  const cube = new ethers.Contract(CONTRACT_ADDRESS_CUBE, ABI_SUNBLOCK_CUBE, provider)
+
+  const targetAmount = await cube.nextTargetAmount()
+  return formatUSDCWeiToNumber(targetAmount)
+  } catch (error) {
+    console.log(error);
+    return 0
+  }
+}
+
 
 export async function getUSDCBalance(provider: ethers.providers.Web3Provider): Promise<number> {
   try {
