@@ -6,7 +6,7 @@ import ListItem from '@mui/material/ListItem'
 import ListItemText from '@mui/material/ListItemText'
 import * as React from 'react'
 import { useEffect, useState } from 'react'
-import { getCurrentTargetAmount, getInvestmentFund, getNextTargetAmount } from '../blockchain/query'
+import { getCurrentTargetAmount, getCurrentTargetName, getInvestmentFund, getNextTargetAmount, getNextTargetName } from '../blockchain/query'
 import { hooks } from '../connectors/metamask'
 import styles from './InvestmentQueue.module.css'
 
@@ -17,8 +17,11 @@ export default function InvestmentQueue() {
   const provider = useProvider()
   // State
   const [currentTargetAmount, setCurrentTargetAmount] = useState(0)
+  const [currentVehicleName, setCurrentVehicleName]= useState('')
+  const [nextVehicleName, setNextVehicleName] = useState('')
   const [nextTargetAmount, setNextTargetAmount] = useState(0)
   const [investmentFund, setInvestmentFund] = useState(0)
+
 
 
   useEffect(() => {
@@ -26,15 +29,25 @@ export default function InvestmentQueue() {
       getCurrentTargetAmount(provider).then((amount) => {
         setCurrentTargetAmount(amount)
       })
+      getCurrentTargetName(provider).then((name) => {
+        setCurrentVehicleName(name)
+      })
       getNextTargetAmount(provider).then((amount) => {
         setNextTargetAmount(amount)
+      })
+      getNextTargetName(provider).then((name) => {
+        setNextVehicleName(name)
       })
       getInvestmentFund(provider).then((amount) => {
         setInvestmentFund(amount)
       })
+
     }
     return () => {
       setCurrentTargetAmount(0)
+      setNextTargetAmount(0)
+      setInvestmentFund(0)
+      setCurrentVehicleName('')
     }
   }, [provider])
 
@@ -55,7 +68,7 @@ export default function InvestmentQueue() {
         <Avatar className={styles.inprogress}  alt="Asset logo" src="/crypto-icons/strong.webp" />
       </ListItemAvatar>
       <ListItemText
-        primary={`Strong node - in progress`}
+        primary={`${currentVehicleName} - in progress`}
         secondary={
           <Box sx={{ width: '100%' }}>
             <LinearProgress variant="determinate" value={Math.round((currentTargetAmount/investmentFund)*10)} />
@@ -69,7 +82,7 @@ export default function InvestmentQueue() {
         <Avatar   alt="Asset logo" src="/crypto-icons/strong.webp" />
       </ListItemAvatar>
       <ListItemText
-        primary={`Strong node`}
+        primary={`${nextVehicleName}`}
         secondary={
           <Box sx={{ width: '100%' }}>
             <LinearProgress variant="determinate" value={0} />

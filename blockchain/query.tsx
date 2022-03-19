@@ -1,78 +1,149 @@
 // Copyright 2022 Kenth Fagerlund.
 // SPDX-License-Identifier: MIT
 import { BigNumber, ethers } from 'ethers'
-import {
-  ABI_SUNBLOCK_CUBE
-} from '../contracts/abi/sunblock'
-import { ABI_ERC20 } from '../programs/contracts'
-import {
-  CONTRACT_ADDRESS_CUBE, TOKEN_ADDRESS_USDC
-} from '../programs/polygon'
+import { ABI_ERC20 } from '../contracts/abi/erc20'
+import { ABI_SUNBLOCK_CUBE } from '../contracts/abi/sunblock'
+import { ABI_VEHICLE } from '../contracts/abi/vehicle'
+import { CONTRACT_ADDRESS_CUBE, TOKEN_ADDRESS_USDC } from '../programs/polygon'
 import { formatUSDCWeiToNumber } from '../utils/formaters'
 
-
-export async function getCurrentTargetAmount(provider: ethers.providers.Web3Provider): Promise<number> {
+export async function getCurrentTargetAmount(
+  provider: ethers.providers.Web3Provider
+): Promise<number> {
   try {
     const signer = provider.getSigner()
-  if (signer === undefined) return 0
+    if (signer === undefined) return 0
 
-  const cube = new ethers.Contract(CONTRACT_ADDRESS_CUBE, ABI_SUNBLOCK_CUBE, provider)
+    const cube = new ethers.Contract(
+      CONTRACT_ADDRESS_CUBE,
+      ABI_SUNBLOCK_CUBE,
+      provider
+    )
 
-  const targetAmount = await cube.currentTargetAmount()
-  return formatUSDCWeiToNumber(targetAmount)
+    const targetAmount = await cube.currentTargetAmount()
+    return formatUSDCWeiToNumber(targetAmount)
   } catch (error) {
-    console.log(error);
+    console.log(error)
     return 0
   }
 }
 
-export async function getNextTargetAmount(provider: ethers.providers.Web3Provider): Promise<number> {
+export async function getCurrentTargetName(
+  provider: ethers.providers.Web3Provider
+): Promise<any> {
   try {
     const signer = provider.getSigner()
-  if (signer === undefined) return 0
+    if (signer === undefined) return 0
 
-  const cube = new ethers.Contract(CONTRACT_ADDRESS_CUBE, ABI_SUNBLOCK_CUBE, provider)
+    const cube = new ethers.Contract(
+      CONTRACT_ADDRESS_CUBE,
+      ABI_SUNBLOCK_CUBE,
+      provider
+    )
 
-  const targetAmount = await cube.nextTargetAmount()
-  return formatUSDCWeiToNumber(targetAmount)
+    const vehicleAddress = await cube.currentVehicle()
+    const vehicle = new ethers.Contract(
+      vehicleAddress,
+      ABI_VEHICLE,
+      provider
+    )
+    const name = await vehicle.vehicleName()
+    console.log("NAME:", name);
+
+    return ethers.utils.parseBytes32String(name)
   } catch (error) {
-    console.log(error);
+    console.log(error)
     return 0
   }
 }
 
-
-export async function getUSDCBalance(provider: ethers.providers.Web3Provider): Promise<number> {
+export async function getNextTargetName(
+  provider: ethers.providers.Web3Provider
+): Promise<any> {
   try {
     const signer = provider.getSigner()
-  if (signer === undefined) return 0
-  const signerAddress = await signer.getAddress()
-  const erc20 = new ethers.Contract(TOKEN_ADDRESS_USDC, ABI_ERC20, signer)
+    if (signer === undefined) return 0
 
-  const contractBalance = await erc20.balanceOf(signerAddress)
-  return formatUSDCWeiToNumber(contractBalance)
+    const cube = new ethers.Contract(
+      CONTRACT_ADDRESS_CUBE,
+      ABI_SUNBLOCK_CUBE,
+      provider
+    )
+
+    const vehicleAddress = await cube.nextVehicle()
+    const vehicle = new ethers.Contract(
+      vehicleAddress,
+      ABI_VEHICLE,
+      provider
+    )
+    const name = await vehicle.vehicleName()
+    console.log("NAME:", name);
+
+    return ethers.utils.parseBytes32String(name)
   } catch (error) {
-    console.log(error);
+    console.log(error)
     return 0
   }
 }
 
-export async function getStrongBalance(provider: ethers.providers.Web3Provider): Promise<number> {
+export async function getNextTargetAmount(
+  provider: ethers.providers.Web3Provider
+): Promise<number> {
   try {
     const signer = provider.getSigner()
-  if (signer === undefined) return 0
-  const signerAddress = await signer.getAddress()
-  const erc20 = new ethers.Contract(TOKEN_ADDRESS_USDC, ABI_ERC20, signer)
+    if (signer === undefined) return 0
 
-  const contractBalance = await erc20.balanceOf(signerAddress)
-  return formatUSDCWeiToNumber(contractBalance)
+    const cube = new ethers.Contract(
+      CONTRACT_ADDRESS_CUBE,
+      ABI_SUNBLOCK_CUBE,
+      provider
+    )
+
+    const targetAmount = await cube.nextTargetAmount()
+    return formatUSDCWeiToNumber(targetAmount)
   } catch (error) {
-    console.log(error);
+    console.log(error)
     return 0
   }
 }
 
-export async function getHeldShares(provider: ethers.providers.Web3Provider): Promise<number> {
+export async function getUSDCBalance(
+  provider: ethers.providers.Web3Provider
+): Promise<number> {
+  try {
+    const signer = provider.getSigner()
+    if (signer === undefined) return 0
+    const signerAddress = await signer.getAddress()
+    const erc20 = new ethers.Contract(TOKEN_ADDRESS_USDC, ABI_ERC20, signer)
+
+    const contractBalance = await erc20.balanceOf(signerAddress)
+    return formatUSDCWeiToNumber(contractBalance)
+  } catch (error) {
+    console.log(error)
+    return 0
+  }
+}
+
+export async function getStrongBalance(
+  provider: ethers.providers.Web3Provider
+): Promise<number> {
+  try {
+    const signer = provider.getSigner()
+    if (signer === undefined) return 0
+    const signerAddress = await signer.getAddress()
+    const erc20 = new ethers.Contract(TOKEN_ADDRESS_USDC, ABI_ERC20, signer)
+
+    const contractBalance = await erc20.balanceOf(signerAddress)
+    return formatUSDCWeiToNumber(contractBalance)
+  } catch (error) {
+    console.log(error)
+    return 0
+  }
+}
+
+export async function getHeldShares(
+  provider: ethers.providers.Web3Provider
+): Promise<number> {
   try {
     const contract = new ethers.Contract(
       CONTRACT_ADDRESS_CUBE,
@@ -83,12 +154,14 @@ export async function getHeldShares(provider: ethers.providers.Web3Provider): Pr
     const amount: BigNumber = await contract.shareholder(signAddr)
     return amount.toNumber()
   } catch (error) {
-    console.log(error);
+    console.log(error)
     return 0
   }
 }
 
-export async function getSharesIssued(provider: ethers.providers.Web3Provider): Promise<number> {
+export async function getSharesIssued(
+  provider: ethers.providers.Web3Provider
+): Promise<number> {
   try {
     const contract = new ethers.Contract(
       CONTRACT_ADDRESS_CUBE,
@@ -98,12 +171,14 @@ export async function getSharesIssued(provider: ethers.providers.Web3Provider): 
     const amount: BigNumber = await contract.sharesIssued()
     return amount.toNumber()
   } catch (error) {
-    console.log(error);
+    console.log(error)
     return 0
   }
 }
 
-export async function getInvestmentFund(provider: ethers.providers.Web3Provider): Promise<number> {
+export async function getInvestmentFund(
+  provider: ethers.providers.Web3Provider
+): Promise<number> {
   try {
     const contract = new ethers.Contract(
       CONTRACT_ADDRESS_CUBE,
@@ -113,12 +188,14 @@ export async function getInvestmentFund(provider: ethers.providers.Web3Provider)
     const amount: BigNumber = await contract.investmentHeld()
     return formatUSDCWeiToNumber(amount)
   } catch (error) {
-    console.log(error);
+    console.log(error)
     return 0
   }
 }
 
-export async function getRewardFund(provider: ethers.providers.Web3Provider): Promise<number> {
+export async function getRewardFund(
+  provider: ethers.providers.Web3Provider
+): Promise<number> {
   try {
     const contract = new ethers.Contract(
       CONTRACT_ADDRESS_CUBE,
@@ -128,7 +205,7 @@ export async function getRewardFund(provider: ethers.providers.Web3Provider): Pr
     const amount: BigNumber = await contract.rewardsHeld()
     return formatUSDCWeiToNumber(amount)
   } catch (error) {
-    console.log(error);
+    console.log(error)
     return 0
   }
 }
@@ -150,7 +227,9 @@ export async function getSharePrice(
   }
 }
 
-export async function getShareholderCount(provider: ethers.providers.Web3Provider): Promise<number> {
+export async function getShareholderCount(
+  provider: ethers.providers.Web3Provider
+): Promise<number> {
   try {
     const contract = new ethers.Contract(
       CONTRACT_ADDRESS_CUBE,
@@ -160,7 +239,7 @@ export async function getShareholderCount(provider: ethers.providers.Web3Provide
     const amount: BigNumber = await contract.shareHolderCount()
     return amount.toNumber()
   } catch (error) {
-    console.log(error);
+    console.log(error)
     return 0
   }
 }

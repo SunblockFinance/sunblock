@@ -7,8 +7,8 @@ import { track } from 'insights-js'
 import { useSnackbar } from 'notistack'
 import React, { FC, useState } from 'react'
 import { hooks } from '../connectors/metamask'
+import { ABI_ERC20 } from '../contracts/abi/erc20'
 import { ABI_SUNBLOCK_CUBE } from '../contracts/abi/sunblock'
-import { ABI_ERC20 } from '../programs/contracts'
 import {
   CONTRACT_ADDRESS_CUBE,
   TOKEN_ADDRESS_USDC
