@@ -93,7 +93,7 @@ export const WhoAreWe = (
     in expensive protocols like StrongBlock. <br />
     <h2>How does it work?</h2>
     <p>
-      Each of us put in $10USDC per share. When we have reached enough to buy 10
+      Each of us put in $10USDT per share. When we have reached enough to buy 10
       STRONG (including gas and swap fees) then Sunblock will move the funds
       over to Etherum network and purchase a StrongBlock node. This will repeate
       as long as we have enough funds for another node.

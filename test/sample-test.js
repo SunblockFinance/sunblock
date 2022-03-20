@@ -12,13 +12,13 @@ describe("USDT tests", function () {
   });
   it("Should send USDT to addr1", async function () {
     const [owner, addr1] = await ethers.getSigners();
-    const USDC = await ethers.getContractFactory("Tether");
-    const usdc = await USDC.deploy();
-    await usdc.deployed();
+    const USDT = await ethers.getContractFactory("Tether");
+    const usdt = await USDT.deploy();
+    await usdt.deployed();
 
-    const decimals = await usdc.decimals();
-    await usdc.connect(owner).transfer(addr1.address, 1)
+    const decimals = await usdt.decimals();
+    await usdt.connect(owner).transfer(addr1.address, 1)
     expect(decimals).to.equal(6);
-    expect(await usdc.balanceOf(addr1.address)).to.equal(1)
+    expect(await usdt.balanceOf(addr1.address)).to.equal(1)
   });
 });

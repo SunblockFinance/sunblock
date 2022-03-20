@@ -4,8 +4,8 @@ import { BigNumber, ethers } from 'ethers'
 import { ABI_ERC20 } from '../contracts/abi/erc20'
 import { ABI_SUNBLOCK_CUBE } from '../contracts/abi/sunblock'
 import { ABI_VEHICLE } from '../contracts/abi/vehicle'
-import { CONTRACT_ADDRESS_CUBE, TOKEN_ADDRESS_USDC } from '../programs/polygon'
-import { formatUSDCWeiToNumber } from '../utils/formaters'
+import { CONTRACT_ADDRESS_CUBE, TOKEN_ADDRESS_USDT } from '../programs/polygon'
+import { formatUSDTWeiToNumber as formatUSDTWeiToNumber } from '../utils/formaters'
 
 export async function getCurrentTargetAmount(
   provider: ethers.providers.Web3Provider
@@ -21,7 +21,7 @@ export async function getCurrentTargetAmount(
     )
 
     const targetAmount = await cube.currentTargetAmount()
-    return formatUSDCWeiToNumber(targetAmount)
+    return formatUSDTWeiToNumber(targetAmount)
   } catch (error) {
     console.log(error)
     return 0
@@ -53,7 +53,7 @@ export async function getCurrentTargetName(
     return ethers.utils.parseBytes32String(name)
   } catch (error) {
     console.log(error)
-    return 0
+    return ''
   }
 }
 
@@ -82,7 +82,7 @@ export async function getNextTargetName(
     return ethers.utils.parseBytes32String(name)
   } catch (error) {
     console.log(error)
-    return 0
+    return ''
   }
 }
 
@@ -100,24 +100,24 @@ export async function getNextTargetAmount(
     )
 
     const targetAmount = await cube.nextTargetAmount()
-    return formatUSDCWeiToNumber(targetAmount)
+    return formatUSDTWeiToNumber(targetAmount)
   } catch (error) {
     console.log(error)
     return 0
   }
 }
 
-export async function getUSDCBalance(
+export async function getUSDTBalance(
   provider: ethers.providers.Web3Provider
 ): Promise<number> {
   try {
     const signer = provider.getSigner()
     if (signer === undefined) return 0
     const signerAddress = await signer.getAddress()
-    const erc20 = new ethers.Contract(TOKEN_ADDRESS_USDC, ABI_ERC20, signer)
+    const erc20 = new ethers.Contract(TOKEN_ADDRESS_USDT, ABI_ERC20, signer)
 
     const contractBalance = await erc20.balanceOf(signerAddress)
-    return formatUSDCWeiToNumber(contractBalance)
+    return formatUSDTWeiToNumber(contractBalance)
   } catch (error) {
     console.log(error)
     return 0
@@ -131,10 +131,10 @@ export async function getStrongBalance(
     const signer = provider.getSigner()
     if (signer === undefined) return 0
     const signerAddress = await signer.getAddress()
-    const erc20 = new ethers.Contract(TOKEN_ADDRESS_USDC, ABI_ERC20, signer)
+    const erc20 = new ethers.Contract(TOKEN_ADDRESS_USDT, ABI_ERC20, signer)
 
     const contractBalance = await erc20.balanceOf(signerAddress)
-    return formatUSDCWeiToNumber(contractBalance)
+    return formatUSDTWeiToNumber(contractBalance)
   } catch (error) {
     console.log(error)
     return 0
@@ -186,7 +186,7 @@ export async function getInvestmentFund(
       provider
     )
     const amount: BigNumber = await contract.investmentHeld()
-    return formatUSDCWeiToNumber(amount)
+    return formatUSDTWeiToNumber(amount)
   } catch (error) {
     console.log(error)
     return 0
@@ -203,7 +203,7 @@ export async function getRewardFund(
       provider
     )
     const amount: BigNumber = await contract.rewardsHeld()
-    return formatUSDCWeiToNumber(amount)
+    return formatUSDTWeiToNumber(amount)
   } catch (error) {
     console.log(error)
     return 0

@@ -21,7 +21,7 @@ const { useProvider } = hooks
 
 export const AssetGroup: FC = () => {
   const provider = useProvider()
-  const usdc = './crypto-icons/usdc.svg'
+  const usdt = './crypto-icons/usdt.svg'
   const strong = './crypto-icons/strong.webp'
 
   /**
@@ -111,8 +111,8 @@ export const AssetGroup: FC = () => {
           >
             <AssetItem
               title="Capital waiting to be invested"
-              value={`${investFund.toString()} USDC`}
-              avatar={usdc}
+              value={`${investFund.toString()} USDT`}
+              avatar={usdt}
             />
             <AssetItem
               title="Rewards accumulated"
@@ -121,8 +121,8 @@ export const AssetGroup: FC = () => {
             />
             <AssetItem
               title="Total lifetime investment"
-              value={`${totalInvestment.toString()} USDC`}
-              avatar={usdc}
+              value={`${totalInvestment.toString()} USDT`}
+              avatar={usdt}
             />
           </Stack>
           <Stack

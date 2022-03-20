@@ -36,7 +36,7 @@ export const HeroRow: FC = () => {
   const strongLogo = (
     <Image
       src="/crypto-logo/strong.webp"
-      alt="usdc"
+      alt="strong"
       width="30px"
       height="30px"
     />
@@ -154,11 +154,11 @@ export const HeroRow: FC = () => {
       >
         <span
           style={{ fontWeight: 'bold', fontSize: 31 }}
-        >{`~ ${earnings.toFixed(2)} USDC`}</span>
+        >{`~ ${earnings.toFixed(2)} USDT`}</span>
       </HeroItem>
       <HeroItem
         title="Purchase shares"
-        subtitle="Each share is 10 USDC"
+        subtitle="Each share is 10 USDT"
         avatar='./crypto-icons/usdt.svg'
         promote
       >

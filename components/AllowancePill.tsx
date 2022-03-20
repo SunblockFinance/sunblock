@@ -11,9 +11,9 @@ import { ABI_ERC20 } from '../contracts/abi/erc20'
 import { ABI_SUNBLOCK_CUBE } from '../contracts/abi/sunblock'
 import {
   CONTRACT_ADDRESS_CUBE,
-  TOKEN_ADDRESS_USDC
+  TOKEN_ADDRESS_USDT
 } from '../programs/polygon'
-import { formatUSDCWeiToNumber } from '../utils/formaters'
+import { formatUSDTWeiToNumber } from '../utils/formaters'
 
 /**
  * CONSTANTS
@@ -31,7 +31,7 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
   const provider = useProvider()
   const {enqueueSnackbar} = useSnackbar()
   const erc20 = new ethers.Contract(
-    TOKEN_ADDRESS_USDC,
+    TOKEN_ADDRESS_USDT,
     ABI_ERC20,
     provider
   )
@@ -66,7 +66,7 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
 
     const sum = cost.mul(amount)
     const erc20signed = new ethers.Contract(
-      TOKEN_ADDRESS_USDC,
+      TOKEN_ADDRESS_USDT,
       ABI_ERC20,
       signer
     )
@@ -75,9 +75,9 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
       if (spender !== CONTRACT_ADDRESS_CUBE) {
         console.log(`Ignoring approval for ${spender}. We expect it for ${CONTRACT_ADDRESS_CUBE}`)
       } else {
-        const allowanceNumber = formatUSDCWeiToNumber(value)
+        const allowanceNumber = formatUSDTWeiToNumber(value)
         setAllowance(allowanceNumber)
-        enqueueSnackbar(`📣 Update! Allowance to Sunblock is now ${allowanceNumber} USDC.`, {
+        enqueueSnackbar(`📣 Update! Allowance to Sunblock is now ${allowanceNumber} USDT.`, {
           variant: 'success',
           anchorOrigin: { horizontal: 'center', vertical: 'top' },
         })
@@ -97,7 +97,7 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
       const rwContract:Contract = erc20.connect(signer)
       await rwContract.approve(CONTRACT_ADDRESS_CUBE, BigNumber.from(0)).catch((error:Error) => console.log(error))
       erc20?.on('Approval', (to, spender, value) => {
-        const ethValue = formatUSDCWeiToNumber(value)
+        const ethValue = formatUSDTWeiToNumber(value)
         setAllowance(ethValue)
         track({
           id: "approval-removed",
@@ -118,7 +118,7 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
       walletAddress,
       CONTRACT_ADDRESS_CUBE
     ).catch((error:Error) => console.log(error))
-    const tokenNumber = formatUSDCWeiToNumber(amount)
+    const tokenNumber = formatUSDTWeiToNumber(amount)
     setAllowance(tokenNumber)
     try {
       if (tokenNumber > Number.MAX_SAFE_INTEGER) {
@@ -154,7 +154,7 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
         label={
           allowance < shareCost
             ? `Allowance to low. Click here to increse`
-            : `Your allowance to us is ${allowance} USDC`
+            : `Your allowance to us is ${allowance} USDT`
         }
         clickable={allowance < shareCost ? true : false}
         onDelete={allowance < shareCost ? undefined : removeAllowance}

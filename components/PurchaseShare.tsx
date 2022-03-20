@@ -18,7 +18,7 @@ import { ethers } from 'ethers'
 import { track } from 'insights-js'
 import { useSnackbar } from 'notistack'
 import React, { FC, useEffect, useState } from 'react'
-import { getSharePrice, getUSDCBalance } from '../blockchain/query'
+import { getSharePrice, getUSDTBalance } from '../blockchain/query'
 import { hooks } from '../connectors/metamask'
 import {
   ABI_SUNBLOCK_CUBE
@@ -26,7 +26,7 @@ import {
 import {
   CONTRACT_ADDRESS_CUBE
 } from '../programs/polygon'
-import { formatUSDCWeiToNumber } from '../utils/formaters'
+import { formatUSDTWeiToNumber as formatUSDTWeiToNumber } from '../utils/formaters'
 import AllowancePill from './AllowancePill'
 
 
@@ -54,7 +54,7 @@ export const PurchaseShares: FC = () => {
   // ===== //
   // STATE //
   // ===== //
-  const [usdc, setUsdc] = useState(0)
+  const [usdt, setUsdt] = useState(0)
   const [activeTx, setActiveTx] = useState<TransactionResponse>()
   const [stopPurchase, setStopPurchase] = useState(false)
   const [shareAmount, setShareAmount] = useState(DEFAULT_SHARE_VALUE)
@@ -124,7 +124,7 @@ export const PurchaseShares: FC = () => {
 
 
     // Check if price is over wallet holding. Disable if to expensive
-    if (basketPrice > usdc) {
+    if (basketPrice > usdt) {
       setStopPurchase(true)
     } else {
       setStopPurchase(false)
@@ -135,12 +135,12 @@ export const PurchaseShares: FC = () => {
 
   useEffect(() => {
     if(provider){
-      getUSDCBalance(provider).then((amount) => {
+      getUSDTBalance(provider).then((amount) => {
         setBalance(amount)
       })
       getSharePrice(provider).then((price) => {
-        setSharePrice(formatUSDCWeiToNumber(price))
-        setBasketPrice(formatUSDCWeiToNumber(price) * DEFAULT_SHARE_VALUE)
+        setSharePrice(formatUSDTWeiToNumber(price))
+        setBasketPrice(formatUSDTWeiToNumber(price) * DEFAULT_SHARE_VALUE)
       })
     }
     return () => {

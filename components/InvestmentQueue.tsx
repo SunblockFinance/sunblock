@@ -1,7 +1,9 @@
 // Copyright 2022 Kenth Fagerlund.
 // SPDX-License-Identifier: MIT
+import WarningIcon from '@mui/icons-material/Warning'
 import { Avatar, LinearProgress, ListItemAvatar } from '@mui/material'
 import Box from '@mui/material/Box'
+import { orange } from '@mui/material/colors'
 import ListItem from '@mui/material/ListItem'
 import ListItemText from '@mui/material/ListItemText'
 import * as React from 'react'
@@ -51,6 +53,11 @@ export default function InvestmentQueue() {
     }
   }, [provider])
 
+  const strong_avatar = <Avatar alt="Asset logo" src="/crypto-icons/strong.webp" />
+  const strong_avatar_active = <Avatar className={styles.inprogress}  alt="Asset logo" src="/crypto-icons/strong.webp" />
+  const warning_avatar = <Avatar sx={{ bgcolor: orange[500] }} alt="Asset logo" ><WarningIcon/></Avatar>
+
+  console.log('MATH',(investmentFund/currentTargetAmount)*100);
 
   return (
     <Box
@@ -65,13 +72,13 @@ export default function InvestmentQueue() {
     >
       <ListItem  alignItems="flex-start"  >
       <ListItemAvatar>
-        <Avatar className={styles.inprogress}  alt="Asset logo" src="/crypto-icons/strong.webp" />
+        {(currentVehicleName==='')?warning_avatar:strong_avatar_active}
       </ListItemAvatar>
       <ListItemText
-        primary={`${currentVehicleName} - in progress`}
+        primary={`${(currentVehicleName==='')?"No target":currentVehicleName}`}
         secondary={
           <Box sx={{ width: '100%' }}>
-            <LinearProgress variant="determinate" value={Math.round((currentTargetAmount/investmentFund)*10)} />
+            <LinearProgress variant="determinate" value={(investmentFund/currentTargetAmount)*100} />
             {investmentFund} / {currentTargetAmount} USDT
           </Box>
         }
@@ -79,10 +86,10 @@ export default function InvestmentQueue() {
     </ListItem>
     <ListItem alignItems="flex-start"  >
       <ListItemAvatar>
-        <Avatar   alt="Asset logo" src="/crypto-icons/strong.webp" />
+        {(nextVehicleName==='')?warning_avatar:strong_avatar}
       </ListItemAvatar>
       <ListItemText
-        primary={`${nextVehicleName}`}
+        primary={`${(nextVehicleName==='')?"😢 No target":nextVehicleName}`}
         secondary={
           <Box sx={{ width: '100%' }}>
             <LinearProgress variant="determinate" value={0} />

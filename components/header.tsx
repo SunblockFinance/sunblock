@@ -29,7 +29,7 @@ export const Header: FC = () => {
     'Just making sure you are you. No transaction is made, thus, cost no gas fee!'
 
   const [currentAccount, setCurrentAccount] = useState('')
-  const [usdc, setUsdc] = useState(0)
+  const [usdt, setUsdt] = useState(0)
 
   useEffect(() => {
     void metaMask.connectEagerly()
