@@ -1,6 +1,6 @@
 // Copyright 2022 Kenth Fagerlund.
 // SPDX-License-Identifier: MIT
-import WarningIcon from '@mui/icons-material/Warning'
+import PriorityHighIcon from '@mui/icons-material/PriorityHigh'
 import { Avatar, LinearProgress, ListItemAvatar } from '@mui/material'
 import Box from '@mui/material/Box'
 import { orange } from '@mui/material/colors'
@@ -55,7 +55,7 @@ export default function InvestmentQueue() {
 
   const strong_avatar = <Avatar alt="Asset logo" src="/crypto-icons/strong.webp" />
   const strong_avatar_active = <Avatar className={styles.inprogress}  alt="Asset logo" src="/crypto-icons/strong.webp" />
-  const warning_avatar = <Avatar sx={{ bgcolor: orange[500] }} alt="Asset logo" ><WarningIcon/></Avatar>
+  const warning_avatar = <Avatar sx={{ bgcolor: orange[500] }} alt="Asset logo" ><PriorityHighIcon/></Avatar>
 
   console.log('MATH',(investmentFund/currentTargetAmount)*100);
 
@@ -70,7 +70,7 @@ export default function InvestmentQueue() {
         backdropFilter: 'blur(10px)',
       }}
     >
-      <ListItem  alignItems="flex-start"  >
+      <ListItem  alignItems="flex-start" >
       <ListItemAvatar>
         {(currentVehicleName==='')?warning_avatar:strong_avatar_active}
       </ListItemAvatar>
@@ -79,7 +79,7 @@ export default function InvestmentQueue() {
         secondary={
           <Box sx={{ width: '100%' }}>
             <LinearProgress variant="determinate" value={(investmentFund/currentTargetAmount)*100} />
-            {investmentFund} / {currentTargetAmount} USDT
+            {investmentFund} / {(currentTargetAmount!=0)?currentTargetAmount:<span>&#8734;</span>} USDT
           </Box>
         }
       />
@@ -93,7 +93,7 @@ export default function InvestmentQueue() {
         secondary={
           <Box sx={{ width: '100%' }}>
             <LinearProgress variant="determinate" value={0} />
-            0 / {nextTargetAmount} USDT
+            0 / {(nextTargetAmount!=0)?nextTargetAmount:<span>&#8734;</span>} USDT
           </Box>
         }
       />

@@ -10,6 +10,7 @@ import React, { FC } from 'react'
 import { AssetGroup } from '../assets/AssetGroup'
 import { Updates } from '../assets/Updates'
 import { History } from '../personal/History'
+import { StatsOverview } from '../statistics/StatsOverview'
 
 export const TabMenu: FC = () => {
   const [value, setValue] = React.useState('1')
@@ -29,9 +30,10 @@ export const TabMenu: FC = () => {
           <TabList  onChange={handleChange} aria-label="lab API tabs example" >
 
             <Tab label="Community stats" value="1" />
-            <Tab label="Sunblock updates" value="2" />
-            <Tab disabled label="Transaction History (soon)" value="3" />
-            <Tab disabled label="Node list (soon)" value="4" />
+            <Tab label="Investment Stats" value="2" />
+            <Tab label="Sunblock updates" value="3" />
+            <Tab disabled label="Transaction History (soon)" value="4" />
+
           </TabList>
         </Box>
         <TabPanel value="1">
@@ -40,11 +42,11 @@ export const TabMenu: FC = () => {
         </TabPanel>
         <TabPanel value="2">
           {' '}
-          <Updates />
+          <StatsOverview />
         </TabPanel>
         <TabPanel value="3">
           {' '}
-          <History />
+          <Updates />
         </TabPanel>
         <TabPanel value="4">
           {' '}

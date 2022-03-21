@@ -134,11 +134,10 @@ export const HeroRow: FC = () => {
       justifyContent="space-between"
     >
       <HeroItem icon={<EventOutlinedIcon fontSize='large'/>} title="Next payday" subtitle="Distributed one time per week">
-        <span style={{ fontWeight: 'bold', fontSize: 31 }}>No investment<br/> yet!</span>
+        <span style={{ fontWeight: 'bold', fontSize: 31 }}>🤷</span>
       </HeroItem>
       <HeroItem
         title="Next investment"
-        subtitle={`Investments in queue: 5`}
         icon={<PollOutlinedIcon fontSize='large'/>}
       >
         <Stack direction="column" alignItems="center" spacing={2}>
