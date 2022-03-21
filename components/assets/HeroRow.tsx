@@ -14,7 +14,13 @@ import CoinGecko from 'coingecko-api'
 import Image from 'next/image'
 import { FC, useEffect, useState } from 'react'
 import { CoinGeckoPrice } from '../../blockchain/coingecko'
-import { getHeldShares, getInvestmentFund, getRewardFund, getSharesIssued, getStrongBalance } from '../../blockchain/query'
+import {
+  getHeldShares,
+  getInvestmentFund,
+  getRewardFund,
+  getSharesIssued,
+  getStrongBalance
+} from '../../blockchain/query'
 import { hooks } from '../../connectors/metamask'
 import InvestmentQueue from '../InvestmentQueue'
 import { PurchaseShares } from '../PurchaseShare'
@@ -69,7 +75,6 @@ export const HeroRow: FC = () => {
     }
   }, [provider])
 
-
   /**
    * Calculate the progress we made to buying a node in percent
    */
@@ -78,38 +83,32 @@ export const HeroRow: FC = () => {
     cg.simple
       .price({ ids: 'strong', vs_currencies: 'usd', include_24hr_change: true })
       .then((data: CoinGeckoPrice) => {
-        const strongprice:number = data.data.strong.usd
-        const np = strongprice*10
+        const strongprice: number = data.data.strong.usd
+        const np = strongprice * 10
         const tp = (100 * investFund) / np
         setNodeProgress(tp)
       })
-      return () => {
-        setNodeProgress(0)
-      }
+    return () => {
+      setNodeProgress(0)
+    }
   }, [investFund])
 
   /**
    * Estimate the reward the user should expect next
    */
   useEffect(() => {
-    const CoinGeckoClient = new CoinGecko();
-    CoinGeckoClient.simple.price({ids:'strong', vs_currencies:'usd', include_24hr_change:true}).then((data:CoinGeckoPrice) => {
-      const strongPrice = data.data.strong.usd
-      const rewardPerShare = (rewardFund * strongPrice) / sharesIssued
-      const userEarningEstimate = rewardPerShare * userShares
-      if (Number.isNaN(userEarningEstimate)) {
-        setEarnings(0)
-      } else {
-        setEarnings(userEarningEstimate)
-      }
-
-    })
+    const rewardPerShare = rewardFund / sharesIssued
+    const userEarningEstimate = rewardPerShare * userShares
+    if (Number.isNaN(userEarningEstimate)) {
+      setEarnings(0)
+    } else {
+      setEarnings(userEarningEstimate)
+    }
 
     return () => {
       setEarnings(0)
     }
-
-  },[rewardFund,userShares, sharesIssued])
+  }, [rewardFund, userShares, sharesIssued])
 
   /**
    * Pretty Progress bar for the node progress
@@ -133,23 +132,26 @@ export const HeroRow: FC = () => {
       spacing={2}
       justifyContent="space-between"
     >
-      <HeroItem icon={<EventOutlinedIcon fontSize='large'/>} title="Next payday" subtitle="Distributed one time per week">
+      <HeroItem
+        icon={<EventOutlinedIcon fontSize="large" />}
+        title="Next payday"
+        subtitle="Distributed one time per week"
+      >
         <span style={{ fontWeight: 'bold', fontSize: 31 }}>🤷</span>
       </HeroItem>
       <HeroItem
         title="Next investment"
-        icon={<PollOutlinedIcon fontSize='large'/>}
+        icon={<PollOutlinedIcon fontSize="large" />}
       >
         <Stack direction="column" alignItems="center" spacing={2}>
-        <InvestmentQueue/>
-
+          <InvestmentQueue />
         </Stack>
       </HeroItem>
 
       <HeroItem
         title="Estimated earning"
         subtitle={`${userShares} shares owned by you`}
-        icon={<MonetizationOnOutlinedIcon fontSize='large'/>}
+        icon={<MonetizationOnOutlinedIcon fontSize="large" />}
       >
         <span
           style={{ fontWeight: 'bold', fontSize: 31 }}
@@ -158,7 +160,7 @@ export const HeroRow: FC = () => {
       <HeroItem
         title="Purchase shares"
         subtitle="Each share is 10 USDT"
-        avatar='./crypto-icons/usdt.svg'
+        avatar="./crypto-icons/usdt.svg"
         promote
       >
         <PurchaseShares />
