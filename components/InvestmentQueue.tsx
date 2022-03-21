@@ -10,6 +10,7 @@ import * as React from 'react'
 import { useEffect, useState } from 'react'
 import { getCurrentTargetAmount, getCurrentTargetName, getInvestmentFund, getNextTargetAmount, getNextTargetName } from '../blockchain/query'
 import { hooks } from '../connectors/metamask'
+import { NameToDescriptor } from '../contracts/deployedContracts'
 import styles from './InvestmentQueue.module.css'
 
 // Web3 Provider
@@ -53,8 +54,12 @@ export default function InvestmentQueue() {
     }
   }, [provider])
 
-  const strong_avatar = <Avatar alt="Asset logo" src="/crypto-icons/strong.webp" />
-  const strong_avatar_active = <Avatar className={styles.inprogress}  alt="Asset logo" src="/crypto-icons/strong.webp" />
+
+  const currentDescriptor = NameToDescriptor(currentVehicleName)
+  const nextDescriptor = NameToDescriptor(nextVehicleName)
+
+  const vehicle_avatar_current_active = <Avatar className={styles.inprogress}  alt="Asset logo" src={currentDescriptor.logo} />
+  const vehicle_avatar_next = <Avatar alt="Asset logo" src={nextDescriptor.logo} />
   const warning_avatar = <Avatar sx={{ bgcolor: orange[500] }} alt="Asset logo" ><PriorityHighIcon/></Avatar>
 
   console.log('MATH',(investmentFund/currentTargetAmount)*100);
@@ -72,7 +77,7 @@ export default function InvestmentQueue() {
     >
       <ListItem  alignItems="flex-start" >
       <ListItemAvatar>
-        {(currentVehicleName==='')?warning_avatar:strong_avatar_active}
+        {(currentVehicleName==='')?warning_avatar:vehicle_avatar_current_active}
       </ListItemAvatar>
       <ListItemText
         primary={`${(currentVehicleName==='')?"No target":currentVehicleName}`}
@@ -86,7 +91,7 @@ export default function InvestmentQueue() {
     </ListItem>
     <ListItem alignItems="flex-start"  >
       <ListItemAvatar>
-        {(nextVehicleName==='')?warning_avatar:strong_avatar}
+        {(nextVehicleName==='')?warning_avatar:vehicle_avatar_next}
       </ListItemAvatar>
       <ListItemText
         primary={`${(nextVehicleName==='')?"😢 No target":nextVehicleName}`}

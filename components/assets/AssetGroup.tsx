@@ -23,6 +23,7 @@ export const AssetGroup: FC = () => {
   const provider = useProvider()
   const usdt = './crypto-icons/usdt.svg'
   const strong = './crypto-icons/strong.webp'
+  const reward = './svg/treasure.svg'
 
   /**
    * Token prices
@@ -116,13 +117,8 @@ export const AssetGroup: FC = () => {
             />
             <AssetItem
               title="Rewards accumulated"
-              value={`${rewardFund.toString()} STRONG `}
-              avatar={strong}
-            />
-            <AssetItem
-              title="Total lifetime investment"
-              value={`${totalInvestment.toString()} USDT`}
-              avatar={usdt}
+              value={`${rewardFund.toString()} USDT `}
+              avatar={reward}
             />
           </Stack>
           <Stack

@@ -19,6 +19,7 @@ import {
 } from '@mui/material'
 import Divider from '@mui/material/Divider'
 import React, { FC } from 'react'
+import { ContractDescriptor } from '../../contracts/deployedContracts'
 import { AssetItem } from '../assets/AssetItem'
 
 const usdt = './crypto-icons/usdt.svg'
@@ -39,7 +40,7 @@ interface VehicleProps {
 
 
 
-export const StatsVehicleCard: FC<VehicleProps> = (props) => {
+export const StatsVehicleCard: FC<ContractDescriptor> = (props) => {
 
     const ExpandMore = styled((props: ExpandMoreProps) => {
         const { expand, ...other } = props
