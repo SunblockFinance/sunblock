@@ -5,7 +5,7 @@ import { ABI_ERC20 } from '../contracts/abi/erc20'
 import { ABI_SUNBLOCK_CUBE } from '../contracts/abi/sunblock'
 import { ABI_VEHICLE } from '../contracts/abi/vehicle'
 import { CONTRACT_ADDRESS_CUBE, TOKEN_ADDRESS_USDT } from '../programs/polygon'
-import { formatUSDTWeiToNumber as formatUSDTWeiToNumber } from '../utils/formaters'
+import { formatUSDTWeiToNumber } from '../utils/formaters'
 
 export async function getCurrentTargetAmount(
   provider: ethers.providers.Web3Provider
@@ -56,6 +56,45 @@ export async function getCurrentTargetName(
     return ''
   }
 }
+
+export async function getVehicleInvestmentPool(
+  provider: ethers.providers.Web3Provider, vehicleAddress:string
+): Promise<string> {
+  try {
+
+    const vehicle = new ethers.Contract(
+      vehicleAddress,
+      ABI_VEHICLE,
+      provider
+    )
+    const amount:BigNumber = await vehicle.investmentPool()
+
+    return ethers.utils.formatUnits(amount, 6)
+  } catch (error) {
+    console.log(error)
+    return ''
+  }
+}
+
+export async function getVehicleRewardPool(
+  provider: ethers.providers.Web3Provider, vehicleAddress:string
+): Promise<string> {
+  try {
+
+    const vehicle = new ethers.Contract(
+      vehicleAddress,
+      ABI_VEHICLE,
+      provider
+    )
+    const amount:BigNumber = await vehicle.rewardPool()
+
+    return ethers.utils.formatUnits(amount, 6)
+  } catch (error) {
+    console.log(error)
+    return ''
+  }
+}
+
 
 export async function getNextTargetName(
   provider: ethers.providers.Web3Provider

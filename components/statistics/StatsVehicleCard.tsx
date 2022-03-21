@@ -18,9 +18,14 @@ import {
     Typography
 } from '@mui/material'
 import Divider from '@mui/material/Divider'
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
+import { getVehicleInvestmentPool, getVehicleRewardPool } from '../../blockchain/query'
+import { hooks } from '../../connectors/metamask'
 import { ContractDescriptor } from '../../contracts/deployedContracts'
 import { AssetItem } from '../assets/AssetItem'
+
+const {useProvider} = hooks
+
 
 const usdt = './crypto-icons/usdt.svg'
 const treasure = './svg/treasure.svg'
@@ -42,6 +47,7 @@ interface VehicleProps {
 
 export const StatsVehicleCard: FC<ContractDescriptor> = (props) => {
 
+
     const ExpandMore = styled((props: ExpandMoreProps) => {
         const { expand, ...other } = props
         return <IconButton {...other} />
@@ -52,11 +58,33 @@ export const StatsVehicleCard: FC<ContractDescriptor> = (props) => {
           duration: theme.transitions.duration.shortest,
         }),
       }))
-  const [expanded, setExpanded] = React.useState(false)
+
+      const provider = useProvider()
+
+      const [expanded, setExpanded] = React.useState(false)
+      const [investFund, setInvestFund] = useState('')
+      const [rewardFund, setRewardFund] = useState('')
 
   const handleExpandClick = () => {
     setExpanded(!expanded)
   }
+
+  useEffect(() => {
+    if (provider) {
+        getVehicleInvestmentPool(provider, props.contract).then((amount) => {
+            setInvestFund(amount)
+        })
+        getVehicleRewardPool(provider, props.contract).then((amount) => {
+            setRewardFund(amount)
+        })
+    }
+
+    return () => {
+        setInvestFund('')
+        setRewardFund('')
+    }
+  }, [provider, props.contract])
+
 
   return (
     <Card sx={{
@@ -88,10 +116,10 @@ export const StatsVehicleCard: FC<ContractDescriptor> = (props) => {
       <Divider textAlign="left">CAPITAL</Divider>
       <AssetItem
         title="To be invested"
-        value={`3000 USDT`}
+        value={`${investFund} USDT`}
         avatar={usdt}
       />
-      <AssetItem title="Rewards held" value={`3300 USDT`} avatar={treasure} />
+      <AssetItem title="Rewards held" value={`${rewardFund} USDT`} avatar={treasure} />
 
       <CardActions disableSpacing>
         <IconButton aria-label="view contract">
