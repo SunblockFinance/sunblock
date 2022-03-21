@@ -38,7 +38,7 @@ export const HeroItem: FC<{title: string, subtitle?: string, promote?: boolean, 
         subheader={data.subtitle}
         titleTypographyProps={{ sx: { fontSize: 21, fontWeight: 'bold' } }}
       />
-      <CardContent sx={{ justifyContent: 'center', display: 'flex' }}>
+      <CardContent sx={{ alignItems: 'center', width:'100%', justifyItems:'auto'}}>
         {data.children}
       </CardContent>
     </Card>
