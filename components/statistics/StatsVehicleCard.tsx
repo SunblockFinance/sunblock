@@ -122,10 +122,10 @@ export const StatsVehicleCard: FC<ContractDescriptor> = (props) => {
       <AssetItem title="Rewards held" value={`${rewardFund} USDT`} avatar={treasure} />
 
       <CardActions disableSpacing>
-        <IconButton aria-label="view contract">
+        <IconButton aria-label="view contract" href={`https://polygonscan.com/address/${props.contract}`}>
           <GavelIcon />
         </IconButton>
-        <IconButton aria-label="share">
+        <IconButton aria-label="share" href={props.url}>
           <LaunchIcon />
         </IconButton>
         <ExpandMore

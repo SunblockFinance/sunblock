@@ -9,8 +9,8 @@ export const StatsOverview: FC = () => {
 
     return (
         <Stack direction='row' spacing={2}>
-            <StatsVehicleCard title={DESCRIPTOR_STRONGBLOCK.title} logo={DESCRIPTOR_STRONGBLOCK.logo} description={DESCRIPTOR_STRONGBLOCK.description} contract={DESCRIPTOR_STRONGBLOCK.contract}/>
-            <StatsVehicleCard title={DESCRIPTOR_YIELDNODE.title} logo={DESCRIPTOR_YIELDNODE.logo} description={DESCRIPTOR_YIELDNODE.description} contract={DESCRIPTOR_YIELDNODE.contract}/>
+            <StatsVehicleCard title={DESCRIPTOR_STRONGBLOCK.title} logo={DESCRIPTOR_STRONGBLOCK.logo} description={DESCRIPTOR_STRONGBLOCK.description} contract={DESCRIPTOR_STRONGBLOCK.contract} url={DESCRIPTOR_STRONGBLOCK.url}/>
+            <StatsVehicleCard title={DESCRIPTOR_YIELDNODE.title} logo={DESCRIPTOR_YIELDNODE.logo} description={DESCRIPTOR_YIELDNODE.description} contract={DESCRIPTOR_YIELDNODE.contract} url={DESCRIPTOR_YIELDNODE.url}/>
         </Stack>
     )
 }
