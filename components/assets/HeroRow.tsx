@@ -18,10 +18,9 @@ import {
   getHeldShares,
   getInvestmentFund,
   getRewardFund,
-  getSharesIssued,
-  getStrongBalance
+  getSharesIssued
 } from '../../blockchain/query'
-import { hooks } from '../../connectors/metamask'
+import { hooks } from '../../connectors/network'
 import InvestmentQueue from '../InvestmentQueue'
 import { PurchaseShares } from '../PurchaseShare'
 import { HeroItem } from './HeroItem'
@@ -29,7 +28,6 @@ import { HeroItem } from './HeroItem'
 const { useProvider } = hooks
 
 export const HeroRow: FC = () => {
-  const [strongAmount, setStrongAmount] = useState(0)
   const [strongNodes, setStrongNodes] = useState(0)
   const [userShares, setUserShares] = useState(0)
   const [sharesIssued, setSharesIssued] = useState(0)
@@ -50,9 +48,6 @@ export const HeroRow: FC = () => {
 
   useEffect(() => {
     if (provider) {
-      getStrongBalance(provider).then((balance) => {
-        setStrongAmount(balance)
-      })
       getHeldShares(provider).then((shares) => {
         setUserShares(shares)
       })
@@ -67,7 +62,6 @@ export const HeroRow: FC = () => {
       })
     }
     return () => {
-      setStrongAmount(0)
       setUserShares(0)
       setInvestFund(0)
       setRewardFund(0)

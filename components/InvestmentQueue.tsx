@@ -9,7 +9,7 @@ import ListItemText from '@mui/material/ListItemText'
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 import { getCurrentTargetAmount, getCurrentTargetName, getInvestmentFund, getNextTargetAmount, getNextTargetName } from '../blockchain/query'
-import { hooks } from '../connectors/metamask'
+import { hooks } from '../connectors/network'
 import { NameToDescriptor } from '../contracts/deployedContracts'
 import styles from './InvestmentQueue.module.css'
 

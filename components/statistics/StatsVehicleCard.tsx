@@ -20,7 +20,7 @@ import {
 import Divider from '@mui/material/Divider'
 import React, { FC, useEffect, useState } from 'react'
 import { getVehicleInvestmentPool, getVehicleRewardPool } from '../../blockchain/query'
-import { hooks } from '../../connectors/metamask'
+import { hooks } from '../../connectors/network'
 import { ContractDescriptor } from '../../contracts/deployedContracts'
 import { AssetItem } from '../assets/AssetItem'
 

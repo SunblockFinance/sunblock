@@ -71,7 +71,7 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
       signer
     )
     await erc20signed.approve(CONTRACT_ADDRESS_CUBE, sum).catch((error:Error) => console.log(error))
-    erc20signed.on('Approval', (to, spender, value) => {
+    erc20signed.once('Approval', (to, spender, value) => {
       if (spender !== CONTRACT_ADDRESS_CUBE) {
         console.log(`Ignoring approval for ${spender}. We expect it for ${CONTRACT_ADDRESS_CUBE}`)
       } else {
@@ -96,7 +96,8 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
       if (signer === undefined) return
       const rwContract:Contract = erc20.connect(signer)
       await rwContract.approve(CONTRACT_ADDRESS_CUBE, BigNumber.from(0)).catch((error:Error) => console.log(error))
-      erc20?.on('Approval', (to, spender, value) => {
+      
+      erc20?.once('Approval', (to, spender, value) => {
         const ethValue = formatUSDTWeiToNumber(value)
         setAllowance(ethValue)
         track({

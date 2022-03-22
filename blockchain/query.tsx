@@ -11,9 +11,6 @@ export async function getCurrentTargetAmount(
   provider: ethers.providers.Web3Provider
 ): Promise<number> {
   try {
-    const signer = provider.getSigner()
-    if (signer === undefined) return 0
-
     const cube = new ethers.Contract(
       CONTRACT_ADDRESS_CUBE,
       ABI_SUNBLOCK_CUBE,
@@ -32,8 +29,6 @@ export async function getCurrentTargetName(
   provider: ethers.providers.Web3Provider
 ): Promise<any> {
   try {
-    const signer = provider.getSigner()
-    if (signer === undefined) return 0
 
     const cube = new ethers.Contract(
       CONTRACT_ADDRESS_CUBE,
@@ -99,8 +94,6 @@ export async function getNextTargetName(
   provider: ethers.providers.Web3Provider
 ): Promise<any> {
   try {
-    const signer = provider.getSigner()
-    if (signer === undefined) return 0
 
     const cube = new ethers.Contract(
       CONTRACT_ADDRESS_CUBE,
@@ -127,8 +120,6 @@ export async function getNextTargetAmount(
   provider: ethers.providers.Web3Provider
 ): Promise<number> {
   try {
-    const signer = provider.getSigner()
-    if (signer === undefined) return 0
 
     const cube = new ethers.Contract(
       CONTRACT_ADDRESS_CUBE,
@@ -168,7 +159,7 @@ export async function getStrongBalance(
     const signer = provider.getSigner()
     if (signer === undefined) return 0
     const signerAddress = await signer.getAddress()
-    const erc20 = new ethers.Contract(TOKEN_ADDRESS_USDT, ABI_ERC20, signer)
+    const erc20 = new ethers.Contract(TOKEN_ADDRESS_USDT, ABI_ERC20, provider)
 
     const contractBalance = await erc20.balanceOf(signerAddress)
     return formatUSDTWeiToNumber(contractBalance)

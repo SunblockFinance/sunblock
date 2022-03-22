@@ -11,7 +11,8 @@ import CoinGecko from 'coingecko-api'
 import { FC, useEffect, useState } from 'react'
 import { CoinGeckoPrice } from '../../blockchain/coingecko'
 import { getInvestmentFund, getRewardFund, getShareholderCount, getSharePrice, getSharesIssued } from '../../blockchain/query'
-import { hooks } from '../../connectors/metamask'
+import { hooks, network } from '../../connectors/network'
+import { CHAINID } from '../../programs/polygon'
 import { formatWeiToNumber } from '../../utils/formaters'
 import { AssetItem } from './AssetItem'
 
@@ -41,6 +42,12 @@ export const AssetGroup: FC = () => {
   const [sharePrice, setSharePrice] = useState(0)
 
   useEffect(() => {
+    void network.activate(CHAINID)
+  }, [])
+
+  useEffect(() => {
+
+
     if (provider) {
       getInvestmentFund(provider).then((balance) => {
         setInvestFund(balance)
@@ -71,6 +78,8 @@ export const AssetGroup: FC = () => {
   }, [provider])
 
   useEffect(() => {
+
+
     const CoinGeckoClient = new CoinGecko();
     CoinGeckoClient.simple.price({ids:'strong', vs_currencies:'usd', include_24hr_change:true}).then((data:CoinGeckoPrice) => {
       setStrongPrice(data.data.strong.usd)
