@@ -93,8 +93,9 @@ export const StatsVehicleCard: FC<ContractDescriptor> = (props) => {
         borderRadius: '5px',
         backgroundColor: 'rgba(56,71,80,0.5)',
         backdropFilter: 'blur(8px)',
-        padding: '0px',
+        padding: '5px',
         width: '100%',
+        maxWidth:'auto'
       }}>
       <CardHeader
         avatar={
