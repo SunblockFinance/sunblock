@@ -48,7 +48,6 @@ export async function getCurrentTargetName(
       provider
     )
     const name = await vehicle.vehicleName()
-    console.log("NAME:", name);
 
     return ethers.utils.parseBytes32String(name)
   } catch (error) {
@@ -116,7 +115,6 @@ export async function getNextTargetName(
       provider
     )
     const name = await vehicle.vehicleName()
-    console.log("NAME:", name);
 
     return ethers.utils.parseBytes32String(name)
   } catch (error) {

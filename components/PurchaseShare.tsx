@@ -26,7 +26,7 @@ import {
 import {
   CONTRACT_ADDRESS_CUBE
 } from '../programs/polygon'
-import { formatUSDTWeiToNumber as formatUSDTWeiToNumber } from '../utils/formaters'
+import { formatUSDTWeiToNumber } from '../utils/formaters'
 import AllowancePill from './AllowancePill'
 
 
@@ -89,7 +89,9 @@ export const PurchaseShares: FC = () => {
       })
     }
     sunblockContract.on('SharesIssued', async (_address: string, amount) => {
+      console.log(`SharesIssued expected ${signerAddress} but got ${_address}` )
       if (signerAddress !== _address) {
+
         return
       }
       closeSpinner()

@@ -62,7 +62,6 @@ export default function InvestmentQueue() {
   const vehicle_avatar_next = <Avatar alt="Asset logo" src={nextDescriptor.logo} />
   const warning_avatar = <Avatar sx={{ bgcolor: orange[500] }} alt="Asset logo" ><PriorityHighIcon/></Avatar>
 
-  console.log('MATH',(investmentFund/currentTargetAmount)*100);
 
   return (
     <Box
@@ -80,6 +79,7 @@ export default function InvestmentQueue() {
         {(currentVehicleName==='')?warning_avatar:vehicle_avatar_current_active}
       </ListItemAvatar>
       <ListItemText
+        disableTypography={true}
         primary={`${(currentVehicleName==='')?"No target":currentVehicleName}`}
         secondary={
           <Box sx={{ width: '100%' }}>
@@ -94,6 +94,7 @@ export default function InvestmentQueue() {
         {(nextVehicleName==='')?warning_avatar:vehicle_avatar_next}
       </ListItemAvatar>
       <ListItemText
+        disableTypography={true}
         primary={`${(nextVehicleName==='')?"😢 No target":nextVehicleName}`}
         secondary={
           <Box sx={{ width: '100%' }}>

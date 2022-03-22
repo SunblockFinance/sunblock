@@ -75,11 +75,11 @@ const NetworkAlert: FC = () => {
           {'🤷‍♂️ Wrong network 🤷‍♂️'}
         </DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
+          <DialogContentText id="alert-dialog-description" >
             Like a lawyer in the wrong courtroom, We have no idea where the
             contracts are on this network. If you want Sunblock on this network,
             give us a shout.{' '}
-            <p> Until then, do you wish for us to switch to Polygon for now?</p>
+            Until then, do you wish for us to switch to Polygon for now?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
