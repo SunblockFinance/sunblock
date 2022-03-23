@@ -14,13 +14,8 @@ import CoinGecko from 'coingecko-api'
 import Image from 'next/image'
 import { FC, useEffect, useState } from 'react'
 import { CoinGeckoPrice } from '../../blockchain/coingecko'
-import {
-  getHeldShares,
-  getInvestmentFund,
-  getRewardFund,
-  getSharesIssued
-} from '../../blockchain/query'
-import { hooks } from '../../connectors/network'
+import { getHeldShares } from '../../blockchain/query'
+import { hooks } from '../../connectors/metamask'
 import InvestmentQueue from '../InvestmentQueue'
 import { PurchaseShares } from '../PurchaseShare'
 import { HeroItem } from './HeroItem'
@@ -28,7 +23,6 @@ import { HeroItem } from './HeroItem'
 const { useProvider } = hooks
 
 export const HeroRow: FC = () => {
-  const [strongNodes, setStrongNodes] = useState(0)
   const [userShares, setUserShares] = useState(0)
   const [sharesIssued, setSharesIssued] = useState(0)
   const [earnings, setEarnings] = useState(0)
@@ -47,25 +41,34 @@ export const HeroRow: FC = () => {
   )
 
   useEffect(() => {
+    fetch('/api/contracts/cube?q=cubeInvestmentFund').then(res => res.json())
+      .then((json) => {
+        setInvestFund(json.value)
+      })
+    fetch('/api/contracts/cube?q=cubeRewardFund').then(res => res.json())
+    .then((json) => {
+      setRewardFund(json.value)
+    })
+    fetch('/api/contracts/cube?q=sharesIssued').then(res => res.json())
+    .then((json) => {
+      setSharesIssued(json.value)
+    })
+    return () => {
+      setInvestFund(0)
+      setRewardFund(0)
+      setSharesIssued(0)
+    }
+  },[])
+
+  useEffect(() => {
     if (provider) {
       getHeldShares(provider).then((shares) => {
         setUserShares(shares)
       })
-      getInvestmentFund(provider).then((balance) => {
-        setInvestFund(balance)
-      })
-      getRewardFund(provider).then((balance) => {
-        setRewardFund(balance)
-      })
-      getSharesIssued(provider).then((amount) => {
-        setSharesIssued(amount)
-      })
     }
+
     return () => {
       setUserShares(0)
-      setInvestFund(0)
-      setRewardFund(0)
-      setSharesIssued(0)
     }
   }, [provider])
 

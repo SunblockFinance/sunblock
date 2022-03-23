@@ -8,7 +8,6 @@ import ListItem from '@mui/material/ListItem'
 import ListItemText from '@mui/material/ListItemText'
 import * as React from 'react'
 import { useEffect, useState } from 'react'
-import { getCurrentTargetAmount, getCurrentTargetName, getInvestmentFund, getNextTargetAmount, getNextTargetName } from '../blockchain/query'
 import { hooks } from '../connectors/network'
 import { NameToDescriptor } from '../contracts/deployedContracts'
 import styles from './InvestmentQueue.module.css'
@@ -28,31 +27,36 @@ export default function InvestmentQueue() {
 
 
   useEffect(() => {
-    if(provider){
-      getCurrentTargetAmount(provider).then((amount) => {
-        setCurrentTargetAmount(amount)
+
+      fetch('/api/contracts/cube?q=currentTargetAmount').then(res => res.json())
+      .then((json) => {
+        setCurrentTargetAmount(json.value)
+      });
+      fetch('/api/contracts/cube?q=currentTargetName').then(res => res.json())
+      .then((json) => {
+        setCurrentVehicleName(json.value)
       })
-      getCurrentTargetName(provider).then((name) => {
-        setCurrentVehicleName(name)
+      fetch('/api/contracts/cube?q=nextTargetAmount').then(res => res.json())
+      .then((json) => {
+        setNextTargetAmount(json.value)
+      });
+      fetch('/api/contracts/cube?q=nextTargetName').then(res => res.json())
+      .then((json) => {
+        setNextVehicleName(json.value)
       })
-      getNextTargetAmount(provider).then((amount) => {
-        setNextTargetAmount(amount)
-      })
-      getNextTargetName(provider).then((name) => {
-        setNextVehicleName(name)
-      })
-      getInvestmentFund(provider).then((amount) => {
-        setInvestmentFund(amount)
+      fetch('/api/contracts/cube?q=cubeInvestmentFund').then(res => res.json())
+      .then((json) => {
+        setInvestmentFund(json.value)
       })
 
-    }
+
     return () => {
       setCurrentTargetAmount(0)
       setNextTargetAmount(0)
       setInvestmentFund(0)
       setCurrentVehicleName('')
     }
-  }, [provider])
+  }, [])
 
 
   const currentDescriptor = NameToDescriptor(currentVehicleName)

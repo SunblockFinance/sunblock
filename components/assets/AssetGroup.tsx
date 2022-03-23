@@ -10,10 +10,8 @@ import Stack from '@mui/material/Stack'
 import CoinGecko from 'coingecko-api'
 import { FC, useEffect, useState } from 'react'
 import { CoinGeckoPrice } from '../../blockchain/coingecko'
-import { getInvestmentFund, getRewardFund, getShareholderCount, getSharePrice, getSharesIssued } from '../../blockchain/query'
 import { hooks, network } from '../../connectors/network'
 import { CHAINID } from '../../programs/polygon'
-import { formatWeiToNumber } from '../../utils/formaters'
 import { AssetItem } from './AssetItem'
 
 
@@ -47,25 +45,27 @@ export const AssetGroup: FC = () => {
 
   useEffect(() => {
 
+      fetch('/api/contracts/cube?q=cubeInvestmentFund').then(res => res.json())
+      .then((json) => {
+        setInvestFund(json.value)
+      })
+      fetch('/api/contracts/cube?q=sharesIssued').then(res => res.json())
+      .then((json) => {
+        setSharesIssued(json.value)
+      })
+      fetch('/api/contracts/cube?q=sharePrice').then(res => res.json())
+      .then((json) => {
+        setSharePrice(json.value)
+      })
+      fetch('/api/contracts/cube?q=cubeRewardFund').then(res => res.json())
+      .then((json) => {
+        setRewardFund(json.value)
+      })
+      fetch('/api/contracts/cube?q=shareholderCount').then(res => res.json())
+      .then((json) => {
+        setInvestorCount(json.value)
+      })
 
-    if (provider) {
-      getInvestmentFund(provider).then((balance) => {
-        setInvestFund(balance)
-      })
-      getSharesIssued(provider).then((shares) => {
-        setSharesIssued(shares)
-      }).catch((e) => console.log(e)
-      )
-      getSharePrice(provider).then((price) => {
-          setSharePrice(formatWeiToNumber(price))
-      })
-      getRewardFund(provider).then((reward) => {
-        setRewardFund(reward)
-      })
-      getShareholderCount(provider).then((count) => {
-        setInvestorCount(count)
-      })
-    }
 
     return () => {
         setInvestFund(0)
@@ -75,7 +75,7 @@ export const AssetGroup: FC = () => {
         setRewardFund(0)
         setInvestorCount(0)
     }
-  }, [provider])
+  }, [])
 
   useEffect(() => {
 

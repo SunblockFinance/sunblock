@@ -127,7 +127,7 @@ export const CHAINS: { [chainId: number]: BasicChainInformation | ExtendedChainI
     blockExplorerUrls: ['https://polygonscan.com'],
   },
   80001: {
-    urls: [`https://polygon-mumbai.infura.io/v3/${process.env.infuraKey}`].filter(
+    urls: [`https://speedy-nodes-nyc.moralis.io/2d2738f646742fb6e4ae69e0/polygon/mumbai`].filter(
       (url) => url !== undefined
     ),
     name: 'Polygon Mumbai',

@@ -9,6 +9,8 @@ import { AppProps } from 'next/app'
 import { SnackbarProvider } from 'notistack'
 import React, { FC, useEffect, useState } from 'react'
 import { metaMask } from '../connectors/metamask'
+import { network } from '../connectors/network'
+import { CHAINID } from '../programs/polygon'
 
 const App: FC<AppProps> = ({ Component, pageProps }) => {
   /**
@@ -16,7 +18,10 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
    */
   useEffect(() => {
     void metaMask.connectEagerly()
+    network.activate(CHAINID)
     const insightkey = process.env.INSIGHT_KEY
+
+
     if (insightkey) init(insightkey)
     trackPages()
   }, [])

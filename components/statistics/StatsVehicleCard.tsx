@@ -6,26 +6,21 @@ import GavelIcon from '@mui/icons-material/Gavel'
 import LaunchIcon from '@mui/icons-material/Launch'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import {
-    Avatar,
-    Card,
-    CardActions,
-    CardContent,
-    CardHeader,
-    Collapse,
-    IconButton,
-    IconButtonProps,
-    styled,
-    Typography
+  Avatar,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  Collapse,
+  IconButton,
+  IconButtonProps,
+  styled,
+  Typography
 } from '@mui/material'
 import Divider from '@mui/material/Divider'
 import React, { FC, useEffect, useState } from 'react'
-import { getVehicleInvestmentPool, getVehicleRewardPool } from '../../blockchain/query'
-import { hooks } from '../../connectors/network'
 import { ContractDescriptor } from '../../contracts/deployedContracts'
 import { AssetItem } from '../assets/AssetItem'
-
-const {useProvider} = hooks
-
 
 const usdt = './crypto-icons/usdt.svg'
 const treasure = './svg/treasure.svg'
@@ -37,57 +32,53 @@ interface ExpandMoreProps extends IconButtonProps {
 }
 
 interface VehicleProps {
-    title: string
-    logo: string
-    description: string
-    contract: string
+  title: string
+  logo: string
+  description: string
+  contract: string
 }
 
-
-
 export const StatsVehicleCard: FC<ContractDescriptor> = (props) => {
+  const ExpandMore = styled((props: ExpandMoreProps) => {
+    const { expand, ...other } = props
+    return <IconButton {...other} />
+  })(({ theme, expand }) => ({
+    transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', {
+      duration: theme.transitions.duration.shortest,
+    }),
+  }))
 
-
-    const ExpandMore = styled((props: ExpandMoreProps) => {
-        const { expand, ...other } = props
-        return <IconButton {...other} />
-      })(({ theme, expand }) => ({
-        transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
-        marginLeft: 'auto',
-        transition: theme.transitions.create('transform', {
-          duration: theme.transitions.duration.shortest,
-        }),
-      }))
-
-      const provider = useProvider()
-
-      const [expanded, setExpanded] = React.useState(false)
-      const [investFund, setInvestFund] = useState('')
-      const [rewardFund, setRewardFund] = useState('')
+  const [expanded, setExpanded] = React.useState(false)
+  const [investFund, setInvestFund] = useState('')
+  const [rewardFund, setRewardFund] = useState('')
 
   const handleExpandClick = () => {
     setExpanded(!expanded)
   }
 
   useEffect(() => {
-    if (provider) {
-        getVehicleInvestmentPool(provider, props.contract).then((amount) => {
-            setInvestFund(amount)
-        })
-        getVehicleRewardPool(provider, props.contract).then((amount) => {
-            setRewardFund(amount)
-        })
-    }
+    fetch(`/api/contracts/vehicle?q=vehicleInvestmentPool&addr=${props.contract}`)
+      .then((res) => res.json())
+      .then((json) => {
+        setInvestFund(json.value)
+      })
+    fetch(`/api/contracts/vehicle?q=vehicleRewardPool&addr=${props.contract}`)
+      .then((res) => res.json())
+      .then((json) => {
+        setRewardFund(json.value)
+      })
 
     return () => {
-        setInvestFund('')
-        setRewardFund('')
+      setInvestFund('')
+      setRewardFund('')
     }
-  }, [provider, props.contract])
-
+  }, [props.contract])
 
   return (
-    <Card sx={{
+    <Card
+      sx={{
         outlineStyle: 'solid',
         outlineColor: 'gray',
         borderRadius: '5px',
@@ -95,12 +86,11 @@ export const StatsVehicleCard: FC<ContractDescriptor> = (props) => {
         backdropFilter: 'blur(8px)',
         padding: '5px',
         width: '100%',
-        maxWidth:'auto'
-      }}>
+        maxWidth: 'auto',
+      }}
+    >
       <CardHeader
-        avatar={
-          <Avatar src={props.logo}  aria-label="logo"/>
-        }
+        avatar={<Avatar src={props.logo} aria-label="logo" />}
         action={
           <IconButton aria-label="settings">
             <MoreVertIcon />
@@ -120,10 +110,17 @@ export const StatsVehicleCard: FC<ContractDescriptor> = (props) => {
         value={`${investFund} USDT`}
         avatar={usdt}
       />
-      <AssetItem title="Rewards held" value={`${rewardFund} USDT`} avatar={treasure} />
+      <AssetItem
+        title="Rewards held"
+        value={`${rewardFund} USDT`}
+        avatar={treasure}
+      />
 
       <CardActions disableSpacing>
-        <IconButton aria-label="view contract" href={`https://polygonscan.com/address/${props.contract}`}>
+        <IconButton
+          aria-label="view contract"
+          href={`https://polygonscan.com/address/${props.contract}`} //TODO: Follow the chain ID
+        >
           <GavelIcon />
         </IconButton>
         <IconButton aria-label="share" href={props.url}>
@@ -140,9 +137,17 @@ export const StatsVehicleCard: FC<ContractDescriptor> = (props) => {
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-        <Divider textAlign="left">EVENTS</Divider>
-            <AssetItem title="Reward transfer to cube" value={`12 Aug 2022`} avatar={withdrawl} />
-            <AssetItem title="Last capital injection" value={`$2300 / 📅 12 Aug 2022`} avatar={investment} />
+          <Divider textAlign="left">EVENTS</Divider>
+          <AssetItem
+            title="Reward transfer to cube"
+            value={`12 Aug 2022`}
+            avatar={withdrawl}
+          />
+          <AssetItem
+            title="Last capital injection"
+            value={`$2300 / 📅 12 Aug 2022`}
+            avatar={investment}
+          />
         </CardContent>
       </Collapse>
     </Card>

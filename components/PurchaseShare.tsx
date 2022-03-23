@@ -18,7 +18,7 @@ import { ethers } from 'ethers'
 import { track } from 'insights-js'
 import { useSnackbar } from 'notistack'
 import React, { FC, useEffect, useState } from 'react'
-import { getSharePrice, getUSDTBalance } from '../blockchain/query'
+import { getUSDTBalance } from '../blockchain/query'
 import { hooks } from '../connectors/metamask'
 import {
   ABI_SUNBLOCK_CUBE
@@ -26,15 +26,20 @@ import {
 import {
   CONTRACT_ADDRESS_CUBE
 } from '../programs/polygon'
-import { formatUSDTWeiToNumber } from '../utils/formaters'
 import AllowancePill from './AllowancePill'
 
 
-const { useProvider, useAccount, useIsActive } = hooks
+const { useIsActive, useProvider } = hooks
+
+
+
 
 let eth: any
 
 export const PurchaseShares: FC = () => {
+  const provider = useProvider()
+  const isWalletActive = useIsActive()
+
   const closeSpinner = () => {
     setOpen(false)
   }
@@ -45,10 +50,7 @@ export const PurchaseShares: FC = () => {
   const DEFAULT_SHARE_VALUE = 10
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar()
-  const provider = useProvider()
-  const account = useAccount()
-  const isactive = useIsActive()
-  // const vehicle = useInvestmentVehicle()
+
 
 
   // ===== //
@@ -133,16 +135,23 @@ export const PurchaseShares: FC = () => {
     }
   }
 
+  useEffect(() => {
+    fetch('/api/contracts/cube?q=sharePrice').then(res => res.json())
+      .then((json) => {
+        setSharePrice(json.value)
+        setBasketPrice(json.value * DEFAULT_SHARE_VALUE)
+      })
+      return () => {
+        setSharePrice(0)
+        setBasketPrice(0)
+      }
+  },[])
 
 
   useEffect(() => {
     if(provider){
       getUSDTBalance(provider).then((amount) => {
         setBalance(amount)
-      })
-      getSharePrice(provider).then((price) => {
-        setSharePrice(formatUSDTWeiToNumber(price))
-        setBasketPrice(formatUSDTWeiToNumber(price) * DEFAULT_SHARE_VALUE)
       })
     }
     return () => {
@@ -170,7 +179,7 @@ export const PurchaseShares: FC = () => {
           }}
           size="small"
           variant="contained"
-          disabled={isUnderfunded || shareAmount === 0}
+          disabled={isUnderfunded || shareAmount === 0 || !isWalletActive}
         >
           {isUnderfunded ? `Low funds 🙁` : `Buy shares`}
         </Button>
