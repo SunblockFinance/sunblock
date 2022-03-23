@@ -34,7 +34,6 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   const { q, addr } = req.query
-  console.log(`Q:${q}, Addr:${addr}`);
 
   switch (q) {
     case 'vehicleInvestmentPool':
