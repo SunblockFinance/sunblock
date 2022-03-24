@@ -1,11 +1,12 @@
 // Copyright 2022 Kenth Fagerlund.
 
+import { withSentry } from '@sentry/nextjs'
 import { BigNumber, ethers } from 'ethers'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { ABI_VEHICLE } from '../../../contracts/abi/vehicle'
 import {
-    CONTRACT_ADDRESS_VEHICLE_STRONG,
-    CONTRACT_ADDRESS_VEHICLE_YIELD
+  CONTRACT_ADDRESS_VEHICLE_STRONG,
+  CONTRACT_ADDRESS_VEHICLE_YIELD
 } from '../../../programs/polygon'
 
 const provider = new ethers.providers.WebSocketProvider(
@@ -29,7 +30,7 @@ type Data = {
   value: string | number
 }
 
-export default async function handler(
+export async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
@@ -87,3 +88,4 @@ export default async function handler(
       return ''
     }
   }
+  export default withSentry(handler);

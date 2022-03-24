@@ -4,11 +4,12 @@
 // https://opensource.org/licenses/MIT
 
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { withSentry } from '@sentry/nextjs'
 import { BigNumber, ethers } from 'ethers'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { ABI_SUNBLOCK_CUBE } from '../../../contracts/abi/sunblock'
 import { ABI_VEHICLE } from '../../../contracts/abi/vehicle'
-import { CONTRACT_ADDRESS_CUBE, CONTRACT_ADDRESS_VEHICLE_STRONG, CONTRACT_ADDRESS_VEHICLE_YIELD } from '../../../programs/polygon'
+import { CONTRACT_ADDRESS_CUBE } from '../../../programs/polygon'
 import { formatUSDTWeiToNumber } from '../../../utils/formaters'
 
 const provider = new ethers.providers.WebSocketProvider(`${process.env.RPC_ENDPOINT}`)
@@ -24,7 +25,7 @@ type Data = {
 
 // =========== HANDLER ============ //
 
-export default async function handler(
+export async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
@@ -244,3 +245,4 @@ async function getShareholderCount(): Promise<number> {
     return 0
   }
 }
+export default withSentry(handler);

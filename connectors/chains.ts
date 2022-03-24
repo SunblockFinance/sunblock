@@ -48,8 +48,8 @@ export function getAddChainParameters(chainId: number): AddEthereumChainParamete
 export const CHAINS: { [chainId: number]: BasicChainInformation | ExtendedChainInformation } = {
   1: {
     urls: [
-      process.env.infuraKey ? `https://mainnet.infura.io/v3/${process.env.infuraKey}` : undefined,
-      process.env.alchemyKey ? `https://eth-mainnet.alchemyapi.io/v2/${process.env.alchemyKey}` : undefined,
+      `https://mainnet.infura.io/v3/${process.env.infuraKey}`,
+      `https://eth-mainnet.alchemyapi.io/v2/${process.env.alchemyKey}`,
       'https://cloudflare-eth.com',
     ].filter((url) => url !== undefined),
     name: 'Mainnet',
