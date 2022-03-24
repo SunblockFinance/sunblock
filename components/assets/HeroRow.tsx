@@ -126,7 +126,7 @@ export const HeroRow: FC = () => {
   return (
     <Stack
       direction={{ xs: 'column', md: 'row' }}
-      spacing={2}
+      spacing={6}
       justifyContent="space-between"
     >
 
