@@ -15,26 +15,18 @@ import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import { ethers } from 'ethers'
-import { track } from 'insights-js'
 import { useSnackbar } from 'notistack'
 import React, { FC, useEffect, useState } from 'react'
 import { getUSDTBalance } from '../blockchain/query'
 import { hooks } from '../connectors/metamask'
-import {
-  ABI_SUNBLOCK_CUBE
-} from '../contracts/abi/sunblock'
-import {
-  CONTRACT_ADDRESS_CUBE
-} from '../programs/polygon'
+import { ABI_SUNBLOCK_CUBE } from '../contracts/abi/sunblock'
+import { CONTRACT_ADDRESS_CUBE } from '../programs/polygon'
 import AllowancePill from './AllowancePill'
 
 
+const DEFAULT_SHARE_VALUE = 10
 const { useIsActive, useProvider } = hooks
 
-
-
-
-let eth: any
 
 export const PurchaseShares: FC = () => {
   const provider = useProvider()
@@ -47,11 +39,7 @@ export const PurchaseShares: FC = () => {
     setOpen(!open)
   }
 
-  const DEFAULT_SHARE_VALUE = 10
-
   const { enqueueSnackbar, closeSnackbar } = useSnackbar()
-
-
 
   // ===== //
   // STATE //
@@ -64,7 +52,6 @@ export const PurchaseShares: FC = () => {
   const [balance, setBalance] = useState(0)
   const [open, setOpen] = useState(false)
   const [sharePrice, setSharePrice] = useState(0)
-
 
   const isUnderfunded = basketPrice > Number(balance)
 
@@ -90,32 +77,27 @@ export const PurchaseShares: FC = () => {
         anchorOrigin: { horizontal: 'center', vertical: 'top' },
       })
     }
-    sunblockContract.on('SharesIssued', async (_address: string, amount) => {
-      console.log(`SharesIssued expected ${signerAddress} but got ${_address}` )
-      if (signerAddress !== _address) {
+    const filter = sunblockContract.filters.SharesIssued(signerAddress, null)
+    provider.once("block", () => {
+      sunblockContract.once(filter, async (buyer: string, amount) => {
+        console.log(`BUY EVENT: Address,${buyer} Amount,${amount}`);
 
-        return
-      }
-      closeSpinner()
-      enqueueSnackbar(`👍 Done! You now got ${amount} new share(s). Nice!`, {
-        variant: 'success',
-        anchorOrigin: { horizontal: 'center', vertical: 'top' },
-      })
-      track({
-        id: "share-issued",
-        parameters: {
-          contract: CONTRACT_ADDRESS_CUBE,
-          amount: amount,
+        if (signerAddress !== buyer) {
+          return
         }
+        closeSpinner()
+        enqueueSnackbar(`👍 Done! You now got ${amount} new share(s). Nice!`, {
+          variant: 'success',
+          anchorOrigin: { horizontal: 'center', vertical: 'top' },
+        })
       })
-
     })
+
   }
 
   const handleShareTextUpdate = (
     e: React.ChangeEvent<HTMLInputElement>
   ): void => {
-
     const sharesNum = Number.parseInt(e.target.value)
 
     if (Number.isNaN(sharesNum) || sharesNum < 0) {
@@ -126,7 +108,6 @@ export const PurchaseShares: FC = () => {
     setShareAmount(sharesNum)
     setBasketPrice(sharePrice * sharesNum)
 
-
     // Check if price is over wallet holding. Disable if to expensive
     if (basketPrice > usdt) {
       setStopPurchase(true)
@@ -136,20 +117,20 @@ export const PurchaseShares: FC = () => {
   }
 
   useEffect(() => {
-    fetch('/api/contracts/cube?q=sharePrice').then(res => res.json())
+    fetch('/api/contracts/cube?q=sharePrice')
+      .then((res) => res.json())
       .then((json) => {
         setSharePrice(json.value)
         setBasketPrice(json.value * DEFAULT_SHARE_VALUE)
       })
-      return () => {
-        setSharePrice(0)
-        setBasketPrice(0)
-      }
-  },[])
-
+    return () => {
+      setSharePrice(0)
+      setBasketPrice(0)
+    }
+  }, [])
 
   useEffect(() => {
-    if(provider){
+    if (provider) {
       getUSDTBalance(provider).then((amount) => {
         setBalance(amount)
       })
@@ -158,8 +139,7 @@ export const PurchaseShares: FC = () => {
       setBalance(0)
       setSharePrice(0)
     }
-
-  },[provider])
+  }, [provider])
 
   return (
     <Stack direction="column">
@@ -213,34 +193,3 @@ export const PurchaseShares: FC = () => {
     </Stack>
   )
 }
-//TODO: URL HARDCODED ABOVE!!
-
-// function useInvestmentVehicle() {
-//   const isActive = useIsActive()
-//   const provider = useProvider()
-//   const [vehicle, setVehicle] = useState<InvestmentVehicle>()
-
-//   useEffect(() => {
-//     const getVehicle = async () => {
-//       const signer = provider?.getSigner()
-//       if (signer === undefined) return
-//       const address = await signer!.getAddress()
-//       const sunblock = new ethers.Contract(
-//         CONTRACT_ADDRESS_SUNBLOCK,
-//         ABI_SUNBLOCK,
-//         signer
-//       )
-//       const vehicle: InvestmentVehicle = await sunblock
-//         .vehicle()
-//         .catch((error: Error) => console.log(error))
-//       setVehicle(vehicle)
-
-
-//     }
-//     if (isActive) {
-//       getVehicle()
-//     } else setVehicle(undefined)
-//     return () => {}
-//   }, [provider, isActive])
-//   return vehicle
-// }
