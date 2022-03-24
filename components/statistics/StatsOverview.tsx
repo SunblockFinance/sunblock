@@ -20,7 +20,7 @@ export const StatsOverview: FC = () => {
           padding: '20px',
         }}
       >
-      <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignContent='space-evenly'>
+      <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} justifyContent="space-around" alignItems="stretch">
         <StatsVehicleCard
           title={DESCRIPTOR_STRONGBLOCK.title}
           logo={DESCRIPTOR_STRONGBLOCK.logo}

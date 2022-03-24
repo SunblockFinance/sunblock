@@ -14,7 +14,7 @@ export interface ContractDescriptor {
 export const DESCRIPTOR_STRONGBLOCK:ContractDescriptor = {
     title:"Strongblock",
     logo:"/svg/strong-logo.svg",
-    description:"StrongBlock is the first and only blockchain-agnostic protocol to reward nodes for supporting the infrastructure of their blockchain.",
+    description:"StrongBlock is the first and only blockchain-agnostic protocol to reward nodes",
     contract:CONTRACT_ADDRESS_VEHICLE_STRONG,
     url:'https://strongblock.com/'
 }
