@@ -9,6 +9,7 @@ declare global {
         ALCHEMY_KEY: string;
         RPC_ENDPOINT: string;
         SENTRY_IGNORE_API_RESOLUTION_ERROR: number;
+        SENTRY_RELEASE:string
       }
     }
   }

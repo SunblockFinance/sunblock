@@ -40,6 +40,7 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
   const appid = process.env.NEXT_PUBLIC_APPID!
   const severurl = process.env.NEXT_PUBLIC_SERVER_URL!
 
+
   const [allowance, setAllowance] = useState('default')
 
   return (

@@ -39,6 +39,17 @@ const { withSentryConfig } = require('@sentry/nextjs');
 
 const moduleExports = {
   // Your existing module.exports
+  reactStrictMode: true,
+  webpack: (config, { dev, isServer }) => {
+    if (!dev && !isServer) {
+      Object.assign(config.resolve.alias, {
+        react: 'preact/compat',
+        'react-dom/test-utils': 'preact/test-utils',
+        'react-dom': 'preact/compat',
+      })
+    }
+    return config
+  },
 };
 
 const sentryWebpackPluginOptions = {
@@ -54,23 +65,23 @@ const sentryWebpackPluginOptions = {
 };
 
 /** @type {import('next').NextConfig} */
-module.exports = {
-  reactStrictMode: true,
-}
+// module.exports = {
+//   reactStrictMode: true,
+// }
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
 module.exports = withBundleAnalyzer({})
-module.exports = {
-  webpack: (config, { dev, isServer }) => {
-    if (!dev && !isServer) {
-      Object.assign(config.resolve.alias, {
-        react: 'preact/compat',
-        'react-dom/test-utils': 'preact/test-utils',
-        'react-dom': 'preact/compat',
-      })
-    }
-    return config
-  },
-}
+// module.exports = {
+//   webpack: (config, { dev, isServer }) => {
+//     if (!dev && !isServer) {
+//       Object.assign(config.resolve.alias, {
+//         react: 'preact/compat',
+//         'react-dom/test-utils': 'preact/test-utils',
+//         'react-dom': 'preact/compat',
+//       })
+//     }
+//     return config
+//   },
+// }
 module.exports = withSentryConfig(moduleExports, sentryWebpackPluginOptions);

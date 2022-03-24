@@ -18,7 +18,6 @@ export const StatsOverview: FC = () => {
           backgroundColor: 'rgba(56,71,80,0.5)',
           backdropFilter: 'blur(8px)',
           padding: '20px',
-          width: '100%',
         }}
       >
       <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignContent='space-evenly'>

@@ -3,10 +3,10 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-import EventOutlinedIcon from '@mui/icons-material/EventOutlined'
+import EventIcon from '@mui/icons-material/Event'
 import MonetizationOnOutlinedIcon from '@mui/icons-material/MonetizationOnOutlined'
 import PollOutlinedIcon from '@mui/icons-material/PollOutlined'
-import { Stack, styled } from '@mui/material'
+import { Avatar, Divider, Stack, styled } from '@mui/material'
 import LinearProgress, {
   linearProgressClasses
 } from '@mui/material/LinearProgress'
@@ -129,13 +129,7 @@ export const HeroRow: FC = () => {
       spacing={2}
       justifyContent="space-between"
     >
-      <HeroItem
-        icon={<EventOutlinedIcon fontSize="large" />}
-        title="Next payday"
-        subtitle="Distributed one time per week"
-      >
-        <span style={{ fontWeight: 'bold', fontSize: 31 }}>🤷</span>
-      </HeroItem>
+
       <HeroItem
         title="Next investment"
         icon={<PollOutlinedIcon fontSize="large" />}
@@ -150,9 +144,11 @@ export const HeroRow: FC = () => {
         subtitle={`${userShares} shares owned by you`}
         icon={<MonetizationOnOutlinedIcon fontSize="large" />}
       >
-        <span
-          style={{ fontWeight: 'bold', fontSize: 31 }}
-        >{`~ ${earnings.toFixed(2)} USDT`}</span>
+        <Divider textAlign="left">Estimated earnings</Divider>
+        <Stack direction='row'><Avatar src='/crypto-icons/usdt.svg'></Avatar><span style={{ fontWeight: 'bold', fontSize: 24 }}>&nbsp;{`${earnings.toFixed(2)} USDT`}</span></Stack>
+        <br/>
+        <Divider textAlign="left">Reward day</Divider>
+        <Stack direction='row'><Avatar sx={{backgroundColor:'transparent'}}><EventIcon fontSize='large' color='info'/></Avatar><span style={{ fontWeight: 'bold', fontSize: 24 }}>&nbsp;{`ETA 6 days`}</span></Stack>
       </HeroItem>
       <HeroItem
         title="Purchase shares"

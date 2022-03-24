@@ -23,7 +23,7 @@ import { ContractDescriptor } from '../../contracts/deployedContracts'
 import { AssetItem } from '../assets/AssetItem'
 
 const usdt = './crypto-icons/usdt.svg'
-const treasure = './svg/treasure.svg'
+const treasure = './svg/buy-money.svg'
 const withdrawl = './svg/withdrawl.svg'
 const investment = './svg/investment.svg'
 
@@ -85,8 +85,8 @@ export const StatsVehicleCard: FC<ContractDescriptor> = (props) => {
         backgroundColor: 'rgba(56,71,80,0.5)',
         backdropFilter: 'blur(8px)',
         padding: '5px',
-        width: '100%',
-        maxWidth: 'auto',
+        maxWidth:'400px'
+
       }}
     >
       <CardHeader

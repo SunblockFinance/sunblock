@@ -1,4 +1,5 @@
 // Copyright 2022 Kenth Fagerlund.
+// SPDX-License-Identifier: MIT
 
 import { withSentry } from '@sentry/nextjs'
 import { BigNumber, ethers } from 'ethers'
@@ -13,7 +14,7 @@ const provider = new ethers.providers.WebSocketProvider(
   `${process.env.RPC_ENDPOINT}`
 )
 
-// SPDX-License-Identifier: MIT
+
 const strongblock = new ethers.Contract(
   CONTRACT_ADDRESS_VEHICLE_STRONG,
   ABI_VEHICLE,

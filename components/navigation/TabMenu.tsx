@@ -9,7 +9,6 @@ import Tab from '@mui/material/Tab'
 import React, { FC } from 'react'
 import { AssetGroup } from '../assets/AssetGroup'
 import { Updates } from '../assets/Updates'
-import { History } from '../personal/History'
 import { StatsOverview } from '../statistics/StatsOverview'
 
 export const TabMenu: FC = () => {
@@ -32,7 +31,6 @@ export const TabMenu: FC = () => {
             <Tab label="Community stats" value="1" />
             <Tab label="Investment Stats" value="2" />
             <Tab label="Sunblock updates" value="3" />
-            <Tab disabled label="Transaction History (soon)" value="4" />
 
           </TabList>
         </Box>
@@ -47,10 +45,6 @@ export const TabMenu: FC = () => {
         <TabPanel value="3">
           {' '}
           <Updates />
-        </TabPanel>
-        <TabPanel value="4">
-          {' '}
-          <History />
         </TabPanel>
       </TabContext>
     </Box>
