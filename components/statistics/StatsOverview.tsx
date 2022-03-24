@@ -3,8 +3,8 @@
 import { Container, Stack } from '@mui/material'
 import { FC } from 'react'
 import {
-    DESCRIPTOR_STRONGBLOCK,
-    DESCRIPTOR_YIELDNODE
+  DESCRIPTOR_STRONGBLOCK,
+  DESCRIPTOR_YIELDNODE
 } from '../../contracts/deployedContracts'
 import { StatsVehicleCard } from './StatsVehicleCard'
 
@@ -21,7 +21,7 @@ export const StatsOverview: FC = () => {
           width: '100%',
         }}
       >
-      <Stack direction="row" spacing={2} alignContent='space-evenly'>
+      <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignContent='space-evenly'>
         <StatsVehicleCard
           title={DESCRIPTOR_STRONGBLOCK.title}
           logo={DESCRIPTOR_STRONGBLOCK.logo}
