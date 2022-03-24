@@ -12,10 +12,17 @@ import { ABI_VEHICLE } from '../../../contracts/abi/vehicle'
 import { CONTRACT_ADDRESS_CUBE } from '../../../programs/polygon'
 import { formatUSDTWeiToNumber } from '../../../utils/formaters'
 
-const provider = new ethers.providers.WebSocketProvider(`${process.env.RPC_ENDPOINT}`)
+let provider:ethers.providers.WebSocketProvider
+let cube:ethers.Contract
+
+
+provider = new ethers.providers.WebSocketProvider(`${process.env.RPC_ENDPOINT}`)
+cube = new ethers.Contract(CONTRACT_ADDRESS_CUBE, ABI_SUNBLOCK_CUBE,provider)
+
+
 
 // === CONTRACTS === //
-const cube = new ethers.Contract(CONTRACT_ADDRESS_CUBE, ABI_SUNBLOCK_CUBE,provider)
+
 
 
 type Data = {

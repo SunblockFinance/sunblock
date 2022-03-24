@@ -3,7 +3,7 @@
 declare global {
     namespace NodeJS {
       interface ProcessEnv {
-        NEXT_PUBLIC_CHAINID: string;
+        NEXT_PUBLIC_CHAINID: number;
         NODE_ENV: 'development' | 'production';
         INFURA_KEY: string;
         ALCHEMY_KEY: string;

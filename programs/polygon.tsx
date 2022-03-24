@@ -3,7 +3,7 @@
  */
 // export const CHAINID = 137
 // export const CHAINID = 31337 // LOCALHOST
-export const CHAINID = 80001 // MUMBAI
+export const CHAINID:number =80001 // MUMBAI
 /**
  * Address to main contract for sunblock
  */

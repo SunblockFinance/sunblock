@@ -18,6 +18,7 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
    */
   useEffect(() => {
     void metaMask.connectEagerly()
+
     network.activate(CHAINID)
     const insightkey = process.env.INSIGHT_KEY
 
