@@ -11,10 +11,11 @@ import { track } from 'insights-js'
 import Image from 'next/image'
 import { FC, useEffect, useState } from 'react'
 import { hooks, metaMask } from '../connectors/metamask'
-
 import { CHAINID } from '../programs/polygon'
 import { shortenAddress } from '../utils/formaters'
 import { AlertDialog, Contracts, WhoAreWe } from './AlertDialog'
+import styles from './header.module.css'
+
 
 let eth: any
 const { useAccount, useError, useIsActive, useProvider } = hooks
@@ -85,7 +86,7 @@ export const Header: FC = () => {
           }}
           color="warning"
         >
-          What is Sunblock?
+          <span className={styles.inprogress}>What is Sunblock?</span>
         </Button>
         <Button
           onClick={() => {
