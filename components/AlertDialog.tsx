@@ -2,17 +2,17 @@
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import {
-    Accordion,
-    AccordionDetails,
-    AccordionSummary,
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
-    Link,
-    Typography
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Link,
+  Typography
 } from '@mui/material'
 import { FC, ReactChild, useEffect, useState } from 'react'
 
@@ -90,19 +90,29 @@ export const Contracts = (
 export const WhoAreWe = (
   <>
     Sunblock is a way for investors with modest resources to be able to invest
-    in expensive protocols like StrongBlock. <br />
+    in protocols that might be out of reach for the average user. <br />
     <h2>How does it work?</h2>
     <p>
-      Each of us put in $10USDT per share. When we have reached enough to buy 10
-      STRONG (including gas and swap fees) then Sunblock will move the funds
-      over to Etherum network and purchase a StrongBlock node. This will repeate
-      as long as we have enough funds for another node.
+      First we, as a community, decide in what we want to invest in and how much our target amount should be.
+      It could be anything but preferably something that has an high entry bar. Then we deposit minimum 10USDT
+      and it goes to that next investment. 10USDT gives you one share. <b>Think of it as a community run savings account.</b>
     </p>
     <p>
-      As soon as we got the node up and running, it will start giving out
-      rewards. We will distributed the rewards on a regular schedule (usually
-      one time per week) to reduce the gas fees. 90% goes to the community, and
-      10% goes to Sunblock so I can warrant the late nights to my wife.
+      When the target amount is reached then Sunblock will, automatically, move the funds
+      to the investment vehicle&#42;. More on investment vehicles below.
+    </p>
+    <p>
+      The funds sent to the investment vehicle is then used to invest in the target investment it
+      is set to invest in, lets say StrongBlock. This vehicles is now ONLY used for that and the rewards
+      from the investments goes right back to the vehicle.
+    </p>
+    <p>
+      Then, on a regular schedule, the rewards from all vehicles are collected by, what we call the cube,
+      and is then distributed to all share holders, aka sunbathers.
+    </p>
+    <h2>Fees</h2>
+    <p>
+      Yes, 10% is taken from the incoming rewards, and ONLY the rewards. No rewards, no fees.
     </p>
     <p>Thats pretty much it. Nice and simple.</p>
     <h2>Q & A</h2>
@@ -119,9 +129,14 @@ export const WhoAreWe = (
           <p>Short: You should not! Trust no-one on the internet.</p>
           <p>
             Long: All I can do is to earn the trust and be as transparent as
-            possible. All contracts and wallets are there for you to see and as
-            for me, Kenth Fagerlund, well you can do your research and see if I
-            can be trusted. 🕵️‍♀️
+            possible. Ive tried to make the contracts in a way that I interact with the funds
+            as little as technically possible.
+            </p>
+            <p>
+              If I can build it all on contract then it will be done.
+            Only if we absolutly need to do manual purchase, like with strongblock then it will be handled
+            with open wallets. All contracts and wallets are there for you to see and as
+            for me, Kenth Fagerlund, well you can do your research and see if I can be trusted. 🕵️‍♀️
           </p>
           <p>
             You can chat with me anytime over Discord or Twitter (Hong Kong time
@@ -131,8 +146,9 @@ export const WhoAreWe = (
           </p>
           <p>
             I really wish that this whole thing could be done through smart
-            contracts that I can remove my ownership from, however, buying nodes
-            is an manual proccess. Noting I can change.
+            contracts that I can remove my ownership from. I intend to make sure
+            that the DAO part of this will give all shareholders comfort as they will
+            decide how the money is moved around. This will be added very very soon.
           </p>
           <p>
             The original idea that came from EasyBlock follows the same trust
