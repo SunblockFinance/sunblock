@@ -1,6 +1,6 @@
 // Copyright 2022 Kenth Fagerlund.
 // SPDX-License-Identifier: MIT
-export const ERC20 = [
+export const ABI_ERC20 = [
     {
     "constant": true,
     "inputs": [],

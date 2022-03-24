@@ -14,6 +14,8 @@ import { hooks, metaMask } from '../connectors/metamask'
 import { CHAINID } from '../programs/polygon'
 import { shortenAddress } from '../utils/formaters'
 import { AlertDialog, Contracts, WhoAreWe } from './AlertDialog'
+import styles from './header.module.css'
+
 
 let eth: any
 const { useAccount, useError, useIsActive, useProvider } = hooks
@@ -29,7 +31,7 @@ export const Header: FC = () => {
     'Just making sure you are you. No transaction is made, thus, cost no gas fee!'
 
   const [currentAccount, setCurrentAccount] = useState('')
-  const [usdc, setUsdc] = useState(0)
+  const [usdt, setUsdt] = useState(0)
 
   useEffect(() => {
     void metaMask.connectEagerly()
@@ -69,10 +71,10 @@ export const Header: FC = () => {
       sx={{ width: '100%' }}
     >
       <Image
-        src="/Sunblock-logos/Sunblock-logos_white.png"
+        src="/sunblock-logo/sunblock-text-side-transparent.svg"
         alt="Sunblock logo"
         width="263"
-        height="80"
+        height="100"
       />
       <Stack direction="row">
         <Button
@@ -84,7 +86,7 @@ export const Header: FC = () => {
           }}
           color="warning"
         >
-          What is Sunblock?
+          <span className={styles.inprogress}>What is Sunblock?</span>
         </Button>
         <Button
           onClick={() => {
@@ -96,6 +98,7 @@ export const Header: FC = () => {
         >
           Contracts and addresses
         </Button>
+
         <AlertDialog active={openHelp} title="What is Sunblock" content={WhoAreWe} />
         <AlertDialog active={openContract} title="Contracts and wallets" content={Contracts} />
       </Stack>

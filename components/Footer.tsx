@@ -29,7 +29,7 @@ export const Footer: FC = ({ children }) => {
         </IconButton>
         <IconButton target="_blank" href="https://discord.gg/6x2ndn5anT">
           <Image
-            src="/social/discord.svg"
+            src="/discord-logo.svg"
             alt="discord"
             height={20}
             width={20}

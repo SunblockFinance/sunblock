@@ -1,138 +1,54 @@
 // Copyright 2022 Kenth Fagerlund.
 // SPDX-License-Identifier: MIT
 import { BigNumber, ethers } from 'ethers'
-import {
-  ABI_ERC20,
-  ABI_SUNBLOCK,
-  InvestmentVehicle
-} from '../programs/contracts'
-import {
-  CONTRACT_ADDRESS_SUNBLOCK,
-  INVESTMENT_WALLET,
-  REWARD_WALLET,
-  TOKEN_ADDRESS_USDC
-} from '../programs/polygon'
-import { formatUSDCWeiToNumber } from '../utils/formaters'
+import { ABI_ERC20 } from '../contracts/abi/erc20'
+import { ABI_SUNBLOCK_CUBE } from '../contracts/abi/sunblock'
+import { CONTRACT_ADDRESS_CUBE, TOKEN_ADDRESS_USDT } from '../programs/polygon'
+import { formatUSDTWeiToNumber } from '../utils/formaters'
 
 
-export async function getUSDCBalance(provider: ethers.providers.Web3Provider): Promise<number> {
+/**
+ *
+ * @param provider metamask provider
+ * @returns amount of stable coins held by the address
+ */
+export async function getUSDTBalance(
+  provider: ethers.providers.Web3Provider
+): Promise<number> {
   try {
     const signer = provider.getSigner()
-  if (signer === undefined) return 0
-  const signerAddress = await signer.getAddress()
-  const erc20 = new ethers.Contract(TOKEN_ADDRESS_USDC, ABI_ERC20, signer)
+    if (signer === undefined) return 0
+    const signerAddress = await signer.getAddress()
+    const erc20 = new ethers.Contract(TOKEN_ADDRESS_USDT, ABI_ERC20, signer)
 
-  const contractBalance = await erc20.balanceOf(signerAddress).catch(console.error())
-  return formatUSDCWeiToNumber(contractBalance)
+    const contractBalance = await erc20.balanceOf(signerAddress)
+    return formatUSDTWeiToNumber(contractBalance)
   } catch (error) {
-    console.log(error);
+    console.log(error)
     return 0
   }
 }
 
-export async function getStrongBalance(provider: ethers.providers.Web3Provider): Promise<number> {
-  try {
-    const signer = provider.getSigner()
-  if (signer === undefined) return 0
-  const signerAddress = await signer.getAddress()
-  const erc20 = new ethers.Contract(TOKEN_ADDRESS_USDC, ABI_ERC20, signer)
 
-  const contractBalance = await erc20.balanceOf(signerAddress).catch(console.error())
-  return formatUSDCWeiToNumber(contractBalance)
-  } catch (error) {
-    console.log(error);
-    return 0
-  }
-}
-
-export async function getHeldShares(provider: ethers.providers.Web3Provider): Promise<number> {
+/**
+ *
+ * @param provider metamask provider
+ * @returns amount of shares held by the specific address
+ */
+export async function getHeldShares(
+  provider: ethers.providers.Web3Provider
+): Promise<number> {
   try {
     const contract = new ethers.Contract(
-      CONTRACT_ADDRESS_SUNBLOCK,
-      ABI_SUNBLOCK,
+      CONTRACT_ADDRESS_CUBE,
+      ABI_SUNBLOCK_CUBE,
       provider
     )
     const signAddr = await provider.getSigner().getAddress()
-    const amount: BigNumber = await contract.shareholder(signAddr).catch(console.error())
+    const amount: BigNumber = await contract.shareholder(signAddr)
     return amount.toNumber()
   } catch (error) {
-    console.log(error);
-    return 0
-  }
-}
-
-export async function getSharesIssued(provider: ethers.providers.Web3Provider): Promise<number> {
-  try {
-    const contract = new ethers.Contract(
-      CONTRACT_ADDRESS_SUNBLOCK,
-      ABI_SUNBLOCK,
-      provider
-    )
-    const amount: BigNumber = await contract.sharesIssued().catch(console.error())
-    return amount.toNumber()
-  } catch (error) {
-    console.log(error);
-    return 0
-  }
-}
-
-export async function getInvestmentFund(provider: ethers.providers.Web3Provider): Promise<number> {
-  try {
-    const contract = new ethers.Contract(
-      TOKEN_ADDRESS_USDC,
-      ABI_ERC20,
-      provider
-    )
-    const amount: BigNumber = await contract.balanceOf(INVESTMENT_WALLET).catch(console.error())
-    return formatUSDCWeiToNumber(amount)
-  } catch (error) {
-    console.log(error);
-    return 0
-  }
-}
-
-export async function getRewardFund(provider: ethers.providers.Web3Provider): Promise<number> {
-  try {
-    const contract = new ethers.Contract(
-      TOKEN_ADDRESS_USDC,
-      ABI_ERC20,
-      provider
-    )
-    const amount: BigNumber = await contract.balanceOf(REWARD_WALLET)
-    return formatUSDCWeiToNumber(amount)
-  } catch (error) {
-    console.log(error);
-    return 0
-  }
-}
-
-export async function getInvestmentVehicle(
-  provider: ethers.providers.Web3Provider
-): Promise<InvestmentVehicle | undefined> {
-  try {
-    const contract = new ethers.Contract(
-      CONTRACT_ADDRESS_SUNBLOCK,
-      ABI_SUNBLOCK,
-      provider
-    )
-    const vehicle: InvestmentVehicle = await contract.vehicle().catch(console.error())
-    return vehicle
-  } catch (error) {
-    return undefined
-  }
-}
-
-export async function getShareholderCount(provider: ethers.providers.Web3Provider): Promise<number> {
-  try {
-    const contract = new ethers.Contract(
-      CONTRACT_ADDRESS_SUNBLOCK,
-      ABI_SUNBLOCK,
-      provider
-    )
-    const amount: BigNumber = await contract.shareHolderCount().catch(console.error())
-    return amount.toNumber()
-  } catch (error) {
-    console.log(error);
+    console.log(error)
     return 0
   }
 }

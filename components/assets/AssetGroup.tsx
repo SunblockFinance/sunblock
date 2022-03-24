@@ -10,10 +10,8 @@ import Stack from '@mui/material/Stack'
 import CoinGecko from 'coingecko-api'
 import { FC, useEffect, useState } from 'react'
 import { CoinGeckoPrice } from '../../blockchain/coingecko'
-import { getInvestmentFund, getInvestmentVehicle, getRewardFund, getShareholderCount, getSharesIssued } from '../../blockchain/query'
-import { hooks } from '../../connectors/metamask'
-import { InvestmentVehicle } from '../../programs/contracts'
-import { formatUSDCWeiToNumber } from '../../utils/formaters'
+import { hooks, network } from '../../connectors/network'
+import { CHAINID } from '../../programs/polygon'
 import { AssetItem } from './AssetItem'
 
 
@@ -22,8 +20,9 @@ const { useProvider } = hooks
 
 export const AssetGroup: FC = () => {
   const provider = useProvider()
-  const usdc = './usdc-logo.webp'
-  const strong = './strong-strong-logo.webp'
+  const usdt = './crypto-icons/usdt.svg'
+  const strong = './crypto-icons/strong.webp'
+  const reward = './svg/treasure.svg'
 
   /**
    * Token prices
@@ -38,38 +37,49 @@ export const AssetGroup: FC = () => {
   const [rewardFund, setRewardFund] = useState(0)
   const [sharesIssued, setSharesIssued] = useState(0)
   const [totalInvestment, setTotalInvestment] = useState(0)
-  const [investmentVehicle, setInvestmentVehicle] = useState<InvestmentVehicle>()
+  const [sharePrice, setSharePrice] = useState(0)
 
   useEffect(() => {
-    if (provider) {
-      getInvestmentFund(provider).then((balance) => {
-        setInvestFund(balance)
+    void network.activate(CHAINID)
+  }, [])
+
+  useEffect(() => {
+
+      fetch('/api/contracts/cube?q=cubeInvestmentFund').then(res => res.json())
+      .then((json) => {
+        setInvestFund(json.value)
       })
-      getSharesIssued(provider).then((shares) => {
-        setSharesIssued(shares)
+      fetch('/api/contracts/cube?q=sharesIssued').then(res => res.json())
+      .then((json) => {
+        setSharesIssued(json.value)
       })
-      getInvestmentVehicle(provider).then((vehicle) => {
-          setInvestmentVehicle(vehicle)
+      fetch('/api/contracts/cube?q=sharePrice').then(res => res.json())
+      .then((json) => {
+        setSharePrice(json.value)
       })
-      getRewardFund(provider).then((reward) => {
-        setRewardFund(reward)
+      fetch('/api/contracts/cube?q=cubeRewardFund').then(res => res.json())
+      .then((json) => {
+        setRewardFund(json.value)
       })
-      getShareholderCount(provider).then((count) => {
-        setInvestorCount(count)
+      fetch('/api/contracts/cube?q=shareholderCount').then(res => res.json())
+      .then((json) => {
+        setInvestorCount(json.value)
       })
-    }
+
 
     return () => {
         setInvestFund(0)
         setSharesIssued(0)
-        setInvestmentVehicle(undefined)
+        setSharePrice(0)
         setTotalInvestment(0)
         setRewardFund(0)
         setInvestorCount(0)
     }
-  }, [provider])
+  }, [])
 
   useEffect(() => {
+
+
     const CoinGeckoClient = new CoinGecko();
     CoinGeckoClient.simple.price({ids:'strong', vs_currencies:'usd', include_24hr_change:true}).then((data:CoinGeckoPrice) => {
       setStrongPrice(data.data.strong.usd)
@@ -83,15 +93,11 @@ export const AssetGroup: FC = () => {
   },[])
 
   useEffect(() => {
-    if (investmentVehicle) {
-      const unitCost = formatUSDCWeiToNumber(investmentVehicle!.unitcost)
-      setTotalInvestment(unitCost * sharesIssued)
-    }
-
+      setTotalInvestment(sharePrice * sharesIssued)
     return () => {
       setTotalInvestment(0)
     }
-  }, [investmentVehicle, sharesIssued])
+  }, [sharePrice, sharesIssued])
 
 
   return (
@@ -115,18 +121,13 @@ export const AssetGroup: FC = () => {
           >
             <AssetItem
               title="Capital waiting to be invested"
-              value={`${investFund.toString()} USDC`}
-              avatar={usdc}
+              value={`${investFund.toString()} USDT`}
+              avatar={usdt}
             />
             <AssetItem
               title="Rewards accumulated"
-              value={`${rewardFund.toString()} STRONG `}
-              avatar={strong}
-            />
-            <AssetItem
-              title="Total lifetime investment"
-              value={`${totalInvestment.toString()} USDC`}
-              avatar={usdc}
+              value={`${rewardFund.toString()} USDT `}
+              avatar={reward}
             />
           </Stack>
           <Stack

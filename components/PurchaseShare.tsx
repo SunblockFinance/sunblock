@@ -15,27 +15,23 @@ import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import { ethers } from 'ethers'
-import { track } from 'insights-js'
 import { useSnackbar } from 'notistack'
 import React, { FC, useEffect, useState } from 'react'
-import { getUSDCBalance } from '../blockchain/query'
+import { getUSDTBalance } from '../blockchain/query'
 import { hooks } from '../connectors/metamask'
-import {
-  ABI_SUNBLOCK,
-  InvestmentVehicle
-} from '../programs/contracts'
-import {
-  CONTRACT_ADDRESS_SUNBLOCK
-} from '../programs/polygon'
-import { formatUSDCWeiToNumber } from '../utils/formaters'
+import { ABI_SUNBLOCK_CUBE } from '../contracts/abi/sunblock'
+import { CONTRACT_ADDRESS_CUBE } from '../programs/polygon'
 import AllowancePill from './AllowancePill'
 
 
-const { useProvider, useAccount, useIsActive } = hooks
+const DEFAULT_SHARE_VALUE = 10
+const { useIsActive, useProvider } = hooks
 
-let eth: any
 
 export const PurchaseShares: FC = () => {
+  const provider = useProvider()
+  const isWalletActive = useIsActive()
+
   const closeSpinner = () => {
     setOpen(false)
   }
@@ -43,24 +39,19 @@ export const PurchaseShares: FC = () => {
     setOpen(!open)
   }
 
-  const DEFAULT_SHARE_VALUE = 10
-
   const { enqueueSnackbar, closeSnackbar } = useSnackbar()
-  const provider = useProvider()
-  const account = useAccount()
-  const isactive = useIsActive()
-  const vehicle = useInvestmentVehicle()
-  const [open, setOpen] = useState(false)
 
-  // What is the users current allowance
-
-  const [usdc, setUsdc] = useState(0)
+  // ===== //
+  // STATE //
+  // ===== //
+  const [usdt, setUsdt] = useState(0)
   const [activeTx, setActiveTx] = useState<TransactionResponse>()
   const [stopPurchase, setStopPurchase] = useState(false)
   const [shareAmount, setShareAmount] = useState(DEFAULT_SHARE_VALUE)
   const [basketPrice, setBasketPrice] = useState(0)
   const [balance, setBalance] = useState(0)
-
+  const [open, setOpen] = useState(false)
+  const [sharePrice, setSharePrice] = useState(0)
 
   const isUnderfunded = basketPrice > Number(balance)
 
@@ -69,8 +60,8 @@ export const PurchaseShares: FC = () => {
     const signer = provider.getSigner()
     const signerAddress = await signer.getAddress()
     const sunblockContract = new ethers.Contract(
-      CONTRACT_ADDRESS_SUNBLOCK,
-      ABI_SUNBLOCK,
+      CONTRACT_ADDRESS_CUBE,
+      ABI_SUNBLOCK_CUBE,
       signer
     )
     try {
@@ -86,51 +77,39 @@ export const PurchaseShares: FC = () => {
         anchorOrigin: { horizontal: 'center', vertical: 'top' },
       })
     }
-    sunblockContract.on('SharesIssued', async (_address: string, amount) => {
-      if (signerAddress !== _address) {
-        return
-      }
-      closeSpinner()
-      enqueueSnackbar(`👍 Done! You now got ${amount} new share(s). Nice!`, {
-        variant: 'success',
-        anchorOrigin: { horizontal: 'center', vertical: 'top' },
-      })
-      track({
-        id: "share-issued",
-        parameters: {
-          contract: CONTRACT_ADDRESS_SUNBLOCK,
-          amount: amount,
-        }
-      })
+    const filter = sunblockContract.filters.SharesIssued(signerAddress, null)
+    provider.once("block", () => {
+      sunblockContract.once(filter, async (buyer: string, amount) => {
+        console.log(`BUY EVENT: Address,${buyer} Amount,${amount}`);
 
+        if (signerAddress !== buyer) {
+          return
+        }
+        closeSpinner()
+        enqueueSnackbar(`👍 Done! You now got ${amount} new share(s). Nice!`, {
+          variant: 'success',
+          anchorOrigin: { horizontal: 'center', vertical: 'top' },
+        })
+      })
     })
+
   }
 
   const handleShareTextUpdate = (
     e: React.ChangeEvent<HTMLInputElement>
   ): void => {
-    if (!vehicle) {
-      console.log("Ain't got no vehicle!")
-      return
-    }
     const sharesNum = Number.parseInt(e.target.value)
 
     if (Number.isNaN(sharesNum) || sharesNum < 0) {
       setShareAmount(0)
       return
     }
-    const totalWeiCost = vehicle.unitcost.mul(sharesNum)
-    console.log("WEI COST:", totalWeiCost);
-    console.log('basket price:', formatUSDCWeiToNumber(totalWeiCost!));
-    console.log('Share amount:', sharesNum);
 
-
-
-    setBasketPrice(formatUSDCWeiToNumber(totalWeiCost!))
     setShareAmount(sharesNum)
+    setBasketPrice(sharePrice * sharesNum)
 
     // Check if price is over wallet holding. Disable if to expensive
-    if (basketPrice > usdc) {
+    if (basketPrice > usdt) {
       setStopPurchase(true)
     } else {
       setStopPurchase(false)
@@ -138,28 +117,29 @@ export const PurchaseShares: FC = () => {
   }
 
   useEffect(() => {
-      if (vehicle) {
-        const totalWeiCost = vehicle.unitcost.mul(DEFAULT_SHARE_VALUE)
-        setBasketPrice(formatUSDCWeiToNumber(totalWeiCost!))
-      }
-
+    fetch('/api/contracts/cube?q=sharePrice')
+      .then((res) => res.json())
+      .then((json) => {
+        setSharePrice(json.value)
+        setBasketPrice(json.value * DEFAULT_SHARE_VALUE)
+      })
     return () => {
+      setSharePrice(0)
       setBasketPrice(0)
     }
-  }, [vehicle])
+  }, [])
 
   useEffect(() => {
-    if(provider){
-      getUSDCBalance(provider).then((amount) => {
-        console.log("Setting balance to ", amount);
+    if (provider) {
+      getUSDTBalance(provider).then((amount) => {
         setBalance(amount)
       })
     }
     return () => {
       setBalance(0)
+      setSharePrice(0)
     }
-
-  },[provider])
+  }, [provider])
 
   return (
     <Stack direction="column">
@@ -179,7 +159,7 @@ export const PurchaseShares: FC = () => {
           }}
           size="small"
           variant="contained"
-          disabled={isUnderfunded || shareAmount === 0}
+          disabled={isUnderfunded || shareAmount === 0 || !isWalletActive}
         >
           {isUnderfunded ? `Low funds 🙁` : `Buy shares`}
         </Button>
@@ -213,80 +193,3 @@ export const PurchaseShares: FC = () => {
     </Stack>
   )
 }
-//TODO: URL HARDCODED ABOVE!!
-
-function useInvestmentVehicle() {
-  const isActive = useIsActive()
-  const provider = useProvider()
-  const [vehicle, setVehicle] = useState<InvestmentVehicle>()
-
-  useEffect(() => {
-    const getVehicle = async () => {
-      const signer = provider?.getSigner()
-      if (signer === undefined) return
-      const address = await signer!.getAddress()
-      const sunblock = new ethers.Contract(
-        CONTRACT_ADDRESS_SUNBLOCK,
-        ABI_SUNBLOCK,
-        signer
-      )
-      const vehicle: InvestmentVehicle = await sunblock
-        .vehicle()
-        .catch((error: Error) => console.log(error))
-      setVehicle(vehicle)
-
-
-    }
-    if (isActive) {
-      getVehicle()
-    } else setVehicle(undefined)
-    return () => {}
-  }, [provider, isActive])
-  return vehicle
-}
-
-// function useTokenBalance() {
-//   const isActive = useIsActive()
-
-//   const [balance, setBalance] = useState('')
-//   const provider = useProvider()
-
-//   useEffect(() => {
-//     // const getBalance = async () => {
-//     //   try {
-//     //     const signer = provider?.getSigner()
-//     //     if (signer === undefined) return
-//     //     const signerAddress = await signer.getAddress()
-
-//     //     const erc20 = new ethers.Contract(
-//     //       TOKEN_ADDRESS_USDC,
-//     //       ABI_ERC20,
-//     //       provider
-//     //     )
-//     //     const amount: BigNumber = await erc20.balanceOf(signerAddress)
-//     //     erc20.on('Transfer', (from, to, amount, event) => {
-//     //       if (from == signerAddress && to == CONTRACT_ADDRESS_SUNBLOCK) {
-//     //         ;async () => {
-//     //           const newBalance = await erc20.balanceOf(signerAddress)
-//     //           newBalance(newBalance)
-//     //         }
-//     //       }
-//     //     })
-//     //     console.log("Balance is ", formatWeiToString(amount));
-
-//     //     setBalance(formatWeiToString(amount))
-//     //   } catch (error) {
-//     //     console.log(error)
-//     //   }
-//     // }
-//     if (isActive) {
-//       getUSDCBalance(provider).then((amount) => {
-//         setBalance(amount)
-//       })
-//     } else setBalance('')
-//     return () => {
-//       setBalance('')
-//     }
-//   }, [provider, isActive])
-//   return balance
-// }

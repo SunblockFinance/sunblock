@@ -1,5 +1,5 @@
 // Copyright 2022 Kenth Fagerlund.
-
+// SPDX-License-Identifier: MIT
 import {
   Button,
   Dialog,
@@ -17,7 +17,6 @@ import { CHAINID } from '../programs/polygon'
 
 const { useProvider, useChainId } = hooks
 
-// SPDX-License-Identifier: MIT
 const NetworkAlert: FC = () => {
   const [open, setOpen] = useState(false)
   const provider = useProvider()
@@ -37,7 +36,6 @@ const NetworkAlert: FC = () => {
       setOpen(false)
     }
   }, [chainID])
-
 
 
   const handleNetworkSwitch = async () => {
@@ -77,11 +75,11 @@ const NetworkAlert: FC = () => {
           {'🤷‍♂️ Wrong network 🤷‍♂️'}
         </DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
+          <DialogContentText id="alert-dialog-description" >
             Like a lawyer in the wrong courtroom, We have no idea where the
             contracts are on this network. If you want Sunblock on this network,
             give us a shout.{' '}
-            <p> Until then, do you wish for us to switch to Polygon for now?</p>
+            Until then, do you wish for us to switch to Polygon for now?
           </DialogContentText>
         </DialogContent>
         <DialogActions>

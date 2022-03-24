@@ -3,7 +3,10 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-import { Stack, styled } from '@mui/material'
+import EventIcon from '@mui/icons-material/Event'
+import MonetizationOnOutlinedIcon from '@mui/icons-material/MonetizationOnOutlined'
+import PollOutlinedIcon from '@mui/icons-material/PollOutlined'
+import { Avatar, Divider, Stack, styled } from '@mui/material'
 import LinearProgress, {
   linearProgressClasses
 } from '@mui/material/LinearProgress'
@@ -11,16 +14,15 @@ import CoinGecko from 'coingecko-api'
 import Image from 'next/image'
 import { FC, useEffect, useState } from 'react'
 import { CoinGeckoPrice } from '../../blockchain/coingecko'
-import { getHeldShares, getInvestmentFund, getRewardFund, getSharesIssued, getStrongBalance } from '../../blockchain/query'
+import { getHeldShares } from '../../blockchain/query'
 import { hooks } from '../../connectors/metamask'
+import InvestmentQueue from '../InvestmentQueue'
 import { PurchaseShares } from '../PurchaseShare'
 import { HeroItem } from './HeroItem'
 
 const { useProvider } = hooks
 
 export const HeroRow: FC = () => {
-  const [strongAmount, setStrongAmount] = useState(0)
-  const [strongNodes, setStrongNodes] = useState(0)
   const [userShares, setUserShares] = useState(0)
   const [sharesIssued, setSharesIssued] = useState(0)
   const [earnings, setEarnings] = useState(0)
@@ -31,40 +33,44 @@ export const HeroRow: FC = () => {
 
   const strongLogo = (
     <Image
-      src="/strong-strong-logo.webp"
-      alt="usdc"
+      src="/crypto-logo/strong.webp"
+      alt="strong"
       width="30px"
       height="30px"
     />
   )
 
   useEffect(() => {
-    if (provider) {
-      getStrongBalance(provider).then((balance) => {
-        setStrongAmount(balance)
+    fetch('/api/contracts/cube?q=cubeInvestmentFund').then(res => res.json())
+      .then((json) => {
+        setInvestFund(json.value)
       })
-      getHeldShares(provider).then((shares) => {
-        setUserShares(shares)
-      })
-      getInvestmentFund(provider).then((balance) => {
-        setInvestFund(balance)
-      })
-      getRewardFund(provider).then((balance) => {
-        setRewardFund(balance)
-      })
-      getSharesIssued(provider).then((amount) => {
-        setSharesIssued(amount)
-      })
-    }
+    fetch('/api/contracts/cube?q=cubeRewardFund').then(res => res.json())
+    .then((json) => {
+      setRewardFund(json.value)
+    })
+    fetch('/api/contracts/cube?q=sharesIssued').then(res => res.json())
+    .then((json) => {
+      setSharesIssued(json.value)
+    })
     return () => {
-      setStrongAmount(0)
-      setUserShares(0)
       setInvestFund(0)
       setRewardFund(0)
       setSharesIssued(0)
     }
-  }, [provider])
+  },[])
 
+  useEffect(() => {
+    if (provider) {
+      getHeldShares(provider).then((shares) => {
+        setUserShares(shares)
+      })
+    }
+
+    return () => {
+      setUserShares(0)
+    }
+  }, [provider])
 
   /**
    * Calculate the progress we made to buying a node in percent
@@ -74,38 +80,32 @@ export const HeroRow: FC = () => {
     cg.simple
       .price({ ids: 'strong', vs_currencies: 'usd', include_24hr_change: true })
       .then((data: CoinGeckoPrice) => {
-        const strongprice:number = data.data.strong.usd
-        const np = strongprice*10
+        const strongprice: number = data.data.strong.usd
+        const np = strongprice * 10
         const tp = (100 * investFund) / np
         setNodeProgress(tp)
       })
-      return () => {
-        setNodeProgress(0)
-      }
+    return () => {
+      setNodeProgress(0)
+    }
   }, [investFund])
 
   /**
    * Estimate the reward the user should expect next
    */
   useEffect(() => {
-    const CoinGeckoClient = new CoinGecko();
-    CoinGeckoClient.simple.price({ids:'strong', vs_currencies:'usd', include_24hr_change:true}).then((data:CoinGeckoPrice) => {
-      const strongPrice = data.data.strong.usd
-      const rewardPerShare = (rewardFund * strongPrice) / sharesIssued
-      const userEarningEstimate = rewardPerShare * userShares
-      if (Number.isNaN(userEarningEstimate)) {
-        setEarnings(0)
-      } else {
-        setEarnings(userEarningEstimate)
-      }
-
-    })
+    const rewardPerShare = rewardFund / sharesIssued
+    const userEarningEstimate = rewardPerShare * userShares
+    if (Number.isNaN(userEarningEstimate)) {
+      setEarnings(0)
+    } else {
+      setEarnings(userEarningEstimate)
+    }
 
     return () => {
       setEarnings(0)
     }
-
-  },[rewardFund,userShares, sharesIssued])
+  }, [rewardFund, userShares, sharesIssued])
 
   /**
    * Pretty Progress bar for the node progress
@@ -126,40 +126,34 @@ export const HeroRow: FC = () => {
   return (
     <Stack
       direction={{ xs: 'column', md: 'row' }}
-      spacing={2}
+      spacing={6}
       justifyContent="space-between"
     >
-      <HeroItem title="Next payday" subtitle="Distributed one time per week">
-        <span style={{ fontWeight: 'bold', fontSize: 31 }}>No nodes, yet!</span>
-      </HeroItem>
+
       <HeroItem
-        title="Strong nodes"
-        subtitle={`${strongNodes} nodes owned by us`}
+        title="Next investment"
+        icon={<PollOutlinedIcon fontSize="large" />}
       >
         <Stack direction="column" alignItems="center" spacing={2}>
-
-          Left until new node:
-          <BorderLinearProgress
-            sx={{ minWidth: 200 }}
-            variant="determinate"
-            value={nodeProgress}
-
-          />
-          <span style={{ fontWeight: 'bold', fontSize: 31 }}>Nodes: 0</span>
+          <InvestmentQueue />
         </Stack>
       </HeroItem>
 
       <HeroItem
         title="Estimated earning"
         subtitle={`${userShares} shares owned by you`}
+        icon={<MonetizationOnOutlinedIcon fontSize="large" />}
       >
-        <span
-          style={{ fontWeight: 'bold', fontSize: 31 }}
-        >{`~ ${earnings.toFixed(2)} USDC`}</span>
+        <Divider textAlign="left">Estimated earnings</Divider>
+        <Stack direction='row'><Avatar src='/crypto-icons/usdt.svg'></Avatar><span style={{ fontWeight: 'bold', fontSize: 24 }}>&nbsp;{`${earnings.toFixed(2)} USDT`}</span></Stack>
+        <br/>
+        <Divider textAlign="left">Reward day</Divider>
+        <Stack direction='row'><Avatar sx={{backgroundColor:'transparent'}}><EventIcon fontSize='large' color='info'/></Avatar><span style={{ fontWeight: 'bold', fontSize: 24 }}>&nbsp;{`ETA 6 days`}</span></Stack>
       </HeroItem>
       <HeroItem
         title="Purchase shares"
-        subtitle="Each share is 10 USDC"
+        subtitle="Each share is 10 USDT"
+        avatar="./crypto-icons/usdt.svg"
         promote
       >
         <PurchaseShares />
