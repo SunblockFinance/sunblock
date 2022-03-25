@@ -10,9 +10,9 @@ import Stack from '@mui/material/Stack'
 import CoinGecko from 'coingecko-api'
 import { FC, useEffect, useState } from 'react'
 import { CoinGeckoPrice } from '../../blockchain/coingecko'
+import * as cube from '../../blockchain/providercalls'
 import { hooks } from '../../connectors/network'
 import { AssetItem } from './AssetItem'
-
 
 let eth: any
 const { useProvider } = hooks
@@ -29,7 +29,6 @@ export const AssetGroup: FC = () => {
   const [strongPrice, setStrongPrice] = useState(0)
   const [strongChange, setStrongChange] = useState(0)
 
-
   const [heldShares, setHeldShares] = useState(0)
   const [investorCount, setInvestorCount] = useState(0)
   const [investFund, setInvestFund] = useState(0)
@@ -43,61 +42,52 @@ export const AssetGroup: FC = () => {
   }, [])
 
   useEffect(() => {
-
-      fetch('/api/contracts/cube?q=cubeInvestmentFund').then(res => res.json())
-      .then((json) => {
-        setInvestFund(json.value)
-      })
-      fetch('/api/contracts/cube?q=sharesIssued').then(res => res.json())
-      .then((json) => {
-        setSharesIssued(json.value)
-      })
-      fetch('/api/contracts/cube?q=sharePrice').then(res => res.json())
-      .then((json) => {
-        setSharePrice(json.value)
-      })
-      fetch('/api/contracts/cube?q=cubeRewardFund').then(res => res.json())
-      .then((json) => {
-        setRewardFund(json.value)
-      })
-      fetch('/api/contracts/cube?q=shareholderCount').then(res => res.json())
-      .then((json) => {
-        setInvestorCount(json.value)
-      })
-
+    cube.getCubeInvestmentFund().then((amount) => {
+      setInvestFund(amount)
+    })
+    cube.getSharesIssued().then((amount) => {
+      setSharesIssued(amount)
+    })
+    cube.getSharePrice().then((price) => {
+      setSharePrice(price)
+    })
+    cube.getCubeRewardFund().then((amount) => {
+      setRewardFund(amount)
+    })
+    cube.getShareholderCount().then((count) => {
+      setInvestorCount(count)
+    })
 
     return () => {
-        setInvestFund(0)
-        setSharesIssued(0)
-        setSharePrice(0)
-        setTotalInvestment(0)
-        setRewardFund(0)
-        setInvestorCount(0)
+      setInvestFund(0)
+      setSharesIssued(0)
+      setSharePrice(0)
+      setTotalInvestment(0)
+      setRewardFund(0)
+      setInvestorCount(0)
     }
   }, [])
 
   useEffect(() => {
-
-
-    const CoinGeckoClient = new CoinGecko();
-    CoinGeckoClient.simple.price({ids:'strong', vs_currencies:'usd', include_24hr_change:true}).then((data:CoinGeckoPrice) => {
-      setStrongPrice(data.data.strong.usd)
-      setStrongChange(data.data.strong.usd_24h_change)
-
-    })
+    const CoinGeckoClient = new CoinGecko()
+    CoinGeckoClient.simple
+      .price({ ids: 'strong', vs_currencies: 'usd', include_24hr_change: true })
+      .then((data: CoinGeckoPrice) => {
+        setStrongPrice(data.data.strong.usd)
+        setStrongChange(data.data.strong.usd_24h_change)
+      })
     return () => {
       setStrongPrice(0)
       setStrongChange(0)
     }
-  },[])
+  }, [])
 
   useEffect(() => {
-      setTotalInvestment(sharePrice * sharesIssued)
+    setTotalInvestment(sharePrice * sharesIssued)
     return () => {
       setTotalInvestment(0)
     }
   }, [sharePrice, sharesIssued])
-
 
   return (
     <>
@@ -137,12 +127,12 @@ export const AssetGroup: FC = () => {
             <AssetItem
               title="Total amount of shares issued"
               value={`${sharesIssued.toString()} shares`}
-              icon={<PieChartTwoToneIcon fontSize="large" color='info'/>}
+              icon={<PieChartTwoToneIcon fontSize="large" color="info" />}
             />
             <AssetItem
               title="Community shareholders"
               value={`${investorCount} Sunbathers`}
-              icon={<GroupIcon fontSize='large' color='info'/>}
+              icon={<GroupIcon fontSize="large" color="info" />}
             />
             <AssetItem
               title="Strong price"
@@ -150,7 +140,6 @@ export const AssetGroup: FC = () => {
               avatar={strong}
             />
           </Stack>
-
         </Stack>
       </Container>
     </>
