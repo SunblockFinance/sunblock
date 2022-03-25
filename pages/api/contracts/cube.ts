@@ -4,7 +4,7 @@
 // https://opensource.org/licenses/MIT
 
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import { withSentry } from '@sentry/nextjs'
+
 import { BigNumber, ethers } from 'ethers'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { ABI_SUNBLOCK_CUBE } from '../../../contracts/abi/sunblock'
@@ -32,7 +32,7 @@ type Data = {
 
 // =========== HANDLER ============ //
 
-export async function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
@@ -64,9 +64,13 @@ export async function handler(
       })
       break;
     case 'cubeRewardFund':
-      await getCubeRewardFund().then((amount) => {
-        res.status(200).json({ field:q, value:amount })
+      return new Promise<void>((resolve, reject) => {
+        getCubeRewardFund().then((amount) => {
+          res.status(200).json({ field:q, value:amount })
+          resolve()
+        })
       })
+
       break;
     case 'heldShares':
       await getHeldShares(addr).then((amount) => {
@@ -184,13 +188,15 @@ async function getCubeInvestmentFund(): Promise<number> {
  * @returns amount of rewards waiting for distribution. Returned formatted
  */
 async function getCubeRewardFund(): Promise<number> {
-  try {
-    const amount: BigNumber = await cube.rewardsHeld()
-    return formatUSDTWeiToNumber(amount)
-  } catch (error) {
-    console.log(error)
-    return 0
-  }
+    try {
+      const amount: BigNumber = await cube.rewardsHeld()
+      return formatUSDTWeiToNumber(amount)
+    } catch (error) {
+      console.log(error)
+      return 0
+    }
+
+
 }
 
 /**
@@ -252,4 +258,3 @@ async function getShareholderCount(): Promise<number> {
     return 0
   }
 }
-export default withSentry(handler);

@@ -1,7 +1,6 @@
 // Copyright 2022 Kenth Fagerlund.
 // SPDX-License-Identifier: MIT
 
-import { withSentry } from '@sentry/nextjs'
 import { BigNumber, ethers } from 'ethers'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { ABI_VEHICLE } from '../../../contracts/abi/vehicle'
@@ -31,7 +30,7 @@ type Data = {
   value: string | number
 }
 
-export async function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
@@ -89,4 +88,3 @@ export async function handler(
       return ''
     }
   }
-  export default withSentry(handler);
