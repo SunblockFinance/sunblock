@@ -15,6 +15,15 @@ export const Footer: FC = ({ children }) => {
   return (
     <>
       <Stack direction="row" justifyContent="center" spacing={4}>
+      <IconButton href="https://docs.sunblock.finance" target="_blank">
+          {' '}
+          <Image
+            src="/svg/gitbook.svg"
+            alt="gitbook logo"
+            height={20}
+            width={20}
+          />
+        </IconButton>
         <IconButton href="https://github.com/SunblockFinance" target="_blank">
           {' '}
           <GitHubIcon color="action" />

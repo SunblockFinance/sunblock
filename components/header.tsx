@@ -72,13 +72,7 @@ export const Header: FC = () => {
         priority
       />
       <Stack direction="row">
-        <Button
-          onClick={() => {
-            setOpenHelp(true)
-            track({
-              id: "open-help",
-            })
-          }}
+        <Button href="https://docs.sunblock.finance" target="_blank"
           color="warning"
         >
           <span className={styles.inprogress}>What is Sunblock?</span>
