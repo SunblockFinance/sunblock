@@ -49,7 +49,6 @@ export const CHAINS: { [chainId: number]: BasicChainInformation | ExtendedChainI
   1: {
     urls: [
       `https://mainnet.infura.io/v3/${process.env.infuraKey}`,
-      `https://eth-mainnet.alchemyapi.io/v2/${process.env.alchemyKey}`,
       'https://cloudflare-eth.com',
     ].filter((url) => url !== undefined),
     name: 'Mainnet',
@@ -119,7 +118,7 @@ export const CHAINS: { [chainId: number]: BasicChainInformation | ExtendedChainI
   // Polygon
   137: {
     urls: [
-      `https://polygon-mainnet.infura.io/v3/${process.env.infuraKey}`,
+      `wss://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
       'https://polygon-rpc.com',
     ].filter((url) => url !== undefined),
     name: 'Polygon Mainnet',

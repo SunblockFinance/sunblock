@@ -10,8 +10,7 @@ import Stack from '@mui/material/Stack'
 import CoinGecko from 'coingecko-api'
 import { FC, useEffect, useState } from 'react'
 import { CoinGeckoPrice } from '../../blockchain/coingecko'
-import { hooks, network } from '../../connectors/network'
-import { CHAINID } from '../../programs/polygon'
+import { hooks } from '../../connectors/network'
 import { AssetItem } from './AssetItem'
 
 
@@ -40,7 +39,7 @@ export const AssetGroup: FC = () => {
   const [sharePrice, setSharePrice] = useState(0)
 
   useEffect(() => {
-    void network.activate(CHAINID)
+    // void network.activate(CHAINID)
   }, [])
 
   useEffect(() => {
