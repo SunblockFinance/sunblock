@@ -8,6 +8,7 @@ import ListItem from '@mui/material/ListItem'
 import ListItemText from '@mui/material/ListItemText'
 import * as React from 'react'
 import { useEffect, useState } from 'react'
+import * as cube from '../blockchain/providercalls'
 import { hooks } from '../connectors/network'
 import { NameToDescriptor } from '../contracts/deployedContracts'
 import styles from './InvestmentQueue.module.css'
@@ -27,28 +28,21 @@ export default function InvestmentQueue() {
 
 
   useEffect(() => {
-
-      fetch('/api/contracts/cube?q=currentTargetAmount').then(res => res.json())
-      .then((json) => {
-        setCurrentTargetAmount(json.value)
-      });
-      fetch('/api/contracts/cube?q=currentTargetName').then(res => res.json())
-      .then((json) => {
-        setCurrentVehicleName(json.value)
-      })
-      fetch('/api/contracts/cube?q=nextTargetAmount').then(res => res.json())
-      .then((json) => {
-        setNextTargetAmount(json.value)
-      });
-      fetch('/api/contracts/cube?q=nextTargetName').then(res => res.json())
-      .then((json) => {
-        setNextVehicleName(json.value)
-      })
-      fetch('/api/contracts/cube?q=cubeInvestmentFund').then(res => res.json())
-      .then((json) => {
-        setInvestmentFund(json.value)
-      })
-
+    cube.getCurrentTargetAmount().then((amount) => {
+      setCurrentTargetAmount(amount)
+    })
+    cube.getCurrentTargetName().then((name) => {
+      setCurrentVehicleName(name)
+    })
+    cube.getNextTargetAmount().then((amount) => {
+      setNextTargetAmount(amount)
+    })
+    cube.getNextTargetName().then((name) => {
+      setNextVehicleName(name)
+    })
+    cube.getCubeInvestmentFund().then((amount) => {
+      setInvestmentFund(amount)
+    })
 
     return () => {
       setCurrentTargetAmount(0)

@@ -17,16 +17,15 @@ import TextField from '@mui/material/TextField'
 import { ethers } from 'ethers'
 import { useSnackbar } from 'notistack'
 import React, { FC, useEffect, useState } from 'react'
+import * as cube from '../blockchain/providercalls'
 import { getUSDTBalance } from '../blockchain/query'
 import { hooks } from '../connectors/metamask'
 import { ABI_SUNBLOCK_CUBE } from '../contracts/abi/sunblock'
 import { CONTRACT_ADDRESS_CUBE } from '../programs/polygon'
 import AllowancePill from './AllowancePill'
 
-
 const DEFAULT_SHARE_VALUE = 10
 const { useIsActive, useProvider } = hooks
-
 
 export const PurchaseShares: FC = () => {
   const provider = useProvider()
@@ -78,9 +77,9 @@ export const PurchaseShares: FC = () => {
       })
     }
     const filter = sunblockContract.filters.SharesIssued(signerAddress, null)
-    provider.once("block", () => {
+    provider.once('block', () => {
       sunblockContract.once(filter, async (buyer: string, amount) => {
-        console.log(`BUY EVENT: Address,${buyer} Amount,${amount}`);
+        console.log(`BUY EVENT: Address,${buyer} Amount,${amount}`)
 
         if (signerAddress !== buyer) {
           return
@@ -92,7 +91,6 @@ export const PurchaseShares: FC = () => {
         })
       })
     })
-
   }
 
   const handleShareTextUpdate = (
@@ -117,12 +115,10 @@ export const PurchaseShares: FC = () => {
   }
 
   useEffect(() => {
-    fetch('/api/contracts/cube?q=sharePrice')
-      .then((res) => res.json())
-      .then((json) => {
-        setSharePrice(json.value)
-        setBasketPrice(json.value * DEFAULT_SHARE_VALUE)
-      })
+    cube.getSharePrice().then((price) => {
+      setSharePrice(price)
+      setBasketPrice(price * DEFAULT_SHARE_VALUE)
+    })
     return () => {
       setSharePrice(0)
       setBasketPrice(0)
