@@ -19,6 +19,7 @@ import {
 } from '@mui/material'
 import Divider from '@mui/material/Divider'
 import React, { FC, useEffect, useState } from 'react'
+import * as vehicle from '../../blockchain/vechicle'
 import { ContractDescriptor } from '../../contracts/deployedContracts'
 import { AssetItem } from '../assets/AssetItem'
 
@@ -59,16 +60,12 @@ export const StatsVehicleCard: FC<ContractDescriptor> = (props) => {
   }
 
   useEffect(() => {
-    fetch(`/api/contracts/vehicle?q=vehicleInvestmentPool&addr=${props.contract}`)
-      .then((res) => res.json())
-      .then((json) => {
-        setInvestFund(json.value)
-      })
-    fetch(`/api/contracts/vehicle?q=vehicleRewardPool&addr=${props.contract}`)
-      .then((res) => res.json())
-      .then((json) => {
-        setRewardFund(json.value)
-      })
+    vehicle.getVehicleInvestmentPool(props.contract).then((amount) => {
+      setInvestFund(amount)
+    })
+    vehicle.getVehicleRewardPool(props.contract).then((amount) => {
+      setRewardFund(amount)
+    })
 
     return () => {
       setInvestFund('')

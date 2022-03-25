@@ -8,7 +8,7 @@ import { ABI_VEHICLE } from "../contracts/abi/vehicle"
 import { CONTRACT_ADDRESS_CUBE } from "../programs/polygon"
 import { formatUSDTWeiToNumber } from "../utils/formaters"
 
-const provider = new ethers.providers.WebSocketProvider(`wss://polygon-mainnet.g.alchemy.com/v2/uP5bkRrcXRoo906ITYJpQhHzjKLBrJ-l`)
+const provider = new ethers.providers.WebSocketProvider(`wss://ws-matic-mainnet.chainstacklabs.com`)
 const cube = new ethers.Contract(CONTRACT_ADDRESS_CUBE, ABI_SUNBLOCK_CUBE,provider)
 
 /**
