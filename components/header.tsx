@@ -23,15 +23,9 @@ const { useAccount, useError, useIsActive, useProvider } = hooks
 export const Header: FC = () => {
   const account = useAccount()
   const isActive = useIsActive()
-  const error = useError()
   const [openHelp, setOpenHelp] = useState(false)
   const [openContract, setOpenContract] = useState(false)
 
-  const signMsg =
-    'Just making sure you are you. No transaction is made, thus, cost no gas fee!'
-
-  const [currentAccount, setCurrentAccount] = useState('')
-  const [usdt, setUsdt] = useState(0)
 
   useEffect(() => {
     void metaMask.connectEagerly()
@@ -75,6 +69,7 @@ export const Header: FC = () => {
         alt="Sunblock logo"
         width="263"
         height="100"
+        priority
       />
       <Stack direction="row">
         <Button
