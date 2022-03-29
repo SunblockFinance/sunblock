@@ -8,7 +8,8 @@ import ListItem from '@mui/material/ListItem'
 import ListItemText from '@mui/material/ListItemText'
 import * as React from 'react'
 import { useEffect, useState } from 'react'
-import * as cube from '../blockchain/providercalls'
+import ContractConnector from '../blockchain/ContractConnector'
+import { useGlobalState } from '../blockchain/networks'
 import { hooks } from '../connectors/network'
 import { NameToDescriptor } from '../contracts/deployedContracts'
 import styles from './InvestmentQueue.module.css'
@@ -24,24 +25,26 @@ export default function InvestmentQueue() {
   const [nextVehicleName, setNextVehicleName] = useState('')
   const [nextTargetAmount, setNextTargetAmount] = useState(0)
   const [investmentFund, setInvestmentFund] = useState(0)
+  const [chainid, setChainid] = useGlobalState('chainid')
 
 
 
   useEffect(() => {
-    cube.getCurrentTargetAmount().then((amount) => {
-      setCurrentTargetAmount(amount)
+    const cube = new ContractConnector(chainid)
+    cube.getCurrentTargetAmount().catch(() => console.error()).then((amount) => {
+      setCurrentTargetAmount(amount || 0)
     })
-    cube.getCurrentTargetName().then((name) => {
-      setCurrentVehicleName(name)
+    cube.getCurrentTargetName().catch(() => console.error()).then((name) => {
+      setCurrentVehicleName(name || '')
     })
-    cube.getNextTargetAmount().then((amount) => {
-      setNextTargetAmount(amount)
+    cube.getNextTargetAmount().catch(() => console.error()).then((amount) => {
+      setNextTargetAmount(amount || 0)
     })
-    cube.getNextTargetName().then((name) => {
-      setNextVehicleName(name)
+    cube.getNextTargetName().catch(() => console.error()).then((name) => {
+      setNextVehicleName(name || '')
     })
-    cube.getCubeInvestmentFund().then((amount) => {
-      setInvestmentFund(amount)
+    cube.getCubeInvestmentFund().catch(() => console.error()).then((amount) => {
+      setInvestmentFund(amount || 0)
     })
 
     return () => {
@@ -50,7 +53,7 @@ export default function InvestmentQueue() {
       setInvestmentFund(0)
       setCurrentVehicleName('')
     }
-  }, [])
+  }, [chainid])
 
 
   const currentDescriptor = NameToDescriptor(currentVehicleName)
