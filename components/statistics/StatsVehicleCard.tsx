@@ -1,7 +1,6 @@
 // Copyright 2022 Kenth Fagerlund.
 // SPDX-License-Identifier: MIT
 
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import GavelIcon from '@mui/icons-material/Gavel'
 import LaunchIcon from '@mui/icons-material/Launch'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
@@ -68,7 +67,7 @@ export const StatsVehicleCard: FC<ContractDescriptor> = (props) => {
   }
 
   useEffect(() => {
-    if (chainid !== 0 && contract !== '') {
+    if (contract !== '') {
       const connector = new ContractConnector(chainid)
       connector.getVehicleInvestmentPool(contract).then((amount) => {
         setInvestFund(amount)
@@ -83,6 +82,15 @@ export const StatsVehicleCard: FC<ContractDescriptor> = (props) => {
       setRewardFund('')
     }
   }, [contract, chainid])
+
+  useEffect(() => {
+    // If reward and invest fund is set, then we safely assume we can show the content.
+    console.log(rewardFund, investFund)
+    if (rewardFund !== '' && investFund !== '') {
+      setIsLoading(false)
+    }
+
+  }, [rewardFund, investFund])
 
 
   if (isLoading) {
@@ -106,18 +114,18 @@ export const StatsVehicleCard: FC<ContractDescriptor> = (props) => {
         />
         <CardContent>
           <Typography variant="body2" color="text.secondary">
-            {props.description}
+            {<Skeleton variant="text" width='400px'/>}
           </Typography>
         </CardContent>
         <Divider textAlign="left">CAPITAL</Divider>
         <AssetItem
           title="To be invested"
-          value={`${investFund} USDT`}
+          value={<Skeleton variant="text" width='30%'/>}
           icon={<Skeleton variant="circular" width={40} height={40} />}
         />
         <AssetItem
           title="Rewards held"
-          value={`${rewardFund} USDT`}
+          value={<Skeleton variant="text" width='30%'/>}
           icon={<Skeleton variant="circular" width={40} height={40} />}
         />
 
@@ -131,14 +139,14 @@ export const StatsVehicleCard: FC<ContractDescriptor> = (props) => {
           <IconButton aria-label="share" href={props.url}>
             <LaunchIcon />
           </IconButton>
-          <ExpandMore
+          {/* <ExpandMore  // FOR FUTURE EXPANTION
             expand={expanded}
             onClick={handleExpandClick}
             aria-expanded={expanded}
             aria-label="show more"
           >
             <ExpandMoreIcon />
-          </ExpandMore>
+          </ExpandMore> */}
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>
@@ -209,14 +217,14 @@ export const StatsVehicleCard: FC<ContractDescriptor> = (props) => {
           <IconButton aria-label="share" href={props.url}>
             <LaunchIcon />
           </IconButton>
-          <ExpandMore
+          {/* <ExpandMore  // FOR FUTURE EXPANTION
             expand={expanded}
             onClick={handleExpandClick}
             aria-expanded={expanded}
             aria-label="show more"
           >
             <ExpandMoreIcon />
-          </ExpandMore>
+          </ExpandMore> */}
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>

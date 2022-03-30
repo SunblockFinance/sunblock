@@ -39,7 +39,7 @@ export interface NetworkDetails {
         '0xE1eb7199A220AefF4F8Cc0559c69b4cB7144f73f',
       ],
       cubeNativeToken: '0x020E3EB05a80aB431F37171Fa5Bd0f175E62Ca0F',
-      providerURL: 'wss://speedy-nodes-nyc.moralis.io/2d2738f646742fb6e4ae69e0/avalanche/testnet/ws'
+      providerURL: 'https://api.avax-test.network/ext/bc/C/rpc'
     }
 
   export const networks = new Map<number, NetworkDetails>([
@@ -47,6 +47,8 @@ export interface NetworkDetails {
     [80001, polygonMumbai],
     [43113, avalanchTest]
   ])
+
+  export const DEFAULT_CHAINID = 137
 
 
   export const { useGlobalState } = createGlobalState({chainid: 0})

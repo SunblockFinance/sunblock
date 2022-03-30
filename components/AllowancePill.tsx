@@ -140,7 +140,7 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
   // }
 
   React.useEffect(() => {
-    if (provider && chainid !== 0) {
+    if (provider) {
       const cube = new ContractConnector(chainid)
       const signer = provider.getSigner()
       const walletAddress = async () => signer.getAddress()

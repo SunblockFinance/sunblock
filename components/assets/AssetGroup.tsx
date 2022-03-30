@@ -11,22 +11,16 @@ import CoinGecko from 'coingecko-api'
 import { FC, useEffect, useState } from 'react'
 import { CoinGeckoPrice } from '../../blockchain/coingecko'
 import ContractConnector from '../../blockchain/ContractConnector'
-import { useGlobalState } from '../../blockchain/networks'
-import { hooks } from '../../connectors/network'
+import { hooks } from '../../connectors/metamask'
 import { AssetItem } from './AssetItem'
 
-
-let eth: any
-const { useProvider } = hooks
+const { useChainId } = hooks
 
 export const AssetGroup: FC = () => {
-  const provider = useProvider()
+  const chainid = useChainId()
   const usdt = './crypto-icons/usdt.svg'
   const strong = './crypto-icons/strong.webp'
   const reward = './svg/treasure.svg'
-  const [chainid, setChainid] = useGlobalState('chainid')
-
-
 
   /**
    * Token prices
@@ -41,30 +35,44 @@ export const AssetGroup: FC = () => {
   const [sharesIssued, setSharesIssued] = useState(0)
   const [totalInvestment, setTotalInvestment] = useState(0)
   const [sharePrice, setSharePrice] = useState(0)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     // void network.activate(CHAINID)
   }, [])
 
   useEffect(() => {
-    if (chainid !== 0){
-      const cube = new ContractConnector(chainid)
-      cube.getCubeInvestmentFund().then((amount) => {
+    const cube = new ContractConnector(chainid)
+    cube
+      .getCubeInvestmentFund()
+      .then((amount) => {
         setInvestFund(amount)
-      }).catch(() => console.error)
-      cube.getSharesIssued().then((amount) => {
+      })
+      .catch(() => console.error)
+    cube
+      .getSharesIssued()
+      .then((amount) => {
         setSharesIssued(amount)
-      }).catch(() => console.error)
-      cube.getSharePrice().then((price) => {
+      })
+      .catch(() => console.error)
+    cube
+      .getSharePrice()
+      .then((price) => {
         setSharePrice(price)
-      }).catch(() => console.error)
-      cube.getCubeRewardFund().then((amount) => {
+      })
+      .catch(() => console.error)
+    cube
+      .getCubeRewardFund()
+      .then((amount) => {
         setRewardFund(amount)
-      }).catch(() => console.error)
-      cube.getShareholderCount().then((count) => {
+      })
+      .catch(() => console.error)
+    cube
+      .getShareholderCount()
+      .then((count) => {
         setInvestorCount(count)
-      }).catch(() => console.error)
-    }
+      })
+      .catch(() => console.error)
 
     return () => {
       setInvestFund(0)
@@ -84,6 +92,7 @@ export const AssetGroup: FC = () => {
         setStrongPrice(data.data.strong.usd)
         setStrongChange(data.data.strong.usd_24h_change)
       })
+      .catch(() => console.error)
     return () => {
       setStrongPrice(0)
       setStrongChange(0)

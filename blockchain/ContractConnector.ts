@@ -3,25 +3,27 @@
 // ========== CONTRACT CALLS ============ //
 
 import { BigNumber, Contract, ethers } from 'ethers'
-import { JsonRpcSigner, WebSocketProvider } from 'ethers/node_modules/@ethersproject/providers'
+import { JsonRpcProvider, JsonRpcSigner } from 'ethers/node_modules/@ethersproject/providers'
 import { ABI_ERC20 } from '../contracts/abi/erc20'
 import { ABI_SUNBLOCK_CUBE } from '../contracts/abi/sunblock'
 import { ABI_VEHICLE } from '../contracts/abi/vehicle'
 import { formatUSDTWeiToNumber } from '../utils/formaters'
-import { NetworkDetails, networks } from './networks'
+import { DEFAULT_CHAINID, NetworkDetails, networks } from './networks'
 
 class ContractConnector {
   network: NetworkDetails
-  provider: WebSocketProvider
+  provider: JsonRpcProvider
   cube: Contract
   token: Contract
 
-  constructor(chainid: number) {
+  constructor(chainid: number | undefined) {
+    console.log(`Connector ${chainid}`)
+
     /**
      * Set Network
      */
 
-    const chosenNetwork = networks.get(chainid)
+    const chosenNetwork = networks.get(chainid || DEFAULT_CHAINID) // We default to Polygon main if user not connected
 
     if (chosenNetwork !== undefined) {
       this.network = chosenNetwork
@@ -32,9 +34,19 @@ class ContractConnector {
     /**
      * Create provider
      */
-    this.provider = new ethers.providers.WebSocketProvider(
-      this.network.providerURL
-    )
+    if (this.network.providerURL.startsWith('wss')) {
+      this.provider = new ethers.providers.WebSocketProvider(
+        this.network.providerURL
+      )
+    } else if (this.network.providerURL.startsWith('http')) {
+      this.provider = new ethers.providers.JsonRpcProvider(
+        this.network.providerURL
+      )
+    } else {
+      console.log(this.network.providerURL)
+      throw new Error("Invalid provider URL");
+    }
+
 
 
 

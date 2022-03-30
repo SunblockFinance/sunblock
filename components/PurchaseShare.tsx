@@ -116,24 +116,22 @@ export const PurchaseShares: FC = () => {
   }
 
   useEffect(() => {
-    if (chainid !== 0) {
-      const cube = new ContractConnector(chainid)
-      cube
-        .getSharePrice()
-        .then((price) => {
-          setSharePrice(price)
-          setBasketPrice(price * DEFAULT_SHARE_VALUE)
-        })
-        .catch(() => console.error)
-      return () => {
-        setSharePrice(0)
-        setBasketPrice(0)
-      }
+    const cube = new ContractConnector(chainid)
+    cube
+      .getSharePrice()
+      .then((price) => {
+        setSharePrice(price)
+        setBasketPrice(price * DEFAULT_SHARE_VALUE)
+      })
+      .catch(() => console.error)
+    return () => {
+      setSharePrice(0)
+      setBasketPrice(0)
     }
   }, [chainid])
 
   useEffect(() => {
-    if (provider && chainid !== 0) {
+    if (provider) {
       const cube = new ContractConnector(chainid)
       provider
         .getSigner()

@@ -12,32 +12,40 @@ import { BigNumber } from 'ethers'
 import { hexStripZeros } from 'ethers/lib/utils'
 import { track } from 'insights-js'
 import { FC, useEffect, useState } from 'react'
+import { networks } from '../blockchain/networks'
 import { hooks } from '../connectors/metamask'
-import { useGlobalState } from '../blockchain/networks'
 
 
 const { useProvider, useChainId } = hooks
-;
+
 
 const NetworkAlert: FC = () => {
   const [open, setOpen] = useState(false)
   const provider = useProvider()
   const chainID = useChainId()
-  const [chainid, setChainid] = useGlobalState('chainid')
   useEffect(() => {
-    if (chainID != chainid && chainID != undefined) {
+    // console.log(`NetworkAlert got chain ${chainID}`);
+    // if(chainID) {
+    //   // console.log(`NetworkAlert has it in list: ${networks.has(chainID)}`);
+    // }
+
+
+
+    if (chainID != undefined && !networks.has(chainID)) {
       setOpen(true)
+    } else {
+      setOpen(false)
     }
     return () => {
       setOpen(false)
     }
-  }, [chainID, chainid])
+  }, [chainID])
 
 
   const handleNetworkSwitch = async () => {
     try {
       const formattedChainId = hexStripZeros(
-        BigNumber.from(chainid).toHexString()
+        BigNumber.from(chainID).toHexString()
       )
       await provider?.send('wallet_switchEthereumChain', [
         { chainId: formattedChainId },

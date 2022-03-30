@@ -28,27 +28,25 @@ export const HeroRow: FC = () => {
   const provider = useProvider()
 
   useEffect(() => {
-    if (chainid !== 0) {
-      const cube = new ContractConnector(chainid)
-      cube
-        .getCubeInvestmentFund()
-        .then((amount) => {
-          setInvestFund(amount)
-        })
-        .catch(() => console.error)
-      cube
-        .getCubeRewardFund()
-        .then((amount) => {
-          setRewardFund(amount)
-        })
-        .catch(() => console.error)
-      cube
-        .getSharesIssued()
-        .then((amount) => {
-          setSharesIssued(amount)
-        })
-        .catch(() => console.error)
-    }
+    const cube = new ContractConnector(chainid)
+    cube
+      .getCubeInvestmentFund()
+      .then((amount) => {
+        setInvestFund(amount)
+      })
+      .catch(() => console.error)
+    cube
+      .getCubeRewardFund()
+      .then((amount) => {
+        setRewardFund(amount)
+      })
+      .catch(() => console.error)
+    cube
+      .getSharesIssued()
+      .then((amount) => {
+        setSharesIssued(amount)
+      })
+      .catch(() => console.error)
 
     return () => {
       setInvestFund(0)
@@ -58,7 +56,7 @@ export const HeroRow: FC = () => {
   }, [chainid])
 
   useEffect(() => {
-    if (provider && chainid !== 0) {
+    if (provider) {
       const cube = new ContractConnector(chainid)
       provider
         .getSigner()

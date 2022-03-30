@@ -4,7 +4,6 @@
 // https://opensource.org/licenses/MIT
 
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material'
-import { init, trackPages } from 'insights-js'
 import { AppProps } from 'next/app'
 import { SnackbarProvider } from 'notistack'
 import React, { FC, useEffect } from 'react'
@@ -23,19 +22,13 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
    */
   useEffect(() => {
     void metaMask.connectEagerly()
-    const insightkey = process.env.INSIGHT_KEY
-    if (insightkey) init(insightkey)
-    trackPages()
   }, [])
 
   useEffect(() => {
-    if (currentChainID) {
-      console.log("Setting global chainID to ", currentChainID);
+    console.log('ChainID updated')
+    console.log(currentChainID)
 
-      setGlobalChainid(currentChainID)
-    }
-
-  }, [currentChainID,setGlobalChainid])
+  }, [currentChainID])
 
   const theme = React.useMemo(
     () =>
