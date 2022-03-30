@@ -8,8 +8,8 @@ import MonetizationOnOutlinedIcon from '@mui/icons-material/MonetizationOnOutlin
 import PollOutlinedIcon from '@mui/icons-material/PollOutlined'
 import { Avatar, Divider, Stack } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
-import * as cube from '../../blockchain/providercalls'
-import { getHeldShares } from '../../blockchain/query'
+import ContractConnector from '../../blockchain/ContractConnector'
+import { useGlobalState } from '../../blockchain/networks'
 import { hooks } from '../../connectors/metamask'
 import InvestmentQueue from '../InvestmentQueue'
 import { PurchaseShares } from '../PurchaseShare'
@@ -23,37 +23,61 @@ export const HeroRow: FC = () => {
   const [earnings, setEarnings] = useState(0)
   const [investFund, setInvestFund] = useState(0)
   const [rewardFund, setRewardFund] = useState(0)
+  const [chainid, setChainid] = useGlobalState('chainid')
 
   const provider = useProvider()
 
   useEffect(() => {
-    cube.getCubeInvestmentFund().then((amount) => {
-      setInvestFund(amount)
-    })
-    cube.getCubeRewardFund().then((amount) => {
-      setRewardFund(amount)
-    })
-    cube.getSharesIssued().then((amount) => {
-      setSharesIssued(amount)
-    })
+    if (chainid !== 0) {
+      const cube = new ContractConnector(chainid)
+      cube
+        .getCubeInvestmentFund()
+        .then((amount) => {
+          setInvestFund(amount)
+        })
+        .catch(() => console.error)
+      cube
+        .getCubeRewardFund()
+        .then((amount) => {
+          setRewardFund(amount)
+        })
+        .catch(() => console.error)
+      cube
+        .getSharesIssued()
+        .then((amount) => {
+          setSharesIssued(amount)
+        })
+        .catch(() => console.error)
+    }
+
     return () => {
       setInvestFund(0)
       setRewardFund(0)
       setSharesIssued(0)
     }
-  }, [])
+  }, [chainid])
 
   useEffect(() => {
-    if (provider) {
-      getHeldShares(provider).then((shares) => {
-        setUserShares(shares)
-      })
+    if (provider && chainid !== 0) {
+      const cube = new ContractConnector(chainid)
+      provider
+        .getSigner()
+        .getAddress()
+        .then((address) => {
+          cube
+            .getHeldShares(address)
+            .then((shares) => {
+              setUserShares(shares)
+            })
+            .catch(() => console.error)
+        })
+        .catch(() => console.error)
     }
 
     return () => {
       setUserShares(0)
     }
-  }, [provider])
+  }, [provider, chainid])
 
   /**
    * Estimate the reward the user should expect next

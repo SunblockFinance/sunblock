@@ -71,7 +71,6 @@ export default async function handler(
         })
       })
 
-      break;
     case 'heldShares':
       await getHeldShares(addr).then((amount) => {
         res.status(200).json({ field:q, value:amount })

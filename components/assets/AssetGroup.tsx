@@ -10,9 +10,11 @@ import Stack from '@mui/material/Stack'
 import CoinGecko from 'coingecko-api'
 import { FC, useEffect, useState } from 'react'
 import { CoinGeckoPrice } from '../../blockchain/coingecko'
-import * as cube from '../../blockchain/providercalls'
+import ContractConnector from '../../blockchain/ContractConnector'
+import { useGlobalState } from '../../blockchain/networks'
 import { hooks } from '../../connectors/network'
 import { AssetItem } from './AssetItem'
+
 
 let eth: any
 const { useProvider } = hooks
@@ -22,6 +24,9 @@ export const AssetGroup: FC = () => {
   const usdt = './crypto-icons/usdt.svg'
   const strong = './crypto-icons/strong.webp'
   const reward = './svg/treasure.svg'
+  const [chainid, setChainid] = useGlobalState('chainid')
+
+
 
   /**
    * Token prices
@@ -42,21 +47,24 @@ export const AssetGroup: FC = () => {
   }, [])
 
   useEffect(() => {
-    cube.getCubeInvestmentFund().then((amount) => {
-      setInvestFund(amount)
-    })
-    cube.getSharesIssued().then((amount) => {
-      setSharesIssued(amount)
-    })
-    cube.getSharePrice().then((price) => {
-      setSharePrice(price)
-    })
-    cube.getCubeRewardFund().then((amount) => {
-      setRewardFund(amount)
-    })
-    cube.getShareholderCount().then((count) => {
-      setInvestorCount(count)
-    })
+    if (chainid !== 0){
+      const cube = new ContractConnector(chainid)
+      cube.getCubeInvestmentFund().then((amount) => {
+        setInvestFund(amount)
+      }).catch(() => console.error)
+      cube.getSharesIssued().then((amount) => {
+        setSharesIssued(amount)
+      }).catch(() => console.error)
+      cube.getSharePrice().then((price) => {
+        setSharePrice(price)
+      }).catch(() => console.error)
+      cube.getCubeRewardFund().then((amount) => {
+        setRewardFund(amount)
+      }).catch(() => console.error)
+      cube.getShareholderCount().then((count) => {
+        setInvestorCount(count)
+      }).catch(() => console.error)
+    }
 
     return () => {
       setInvestFund(0)
@@ -66,7 +74,7 @@ export const AssetGroup: FC = () => {
       setRewardFund(0)
       setInvestorCount(0)
     }
-  }, [])
+  }, [chainid])
 
   useEffect(() => {
     const CoinGeckoClient = new CoinGecko()

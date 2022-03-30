@@ -1,14 +1,47 @@
 // Copyright 2022 Kenth Fagerlund.
 // SPDX-License-Identifier: MIT
 import { Container, Stack } from '@mui/material'
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
+import ContractConnector from '../../blockchain/ContractConnector'
+import { networks, useGlobalState } from '../../blockchain/networks'
 import {
-  DESCRIPTOR_STRONGBLOCK,
-  DESCRIPTOR_YIELDNODE
+  ContractDescriptor, NameToDescriptor
 } from '../../contracts/deployedContracts'
 import { StatsVehicleCard } from './StatsVehicleCard'
 
+
+
 export const StatsOverview: FC = () => {
+  const [chainid, setChainid] = useGlobalState('chainid')
+  const [currentVehicle, setCurrentVehicle] = useState<ContractDescriptor>()
+  const [currentVehicleContract, setCurrentVehicleContract] = useState('')
+  const [nextVehicle, setNextVehicle] = useState<ContractDescriptor>()
+  const [nextVehicleContract, setNextVehicleContract] = useState('')
+
+
+  useEffect(() => {
+    console.log(`Getting vehicles for chain ${chainid}`);
+    if (chainid !== 0) {
+      const connector = new ContractConnector(chainid)
+      const currentNetwork = networks.get(chainid)
+      setCurrentVehicleContract(currentNetwork?.vehicleContracts[0] || '')
+      setNextVehicleContract(currentNetwork?.vehicleContracts[1] || '')
+      if (currentNetwork) {
+        connector.getCurrentTargetName().then((name) => {
+          setCurrentVehicle(NameToDescriptor(name))
+        }).catch(() => console.error)
+        connector.getNextTargetName().then((name) => {
+          setNextVehicle(NameToDescriptor(name))
+        }).catch(() => console.error)
+      }
+    }
+
+    return () => {
+      setCurrentVehicle(undefined)
+      setNextVehicle(undefined)
+    }
+  }, [chainid])
+
   return (
     <Container
         sx={{
@@ -21,19 +54,19 @@ export const StatsOverview: FC = () => {
         }}
       >
       <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} justifyContent="space-around" alignItems="stretch">
-        <StatsVehicleCard
-          title={DESCRIPTOR_STRONGBLOCK.title}
-          logo={DESCRIPTOR_STRONGBLOCK.logo}
-          description={DESCRIPTOR_STRONGBLOCK.description}
-          contract={DESCRIPTOR_STRONGBLOCK.contract}
-          url={DESCRIPTOR_STRONGBLOCK.url}
+          <StatsVehicleCard
+          title={currentVehicle?.title || ''}
+          logo={currentVehicle?.logo || ''}
+          description={currentVehicle?.description || 'Loading up the next great thing. Give it a second...'}
+          contract={currentVehicleContract || ''}
+          url={currentVehicle?.url || ''}
         />
         <StatsVehicleCard
-          title={DESCRIPTOR_YIELDNODE.title}
-          logo={DESCRIPTOR_YIELDNODE.logo}
-          description={DESCRIPTOR_YIELDNODE.description}
-          contract={DESCRIPTOR_YIELDNODE.contract}
-          url={DESCRIPTOR_YIELDNODE.url}
+          title={nextVehicle?.title || ''}
+          logo={nextVehicle?.logo || ''}
+          description={nextVehicle?.description || 'Loading up the next great thing. Give it a second...'}
+          contract={nextVehicleContract || ''}
+          url={nextVehicle?.url || ''}
         />
       </Stack>
     </Container>

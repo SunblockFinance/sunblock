@@ -17,8 +17,8 @@ import TextField from '@mui/material/TextField'
 import { ethers } from 'ethers'
 import { useSnackbar } from 'notistack'
 import React, { FC, useEffect, useState } from 'react'
-import * as cube from '../blockchain/providercalls'
-import { getUSDTBalance } from '../blockchain/query'
+import ContractConnector from '../blockchain/ContractConnector'
+import { useGlobalState } from '../blockchain/networks'
 import { hooks } from '../connectors/metamask'
 import { ABI_SUNBLOCK_CUBE } from '../contracts/abi/sunblock'
 import { CONTRACT_ADDRESS_CUBE } from '../programs/polygon'
@@ -51,6 +51,7 @@ export const PurchaseShares: FC = () => {
   const [balance, setBalance] = useState(0)
   const [open, setOpen] = useState(false)
   const [sharePrice, setSharePrice] = useState(0)
+  const [chainid, setChainid] = useGlobalState('chainid')
 
   const isUnderfunded = basketPrice > Number(balance)
 
@@ -115,27 +116,43 @@ export const PurchaseShares: FC = () => {
   }
 
   useEffect(() => {
-    cube.getSharePrice().then((price) => {
-      setSharePrice(price)
-      setBasketPrice(price * DEFAULT_SHARE_VALUE)
-    })
-    return () => {
-      setSharePrice(0)
-      setBasketPrice(0)
+    if (chainid !== 0) {
+      const cube = new ContractConnector(chainid)
+      cube
+        .getSharePrice()
+        .then((price) => {
+          setSharePrice(price)
+          setBasketPrice(price * DEFAULT_SHARE_VALUE)
+        })
+        .catch(() => console.error)
+      return () => {
+        setSharePrice(0)
+        setBasketPrice(0)
+      }
     }
-  }, [])
+  }, [chainid])
 
   useEffect(() => {
-    if (provider) {
-      getUSDTBalance(provider).then((amount) => {
-        setBalance(amount)
-      })
+    if (provider && chainid !== 0) {
+      const cube = new ContractConnector(chainid)
+      provider
+        .getSigner()
+        .getAddress()
+        .then((address) => {
+          cube
+            .getUSDTBalance(address)
+            .then((amount) => {
+              setBalance(amount)
+            })
+            .catch(() => console.error)
+        })
+        .catch(() => console.error)
     }
     return () => {
       setBalance(0)
       setSharePrice(0)
     }
-  }, [provider])
+  }, [provider, chainid])
 
   return (
     <Stack direction="column">

@@ -31,12 +31,9 @@ export function NameToDescriptor(contractName:string):ContractDescriptor {
     switch (contractName) {
         case 'Strongblock':
             return DESCRIPTOR_STRONGBLOCK
-            break;
         case 'Yieldnodes':
             return DESCRIPTOR_YIELDNODE
-            break
         default:
             return DESCRIPTOR_STRONGBLOCK
-            break;
     }
 }

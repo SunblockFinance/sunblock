@@ -8,22 +8,34 @@ import { init, trackPages } from 'insights-js'
 import { AppProps } from 'next/app'
 import { SnackbarProvider } from 'notistack'
 import React, { FC, useEffect } from 'react'
-import { metaMask } from '../connectors/metamask'
+import { useGlobalState } from '../blockchain/networks'
+import { hooks, metaMask } from '../connectors/metamask'
+
 
 const App: FC<AppProps> = ({ Component, pageProps }) => {
+  const {useIsActive, useChainId} = hooks
+
+  const [globalChainid, setGlobalChainid] = useGlobalState('chainid')
+  const currentChainID = useChainId()
+
   /**
    * Make sure we are connected
    */
   useEffect(() => {
     void metaMask.connectEagerly()
-
-    // network.activate(CHAINID)
     const insightkey = process.env.INSIGHT_KEY
-
-
     if (insightkey) init(insightkey)
     trackPages()
   }, [])
+
+  useEffect(() => {
+    if (currentChainID) {
+      console.log("Setting global chainID to ", currentChainID);
+
+      setGlobalChainid(currentChainID)
+    }
+
+  }, [currentChainID,setGlobalChainid])
 
   const theme = React.useMemo(
     () =>

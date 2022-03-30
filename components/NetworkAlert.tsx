@@ -13,35 +13,31 @@ import { hexStripZeros } from 'ethers/lib/utils'
 import { track } from 'insights-js'
 import { FC, useEffect, useState } from 'react'
 import { hooks } from '../connectors/metamask'
-import { CHAINID } from '../programs/polygon'
+import { useGlobalState } from '../blockchain/networks'
+
 
 const { useProvider, useChainId } = hooks
+;
 
 const NetworkAlert: FC = () => {
   const [open, setOpen] = useState(false)
   const provider = useProvider()
   const chainID = useChainId()
-
+  const [chainid, setChainid] = useGlobalState('chainid')
   useEffect(() => {
-    if (chainID != CHAINID && chainID != undefined) {
+    if (chainID != chainid && chainID != undefined) {
       setOpen(true)
-      track({
-        id: "network-wrong",
-        parameters: {
-          userChain: chainID.toString()
-        }
-      })
     }
     return () => {
       setOpen(false)
     }
-  }, [chainID])
+  }, [chainID, chainid])
 
 
   const handleNetworkSwitch = async () => {
     try {
       const formattedChainId = hexStripZeros(
-        BigNumber.from(CHAINID).toHexString()
+        BigNumber.from(chainid).toHexString()
       )
       await provider?.send('wallet_switchEthereumChain', [
         { chainId: formattedChainId },
