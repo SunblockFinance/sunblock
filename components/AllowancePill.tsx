@@ -61,7 +61,6 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
       signer
     )
     const cost: BigNumber = await contract.unitcost()
-    console.log(cost)
 
     const sum = cost.mul(amount)
     const erc20signed = new ethers.Contract(

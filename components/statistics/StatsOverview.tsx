@@ -21,23 +21,21 @@ export const StatsOverview: FC = () => {
   const chainid = useChainId()
 
   useEffect(() => {
-    const connector = new ContractConnector(chainid)
-    const currentNetwork = networks.get(chainid || DEFAULT_CHAINID) // Default to Polygon main
-    setCurrentVehicleContract(currentNetwork?.vehicleContracts[0] || '')
-    setNextVehicleContract(currentNetwork?.vehicleContracts[1] || '')
-    if (currentNetwork) {
-      connector
-        .getCurrentTargetName()
-        .then((name) => {
+    try {
+      const connector = new ContractConnector(chainid)
+      const currentNetwork = networks.get(chainid || DEFAULT_CHAINID) // Default to Polygon main
+      setCurrentVehicleContract(currentNetwork?.vehicleContracts[0] || '')
+      setNextVehicleContract(currentNetwork?.vehicleContracts[1] || '')
+      if (currentNetwork) {
+        connector.getCurrentTargetName().then((name) => {
           setCurrentVehicle(NameToDescriptor(name))
-        })
-        .catch(() => console.error)
-      connector
-        .getNextTargetName()
-        .then((name) => {
+        }).catch((e) => console.error)
+        connector.getNextTargetName().then((name) => {
           setNextVehicle(NameToDescriptor(name))
-        })
-        .catch(() => console.error)
+        }).catch((e) => console.error)
+      }
+    } catch (error) {
+      console.error
     }
 
     return () => {
@@ -64,23 +62,23 @@ export const StatsOverview: FC = () => {
         alignItems="stretch"
       >
         <StatsVehicleCard
+          contract={currentVehicleContract}
           title={currentVehicle?.title || ''}
           logo={currentVehicle?.logo || ''}
           description={
             currentVehicle?.description ||
             'Loading up the next great thing. Give it a second...'
           }
-          contract={currentVehicleContract || ''}
           url={currentVehicle?.url || ''}
         />
         <StatsVehicleCard
+          contract={nextVehicleContract}
           title={nextVehicle?.title || ''}
           logo={nextVehicle?.logo || ''}
           description={
             nextVehicle?.description ||
             'Loading up the next great thing. Give it a second...'
           }
-          contract={nextVehicleContract || ''}
           url={nextVehicle?.url || ''}
         />
       </Stack>

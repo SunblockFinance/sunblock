@@ -20,8 +20,7 @@ import {
 import Divider from '@mui/material/Divider'
 import React, { FC, useEffect, useState } from 'react'
 import ContractConnector from '../../blockchain/ContractConnector'
-import { useGlobalState } from '../../blockchain/networks'
-import { ContractDescriptor } from '../../contracts/deployedContracts'
+import { hooks } from '../../connectors/metamask'
 import { AssetItem } from '../assets/AssetItem'
 
 const usdt = './crypto-icons/usdt.svg'
@@ -38,9 +37,10 @@ interface VehicleProps {
   logo: string
   description: string
   contract: string
+  url: string
 }
 
-export const StatsVehicleCard: FC<ContractDescriptor> = (props) => {
+export const StatsVehicleCard: FC<VehicleProps> = (props) => {
   const ExpandMore = styled((props: ExpandMoreProps) => {
     const { expand, ...other } = props
     return <IconButton {...other} />
@@ -53,14 +53,13 @@ export const StatsVehicleCard: FC<ContractDescriptor> = (props) => {
   }))
 
   const contract = props.contract
-
-
+  const { useChainId } = hooks
 
   const [expanded, setExpanded] = React.useState(false)
   const [investFund, setInvestFund] = useState('')
   const [rewardFund, setRewardFund] = useState('')
-  const [chainid, setChainid] = useGlobalState('chainid')
   const [isLoading, setIsLoading] = useState(true)
+  const chainid = useChainId()
 
   const handleExpandClick = () => {
     setExpanded(!expanded)
@@ -68,13 +67,17 @@ export const StatsVehicleCard: FC<ContractDescriptor> = (props) => {
 
   useEffect(() => {
     if (contract !== '') {
-      const connector = new ContractConnector(chainid)
-      connector.getVehicleInvestmentPool(contract).then((amount) => {
-        setInvestFund(amount)
-      }).catch(() => console.error())
-      connector.getVehicleRewardPool(contract).then((amount) => {
-        setRewardFund(amount)
-      }).catch(() => console.error())
+      try {
+        const connector = new ContractConnector(chainid)
+        connector.getVehicleInvestmentPool(contract).then((amount) => {
+          setInvestFund(amount)
+        }).catch((e) => console.error)
+        connector.getVehicleRewardPool(contract).then((amount) => {
+          setRewardFund(amount)
+        }).catch((e) => console.error)
+      } catch (error) {
+        console.error
+      }
     }
 
     return () => {
@@ -85,13 +88,10 @@ export const StatsVehicleCard: FC<ContractDescriptor> = (props) => {
 
   useEffect(() => {
     // If reward and invest fund is set, then we safely assume we can show the content.
-    console.log(rewardFund, investFund)
     if (rewardFund !== '' && investFund !== '') {
       setIsLoading(false)
     }
-
   }, [rewardFund, investFund])
-
 
   if (isLoading) {
     return (
@@ -103,29 +103,28 @@ export const StatsVehicleCard: FC<ContractDescriptor> = (props) => {
           backgroundColor: 'rgba(56,71,80,0.5)',
           backdropFilter: 'blur(8px)',
           padding: '5px',
-          maxWidth:'400px'
-
+          maxWidth: '400px',
         }}
       >
         <CardHeader
           avatar={<Skeleton variant="circular" width={40} height={40} />}
           title={<Skeleton variant="text" />}
-          subheader={<Skeleton variant="text" width='40%' />}
+          subheader={<Skeleton variant="text" width="40%" />}
         />
         <CardContent>
           <Typography variant="body2" color="text.secondary">
-            {<Skeleton variant="text" width='400px'/>}
+            {<Skeleton variant="text" width="400px" />}
           </Typography>
         </CardContent>
         <Divider textAlign="left">CAPITAL</Divider>
         <AssetItem
           title="To be invested"
-          value={<Skeleton variant="text" width='30%'/>}
+          value={<Skeleton variant="text" width="30%" />}
           icon={<Skeleton variant="circular" width={40} height={40} />}
         />
         <AssetItem
           title="Rewards held"
-          value={<Skeleton variant="text" width='30%'/>}
+          value={<Skeleton variant="text" width="30%" />}
           icon={<Skeleton variant="circular" width={40} height={40} />}
         />
 
@@ -165,7 +164,6 @@ export const StatsVehicleCard: FC<ContractDescriptor> = (props) => {
         </Collapse>
       </Card>
     )
-
   } else {
     return (
       <Card
@@ -176,8 +174,7 @@ export const StatsVehicleCard: FC<ContractDescriptor> = (props) => {
           backgroundColor: 'rgba(56,71,80,0.5)',
           backdropFilter: 'blur(8px)',
           padding: '5px',
-          maxWidth:'400px'
-
+          maxWidth: '400px',
         }}
       >
         <CardHeader
@@ -244,4 +241,4 @@ export const StatsVehicleCard: FC<ContractDescriptor> = (props) => {
       </Card>
     )
   }
-  }
+}

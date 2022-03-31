@@ -3,7 +3,10 @@
 // ========== CONTRACT CALLS ============ //
 
 import { BigNumber, Contract, ethers } from 'ethers'
-import { JsonRpcProvider, JsonRpcSigner } from 'ethers/node_modules/@ethersproject/providers'
+import {
+  JsonRpcProvider,
+  JsonRpcSigner
+} from 'ethers/node_modules/@ethersproject/providers'
 import { ABI_ERC20 } from '../contracts/abi/erc20'
 import { ABI_SUNBLOCK_CUBE } from '../contracts/abi/sunblock'
 import { ABI_VEHICLE } from '../contracts/abi/vehicle'
@@ -44,11 +47,8 @@ class ContractConnector {
       )
     } else {
       console.log(this.network.providerURL)
-      throw new Error("Invalid provider URL");
+      throw new Error('Invalid provider URL')
     }
-
-
-
 
     /**
      * Create Cube contract. Read only
@@ -70,26 +70,31 @@ class ContractConnector {
   }
 
   /**
- *
- * @param provider metamask provider
- * @returns amount of stable coins held by the address
- */
-  async getUSDTBalance(walletAddress:string): Promise<number> {
-  try {
-    const erc20 = new ethers.Contract(this.network.cubeNativeToken, ABI_ERC20, this.provider)
-    const contractBalance = await erc20.balanceOf(walletAddress)
-    return formatUSDTWeiToNumber(contractBalance)
-  } catch (error) {
-    console.log(error)
-    return 0
-  }
-}
-
-
-
-  async getERC20Allowance(owner:string): Promise<number> {
+   *
+   * @param provider metamask provider
+   * @returns amount of stable coins held by the address
+   */
+  async getUSDTBalance(walletAddress: string): Promise<number> {
     try {
-      const amount: BigNumber = await this.token.allowance(owner, this.network.cubeContract)
+      const erc20 = new ethers.Contract(
+        this.network.cubeNativeToken,
+        ABI_ERC20,
+        this.provider
+      )
+      const contractBalance = await erc20.balanceOf(walletAddress)
+      return formatUSDTWeiToNumber(contractBalance)
+    } catch (error) {
+      console.log(error)
+      return 0
+    }
+  }
+
+  async getERC20Allowance(owner: string): Promise<number> {
+    try {
+      const amount: BigNumber = await this.token.allowance(
+        owner,
+        this.network.cubeContract
+      )
 
       return formatUSDTWeiToNumber(amount)
     } catch (error) {
@@ -98,7 +103,10 @@ class ContractConnector {
     }
   }
 
-  async approveERC20Allowance(signer:JsonRpcSigner, amount:BigNumber): Promise<void> {
+  async approveERC20Allowance(
+    signer: JsonRpcSigner,
+    amount: BigNumber
+  ): Promise<void> {
     try {
       const signedContract = await this.token.connect(signer)
       await signedContract.approve(this.network.cubeContract, amount)
@@ -136,11 +144,8 @@ class ContractConnector {
       )
       const name = await vehicle.vehicleName()
 
-
       return ethers.utils.parseBytes32String(name)
     } catch (error) {
-
-
       console.log(error)
       return ''
     }
@@ -166,8 +171,8 @@ class ContractConnector {
    */
   async getNextTargetName(): Promise<string> {
     try {
-      const vehicleAddress:string = await this.cube.nextVehicle()
-      console.log(vehicleAddress);
+      const vehicleAddress: string = await this.cube.nextVehicle()
+      console.log(vehicleAddress)
 
       const vehicle = new ethers.Contract(
         vehicleAddress,
@@ -260,44 +265,39 @@ class ContractConnector {
   }
 
   /**
- * Well retrive the amount required to trigger funding of the vehicle
- * @returns formatted amount to be reach before funding the vehicle
- */
- async getVehicleInvestmentPool(vehicleAddress:string): Promise<string> {
-   console.log(vehicleAddress);
+   * Well retrive the amount required to trigger funding of the vehicle
+   * @returns formatted amount to be reach before funding the vehicle
+   */
+  async getVehicleInvestmentPool(vehicleAddress: string): Promise<string> {
+    try {
+      const vehicle = new ethers.Contract(
+        vehicleAddress,
+        ABI_VEHICLE,
+        this.provider
+      )
 
-  try {
-    const vehicle = new ethers.Contract(
-      vehicleAddress,
-      ABI_VEHICLE,
-      this.provider
-    )
-    console.log(`Vehicle found`);
-    console.log(vehicle);
-
-
-    const amount:BigNumber = await vehicle.investmentPool()
-    return ethers.utils.formatUnits(amount, 6)
-  } catch (error) {
-    console.log(error)
-    return ''
+      const amount: BigNumber = await vehicle.investmentPool()
+      return ethers.utils.formatUnits(amount, 6)
+    } catch (error) {
+      console.log(error)
+      return ''
+    }
   }
-}
 
-async getVehicleRewardPool(vehicleAddress:string): Promise<string> {
-  try {
-    const vehicle = new ethers.Contract(
-      vehicleAddress,
-      ABI_VEHICLE,
-      this.provider
-    )
-    const amount:BigNumber = await vehicle.rewardPool()
-    return ethers.utils.formatUnits(amount, 6)
-  } catch (error) {
-    console.log(error)
-    return ''
+  async getVehicleRewardPool(vehicleAddress: string): Promise<string> {
+    try {
+      const vehicle = new ethers.Contract(
+        vehicleAddress,
+        ABI_VEHICLE,
+        this.provider
+      )
+      const amount: BigNumber = await vehicle.rewardPool()
+      return ethers.utils.formatUnits(amount, 6)
+    } catch (error) {
+      console.log(error)
+      return ''
+    }
   }
-}
 }
 
 export default ContractConnector
