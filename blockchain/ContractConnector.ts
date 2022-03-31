@@ -69,6 +69,16 @@ class ContractConnector {
     )
   }
 
+  async purchaseShare(signer: JsonRpcSigner, amount: number): Promise<void> {
+    if (amount === 0) return
+    try {
+      const signedCube = this.cube.connect(signer)
+      await signedCube.buyShares(amount)
+    } catch (error) {
+      console.error
+    }
+  }
+
   /**
    *
    * @param provider metamask provider

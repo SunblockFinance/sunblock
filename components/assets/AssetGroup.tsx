@@ -42,6 +42,7 @@ export const AssetGroup: FC = () => {
   }, [])
 
   useEffect(() => {
+    if (chainid === 0) return
     try {
     const cube = new ContractConnector(chainid)
     cube

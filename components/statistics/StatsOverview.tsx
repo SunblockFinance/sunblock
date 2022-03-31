@@ -22,6 +22,7 @@ export const StatsOverview: FC = () => {
 
   useEffect(() => {
     try {
+        
       const connector = new ContractConnector(chainid)
       const currentNetwork = networks.get(chainid || DEFAULT_CHAINID) // Default to Polygon main
       setCurrentVehicleContract(currentNetwork?.vehicleContracts[0] || '')

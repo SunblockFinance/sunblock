@@ -7,14 +7,12 @@ import { createTheme, CssBaseline, ThemeProvider } from '@mui/material'
 import { AppProps } from 'next/app'
 import { SnackbarProvider } from 'notistack'
 import React, { FC, useEffect } from 'react'
-import { useGlobalState } from '../blockchain/networks'
 import { hooks, metaMask } from '../connectors/metamask'
 
 
 const App: FC<AppProps> = ({ Component, pageProps }) => {
   const {useIsActive, useChainId} = hooks
 
-  const [globalChainid, setGlobalChainid] = useGlobalState('chainid')
   const currentChainID = useChainId()
 
   /**

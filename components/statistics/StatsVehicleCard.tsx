@@ -66,6 +66,7 @@ export const StatsVehicleCard: FC<VehicleProps> = (props) => {
   }
 
   useEffect(() => {
+    if (chainid === 0) return
     if (contract !== '') {
       try {
         const connector = new ContractConnector(chainid)

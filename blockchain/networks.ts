@@ -1,6 +1,4 @@
 // Copyright 2022 Kenth Fagerlund.
-// SPDX-License-Identifier: MIT
-import { createGlobalState } from 'react-hooks-global-state'
 export interface NetworkDetails {
     chainid: number
     cubeContract: string
@@ -17,7 +15,7 @@ export interface NetworkDetails {
       '0x9f5f595018215754Bd64446d8F369eA0726fDFf9',
     ],
     cubeNativeToken: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
-    providerURL:'wss://ws-matic-mainnet.chainstacklabs.com'
+    providerURL:'https://apis-sj.ankr.com/a2619343e18742269cd75b3d774b2dd7/fc5bf88d2604a7790ef5a8b216d87cc0/polygon/full/main'
   }
 
   const polygonMumbai: NetworkDetails = {
@@ -28,7 +26,7 @@ export interface NetworkDetails {
       '0x334e65fd4e98b03c25Bcf6797Fe034551E4C2d0B',
     ],
     cubeNativeToken: '0x2AF8C95864dAF017906b310C4910C4B1b1E55499',
-    providerURL: 'wss://ws-matic-mumbai.chainstacklabs.com'
+    providerURL: 'https://apis.ankr.com/ae5b5e85d5a94ee38490f6f20ec93c5b/fc5bf88d2604a7790ef5a8b216d87cc0/polygon/full/test'
   }
 
   const avalanchTest: NetworkDetails = {
@@ -39,7 +37,7 @@ export interface NetworkDetails {
         '0xE1eb7199A220AefF4F8Cc0559c69b4cB7144f73f',
       ],
       cubeNativeToken: '0x020E3EB05a80aB431F37171Fa5Bd0f175E62Ca0F',
-      providerURL: 'https://api.avax-test.network/ext/bc/C/rpc'
+      providerURL: 'https://rpc.ankr.com/avalanche_fuji'
     }
 
   export const networks = new Map<number, NetworkDetails>([
@@ -49,6 +47,3 @@ export interface NetworkDetails {
   ])
 
   export const DEFAULT_CHAINID = 137
-
-
-  export const { useGlobalState } = createGlobalState({chainid: 0})

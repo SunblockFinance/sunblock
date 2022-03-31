@@ -33,19 +33,19 @@ const NetworkAlert: FC = () => {
     }
   }, [chainID])
 
-  const handleNetworkSwitch = (e:any): void => {
-    const attributes:NamedNodeMap = e.target.attributes
+  const handleNetworkSwitch = (e: any): void => {
+    const attributes: NamedNodeMap = e.target.attributes
     const chosenChain = Number(attributes.getNamedItem('chain')?.value)
-
 
     if (provider && chosenChain) {
       try {
         const formattedChainId = hexStripZeros(
           BigNumber.from(chosenChain).toHexString()
         )
-        provider.send('wallet_switchEthereumChain', [
-          { chainId: formattedChainId },
-        ]).then().catch(e => console.error)
+        provider
+          .send('wallet_switchEthereumChain', [{ chainId: formattedChainId }])
+          .then()
+          .catch((e) => console.error)
       } catch (switchError: any) {
         // This error code indicates that the chain has not been added to MetaMask.
         if (switchError.code === 4902) {
@@ -54,6 +54,9 @@ const NetworkAlert: FC = () => {
           )
         }
       }
+    } else {
+
+
     }
   }
 
@@ -63,8 +66,6 @@ const NetworkAlert: FC = () => {
 
   const polygonChain = { chain: 137 }
   const avalancheChain = { chain: 43113 }
-
-
 
   return (
     <div>
@@ -79,14 +80,10 @@ const NetworkAlert: FC = () => {
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-
-              Like a lawyer in the wrong courtroom, we have no idea where the
-              contracts are on this network. If you want Sunblock on this
-              network, give us a shout.{' '}
-
-              Until then, click one of the networks below that we support and we
-              will help you switch to it.
-
+            Like a lawyer in the wrong courtroom, we have no idea where the
+            contracts are on this network. If you want Sunblock on this network,
+            give us a shout. Until then, click one of the networks below that we
+            support and we will help you switch to it.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -95,7 +92,7 @@ const NetworkAlert: FC = () => {
             variant="outlined"
             aria-label="outlined primary button group"
           >
-            <Button {...polygonChain}  onClick={handleNetworkSwitch}>
+            <Button {...polygonChain} onClick={handleNetworkSwitch}>
               <Avatar src="/crypto-icons/matic.svg" />
               &nbsp;Polygon
             </Button>

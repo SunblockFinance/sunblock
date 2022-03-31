@@ -31,7 +31,7 @@ export const DESCRIPTOR_THOR:ContractDescriptor = {
 
 export const DESCRIPTOR_ETHERSTONES:ContractDescriptor = {
     title:"Etherstones",
-    logo:"/svg/yield-nodes-logo.svg",
+    logo:"/etherstones.webp",
     description:"YieldNodes is a complex, multi-tiered Node rental program based on the new blockchain-based economy",
     url:'https://etherstones.fi/'
 }

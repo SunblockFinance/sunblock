@@ -14,21 +14,18 @@ import {
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
-import { ethers } from 'ethers'
 import { useSnackbar } from 'notistack'
 import React, { FC, useEffect, useState } from 'react'
 import ContractConnector from '../blockchain/ContractConnector'
-import { useGlobalState } from '../blockchain/networks'
 import { hooks } from '../connectors/metamask'
-import { ABI_SUNBLOCK_CUBE } from '../contracts/abi/sunblock'
-import { CONTRACT_ADDRESS_CUBE } from '../programs/polygon'
 import AllowancePill from './AllowancePill'
 
 const DEFAULT_SHARE_VALUE = 10
-const { useIsActive, useProvider } = hooks
+const { useIsActive, useProvider, useChainId } = hooks
 
 export const PurchaseShares: FC = () => {
   const provider = useProvider()
+  const chainid = useChainId()
   const isWalletActive = useIsActive()
 
   const closeSpinner = () => {
@@ -51,47 +48,14 @@ export const PurchaseShares: FC = () => {
   const [balance, setBalance] = useState(0)
   const [open, setOpen] = useState(false)
   const [sharePrice, setSharePrice] = useState(0)
-  const [chainid, setChainid] = useGlobalState('chainid')
 
   const isUnderfunded = basketPrice > Number(balance)
 
   async function purchaseShare(amount: number) {
-    if (provider === undefined) return
-    const signer = provider.getSigner()
-    const signerAddress = await signer.getAddress()
-    const sunblockContract = new ethers.Contract(
-      CONTRACT_ADDRESS_CUBE,
-      ABI_SUNBLOCK_CUBE,
-      signer
-    )
-    try {
-      const response: TransactionResponse = await sunblockContract.buyShares(
-        amount
-      )
-      setActiveTx(response)
-      openSpinner()
-    } catch (error) {
-      closeSpinner()
-      enqueueSnackbar("🙁 That didn't work as expected... Try again?", {
-        variant: 'error',
-        anchorOrigin: { horizontal: 'center', vertical: 'top' },
-      })
+    if (chainid && provider) {
+      const connector = new ContractConnector(chainid)
+      connector.purchaseShare(provider.getSigner(),amount)
     }
-    const filter = sunblockContract.filters.SharesIssued(signerAddress, null)
-    provider.once('block', () => {
-      sunblockContract.once(filter, async (buyer: string, amount) => {
-        console.log(`BUY EVENT: Address,${buyer} Amount,${amount}`)
-
-        if (signerAddress !== buyer) {
-          return
-        }
-        closeSpinner()
-        enqueueSnackbar(`👍 Done! You now got ${amount} new share(s). Nice!`, {
-          variant: 'success',
-          anchorOrigin: { horizontal: 'center', vertical: 'top' },
-        })
-      })
-    })
   }
 
   const handleShareTextUpdate = (

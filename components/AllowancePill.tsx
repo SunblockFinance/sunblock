@@ -7,7 +7,6 @@ import { track } from 'insights-js'
 import { useSnackbar } from 'notistack'
 import React, { FC, useState } from 'react'
 import ContractConnector from '../blockchain/ContractConnector'
-import { useGlobalState } from '../blockchain/networks'
 import { hooks } from '../connectors/metamask'
 import { ABI_ERC20 } from '../contracts/abi/erc20'
 import { ABI_SUNBLOCK_CUBE } from '../contracts/abi/sunblock'
@@ -23,12 +22,12 @@ const TXT_NO_ALLOWANCE = 'No allowance given'
  * VARIABLES
  */
 let eth
-const { useAccounts, useProvider } = hooks
+const { useAccount, useProvider, useChainId } = hooks
 
 const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
   const provider = useProvider()
+  const chainid = useChainId()
   const { enqueueSnackbar } = useSnackbar()
-  const [chainid, setChainid] = useGlobalState('chainid')
 
   const erc20 = new ethers.Contract(TOKEN_ADDRESS_USDT, ABI_ERC20, provider)
   const sunblock = new ethers.Contract(
@@ -46,51 +45,20 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
    * LOCAL VARIABLES
    */
 
-  const accounts = useAccounts()
+  const account = useAccount()
 
   // const {NotifyAllowanceIncresed: NotifyAllowanceIncreased, NotifyAllowanceRemoved}= useSnackbarNotifications()
 
   async function addAllowance(amount: number) {
-    const signer = provider?.getSigner()
-    if (signer === undefined) return
-    const signerAddress = await signer.getAddress()
+    if (provider && chainid && chainid !== 0) {
+      const connector = new ContractConnector(chainid)
 
-    const contract = await new Contract(
-      CONTRACT_ADDRESS_CUBE,
-      ABI_SUNBLOCK_CUBE,
-      signer
-    )
-    const cost: BigNumber = await contract.unitcost()
+      const shareprice = await connector.getSharePrice()
+      const ethSharePrice = ethers.utils.parseUnits(shareprice.toString(), 6)
 
-    const sum = cost.mul(amount)
-    const erc20signed = new ethers.Contract(
-      TOKEN_ADDRESS_USDT,
-      ABI_ERC20,
-      signer
-    )
-    await erc20signed
-      .approve(CONTRACT_ADDRESS_CUBE, sum)
-      .catch((error: Error) => console.log(error))
-    erc20signed.once('Approval', (to, spender, value) => {
-      if (spender !== CONTRACT_ADDRESS_CUBE) {
-        console.log(
-          `Ignoring approval for ${spender}. We expect it for ${CONTRACT_ADDRESS_CUBE}`
-        )
-      } else {
-        const allowanceNumber = formatUSDTWeiToNumber(value)
-        setAllowance(allowanceNumber)
-        enqueueSnackbar(
-          `📣 Update! Allowance to Sunblock is now ${allowanceNumber} USDT.`,
-          {
-            variant: 'success',
-            anchorOrigin: { horizontal: 'center', vertical: 'top' },
-          }
-        )
-        track({
-          id: 'approval-added',
-        })
-      }
-    })
+      const signer = provider.getSigner()
+      connector.approveERC20Allowance(signer, ethSharePrice.mul(amount))
+    }
   }
 
   async function removeAllowance(): Promise<void> {
@@ -114,65 +82,26 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
     } catch (error) {}
   }
 
-  // async function updateAllowance(): Promise<void> {
-  //   const signer = provider?.getSigner()
-  //   if (signer === undefined) return
-  //   const walletAddress = await signer?.getAddress()
 
-  //   // If we get undefined here then the user is very likely not logged in to metamask
-  //   if (walletAddress === undefined) return
-
-  //   const tokenNumber = await cube.getERC20Allowance(walletAddress)
-  //   setAllowance(tokenNumber)
-  //   try {
-  //     if (tokenNumber > Number.MAX_SAFE_INTEGER) {
-  //       setSpendlimitWarning(true)
-  //     } else if (tokenNumber === 0) {
-  //       setSpendlimitWarning(true)
-  //     } else {
-  //       setSpendlimitWarning(false)
-  //     }
-  //   } catch (error) {
-  //     setAllowance(-1)
-  //     setSpendlimitWarning(true)
-  //   }
-  // }
 
   React.useEffect(() => {
-    if (provider) {
+    if (provider && chainid !== 0 && account) {
       const cube = new ContractConnector(chainid)
-      const signer = provider.getSigner()
-      const walletAddress = async () => signer.getAddress()
-
-      // If we get undefined here then the user is very likely not logged in to metamask
-      if (walletAddress === undefined) return
-
-      ;async () => {
-        const walletAddress = await signer.getAddress()
-        const amount = await cube.getERC20Allowance(walletAddress)
-
-        setAllowance(amount)
-        try {
-          if (amount > Number.MAX_SAFE_INTEGER) {
-            setSpendlimitWarning(true)
-          // deepcode ignore DuplicateIfBody: <False positive. Spending limit is true and false, not identical>
-          } else if (amount === 0) {
+        cube.getERC20Allowance(account).then((amount) => {
+          setAllowance(amount)
+          if (amount === 0) {
             setSpendlimitWarning(true)
           } else {
             setSpendlimitWarning(false)
           }
-        } catch (error) {
-          setAllowance(-1)
-          setSpendlimitWarning(true)
-        }
-      }
+        }).catch(console.error)
     }
 
     return () => {
       setAllowance(-1)
       setSpendlimitWarning(false)
     }
-  }, [chainid, provider])
+  }, [chainid, provider, account])
 
   return (
     <Chip

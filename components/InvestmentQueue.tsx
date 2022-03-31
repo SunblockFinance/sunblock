@@ -36,6 +36,8 @@ export default function InvestmentQueue() {
   const isActive = useIsActive()
 
   useEffect(() => {
+    if (!chainid || chainid === 0) return
+    console.log(`QUEUE = ${chainid}`)
     try {
       const cube = new ContractConnector(chainid)
       setInprogress((prevcount) => prevcount + 1)

@@ -9,13 +9,12 @@ import PollOutlinedIcon from '@mui/icons-material/PollOutlined'
 import { Avatar, Divider, Stack } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
 import ContractConnector from '../../blockchain/ContractConnector'
-import { useGlobalState } from '../../blockchain/networks'
 import { hooks } from '../../connectors/metamask'
 import InvestmentQueue from '../InvestmentQueue'
 import { PurchaseShares } from '../PurchaseShare'
 import { HeroItem } from './HeroItem'
 
-const { useProvider } = hooks
+const { useProvider, useChainId } = hooks
 
 export const HeroRow: FC = () => {
   const [userShares, setUserShares] = useState(0)
@@ -23,30 +22,37 @@ export const HeroRow: FC = () => {
   const [earnings, setEarnings] = useState(0)
   const [investFund, setInvestFund] = useState(0)
   const [rewardFund, setRewardFund] = useState(0)
-  const [chainid, setChainid] = useGlobalState('chainid')
 
   const provider = useProvider()
+  const chainid = useChainId()
 
   useEffect(() => {
-    const cube = new ContractConnector(chainid)
-    cube
-      .getCubeInvestmentFund()
-      .then((amount) => {
-        setInvestFund(amount)
-      })
-      .catch(() => console.error)
-    cube
-      .getCubeRewardFund()
-      .then((amount) => {
-        setRewardFund(amount)
-      })
-      .catch(() => console.error)
-    cube
-      .getSharesIssued()
-      .then((amount) => {
-        setSharesIssued(amount)
-      })
-      .catch(() => console.error)
+    try {
+
+      if (!chainid || chainid === 0) return
+      console.log(`HERO = ${chainid}`)
+      const cube = new ContractConnector(chainid)
+      cube
+        .getCubeInvestmentFund()
+        .then((amount) => {
+          setInvestFund(amount)
+        })
+        .catch(() => console.error)
+      cube
+        .getCubeRewardFund()
+        .then((amount) => {
+          setRewardFund(amount)
+        })
+        .catch(() => console.error)
+      cube
+        .getSharesIssued()
+        .then((amount) => {
+          setSharesIssued(amount)
+        })
+        .catch(() => console.error)
+    } catch (error) {
+      console.error
+    }
 
     return () => {
       setInvestFund(0)
@@ -56,15 +62,17 @@ export const HeroRow: FC = () => {
   }, [chainid])
 
   useEffect(() => {
-    if (provider) {
+    if (provider && chainid !== 0) {
       const cube = new ContractConnector(chainid)
       provider
         .getSigner()
         .getAddress()
         .then((address) => {
+          console.log(`Signer address is ${address} on chain ${chainid}`)
           cube
             .getHeldShares(address)
             .then((shares) => {
+              console.log(`Shares owned is ${shares}`)
               setUserShares(shares)
             })
             .catch(() => console.error)
