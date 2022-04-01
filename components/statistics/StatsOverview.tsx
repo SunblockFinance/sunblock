@@ -7,7 +7,7 @@ import { networks } from '../../blockchain/networks'
 import { hooks } from '../../connectors/metamask'
 import {
   ContractDescriptor,
-  NameToDescriptor
+  NameToDescriptor,
 } from '../../contracts/deployedContracts'
 import { StatsVehicleCard } from './StatsVehicleCard'
 
@@ -26,24 +26,28 @@ export const StatsOverview: FC = () => {
         /**
          * TODO:GET THE CONTRACTS FROM A FIXED LIST RATHER THAN WHATS ON THE CUEUE
          */
-      const connector = new ContractConnector(chainid)
-      const currentNetwork = networks.get(chainid) // Default to Polygon main
-      setCurrentVehicleContract(currentNetwork?.vehicleContracts[0] || '')
-      setNextVehicleContract(currentNetwork?.vehicleContracts[1] || '')
-      if (currentNetwork) {
-        connector.getCurrentTargetName().then((name) => {
-          setCurrentVehicle(NameToDescriptor(name))
-        }).catch((e) => console.error)
-        connector.getNextTargetName().then((name) => {
-          setNextVehicle(NameToDescriptor(name))
-        }).catch((e) => console.error)
+        const connector = new ContractConnector(chainid)
+        const currentNetwork = networks.get(chainid) // Default to Polygon main
+        setCurrentVehicleContract(currentNetwork?.vehicleContracts[0] || '')
+        setNextVehicleContract(currentNetwork?.vehicleContracts[1] || '')
+        if (currentNetwork) {
+          connector
+            .getCurrentTargetName()
+            .then((name) => {
+              setCurrentVehicle(NameToDescriptor(name))
+            })
+            .catch((e) => console.error)
+          connector
+            .getNextTargetName()
+            .then((name) => {
+              setNextVehicle(NameToDescriptor(name))
+            })
+            .catch((e) => console.error)
+        }
+      } catch (error) {
+        console.error
       }
-    } catch (error) {
-      console.error
     }
-
-    }
-
 
     return () => {
       setCurrentVehicle(undefined)
