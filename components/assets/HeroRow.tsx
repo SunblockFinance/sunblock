@@ -63,7 +63,8 @@ export const HeroRow: FC = () => {
 
   useEffect(() => {
     if (provider && chainid !== 0) {
-      const cube = new ContractConnector(chainid)
+      try {
+        const cube = new ContractConnector(chainid)
       provider
         .getSigner()
         .getAddress()
@@ -78,6 +79,9 @@ export const HeroRow: FC = () => {
             .catch(() => console.error)
         })
         .catch(() => console.error)
+      } catch (error) {
+        console.error
+      }
     }
 
     return () => {

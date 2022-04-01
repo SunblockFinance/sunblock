@@ -20,7 +20,7 @@ import ContractConnector from '../blockchain/ContractConnector'
 import { hooks } from '../connectors/metamask'
 import AllowancePill from './AllowancePill'
 
-const DEFAULT_SHARE_VALUE = 10
+const DEFAULT_SHARE_AMOUNT = 10
 const { useIsActive, useProvider, useChainId } = hooks
 
 export const PurchaseShares: FC = () => {
@@ -43,7 +43,7 @@ export const PurchaseShares: FC = () => {
   const [usdt, setUsdt] = useState(0)
   const [activeTx, setActiveTx] = useState<TransactionResponse>()
   const [stopPurchase, setStopPurchase] = useState(false)
-  const [shareAmount, setShareAmount] = useState(DEFAULT_SHARE_VALUE)
+  const [shareAmount, setShareAmount] = useState(DEFAULT_SHARE_AMOUNT)
   const [basketPrice, setBasketPrice] = useState(0)
   const [balance, setBalance] = useState(0)
   const [open, setOpen] = useState(false)
@@ -54,7 +54,7 @@ export const PurchaseShares: FC = () => {
   async function purchaseShare(amount: number) {
     if (chainid && provider) {
       const connector = new ContractConnector(chainid)
-      connector.purchaseShare(provider.getSigner(),amount)
+      connector.purchaseShare(provider.getSigner(), amount)
     }
   }
 
@@ -80,14 +80,21 @@ export const PurchaseShares: FC = () => {
   }
 
   useEffect(() => {
-    const cube = new ContractConnector(chainid)
-    cube
-      .getSharePrice()
-      .then((price) => {
-        setSharePrice(price)
-        setBasketPrice(price * DEFAULT_SHARE_VALUE)
-      })
-      .catch(() => console.error)
+    if (chainid) {
+      try {
+        const cube = new ContractConnector(chainid)
+      cube
+        .getSharePrice()
+        .then((price) => {
+          setSharePrice(price)
+          setBasketPrice(price * DEFAULT_SHARE_AMOUNT)
+        })
+        .catch(() => console.error)
+      } catch (error) {
+        console.error
+      }
+    }
+
     return () => {
       setSharePrice(0)
       setBasketPrice(0)
@@ -96,7 +103,8 @@ export const PurchaseShares: FC = () => {
 
   useEffect(() => {
     if (provider) {
-      const cube = new ContractConnector(chainid)
+      try {
+        const cube = new ContractConnector(chainid)
       provider
         .getSigner()
         .getAddress()
@@ -109,6 +117,9 @@ export const PurchaseShares: FC = () => {
             .catch(() => console.error)
         })
         .catch(() => console.error)
+      } catch (error) {
+        console.error
+      }
     }
     return () => {
       setBalance(0)

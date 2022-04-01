@@ -3,7 +3,7 @@
 import { Container, Stack } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
 import ContractConnector from '../../blockchain/ContractConnector'
-import { DEFAULT_CHAINID, networks } from '../../blockchain/networks'
+import { networks } from '../../blockchain/networks'
 import { hooks } from '../../connectors/metamask'
 import {
   ContractDescriptor,
@@ -21,10 +21,13 @@ export const StatsOverview: FC = () => {
   const chainid = useChainId()
 
   useEffect(() => {
-    try {
-        
+    if (chainid) {
+      try {
+        /**
+         * TODO:GET THE CONTRACTS FROM A FIXED LIST RATHER THAN WHATS ON THE CUEUE
+         */
       const connector = new ContractConnector(chainid)
-      const currentNetwork = networks.get(chainid || DEFAULT_CHAINID) // Default to Polygon main
+      const currentNetwork = networks.get(chainid) // Default to Polygon main
       setCurrentVehicleContract(currentNetwork?.vehicleContracts[0] || '')
       setNextVehicleContract(currentNetwork?.vehicleContracts[1] || '')
       if (currentNetwork) {
@@ -38,6 +41,9 @@ export const StatsOverview: FC = () => {
     } catch (error) {
       console.error
     }
+
+    }
+
 
     return () => {
       setCurrentVehicle(undefined)
