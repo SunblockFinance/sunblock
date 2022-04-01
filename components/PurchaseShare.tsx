@@ -125,7 +125,7 @@ export const PurchaseShares: FC = () => {
         provider
           .getSigner()
           .getAddress()
-          .then((address) => {
+          .then((address: string) => {
             cube
               .getUSDTBalance(address)
               .then((amount) => {

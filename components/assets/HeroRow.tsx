@@ -66,7 +66,7 @@ export const HeroRow: FC = () => {
         provider
           .getSigner()
           .getAddress()
-          .then((address) => {
+          .then((address: string | string[]) => {
             cube
               .getHeldShares(address)
               .then((shares) => {

@@ -8,7 +8,7 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle,
+  DialogTitle
 } from '@mui/material'
 import { BigNumber } from 'ethers'
 import { hexStripZeros } from 'ethers/lib/utils'
@@ -50,7 +50,7 @@ const NetworkAlert: FC = () => {
         provider!
           .send('wallet_switchEthereumChain', [{ chainId: formattedChainId }])
           .then()
-          .catch((e) => console.error)
+          .catch(() => console.error)
       } catch (switchError: any) {
         // This error code indicates that the chain has not been added to MetaMask.
         if (switchError.code === 4902) {
