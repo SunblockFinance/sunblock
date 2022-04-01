@@ -57,14 +57,15 @@ export const PurchaseShares: FC = () => {
   async function purchaseShare(amount: number) {
     if (chainid && provider) {
       const connector = new ContractConnector(chainid, (event) => {
-        console.log(event)
         setOpenProgress(false)
         enqueueSnackbar(
-          `🎉 Success! You now have ${event.data['shares']} more share${event.data['shares']>1?'s':''}`,
+          `🎉 Success! You now have ${event.data['shares']} more share${
+            event.data['shares'] > 1 ? 's' : ''
+          }`,
           {
             variant: 'success',
             anchorOrigin: { horizontal: 'center', vertical: 'top' },
-            preventDuplicate: true
+            preventDuplicate: true,
           }
         )
       })

@@ -81,10 +81,11 @@ class ContractConnector {
   async purchaseShare(signer: JsonRpcSigner, amount: number): Promise<void> {
     if (amount === 0) return
     try {
+      const sender = await signer.getAddress()
       const signedCube = this.cube.connect(signer)
       await signedCube.buyShares(amount)
       signedCube.once('SharesIssued', (addr, shares) => {
-        if (this.callback) {
+        if (this.callback && sender === addr) {
           const ev: ContractEvent = {
             event: 'SharesIssued',
             data: { address: addr, shares: shares },
