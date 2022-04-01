@@ -20,6 +20,7 @@ import {
 import Divider from '@mui/material/Divider'
 import React, { FC, useEffect, useState } from 'react'
 import ContractConnector from '../../blockchain/ContractConnector'
+import { NetworkDetails, networks } from '../../blockchain/networks'
 import { hooks } from '../../connectors/metamask'
 import { AssetItem } from '../assets/AssetItem'
 
@@ -59,6 +60,7 @@ export const StatsVehicleCard: FC<VehicleProps> = (props) => {
   const [investFund, setInvestFund] = useState('')
   const [rewardFund, setRewardFund] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  const [chain, setChain] = useState<NetworkDetails>()
   const chainid = useChainId()
 
   const handleExpandClick = () => {
@@ -66,8 +68,7 @@ export const StatsVehicleCard: FC<VehicleProps> = (props) => {
   }
 
   useEffect(() => {
-    if (chainid === 0) return
-    if (contract !== '') {
+    if (chainid !== 0 && chainid && contract !== '') {
       try {
         const connector = new ContractConnector(chainid)
         connector.getVehicleInvestmentPool(contract).then((amount) => {
@@ -79,7 +80,12 @@ export const StatsVehicleCard: FC<VehicleProps> = (props) => {
       } catch (error) {
         console.error
       }
+      setChain(networks[chainid])
     }
+
+
+
+
 
     return () => {
       setInvestFund('')
@@ -132,7 +138,7 @@ export const StatsVehicleCard: FC<VehicleProps> = (props) => {
         <CardActions disableSpacing>
           <IconButton
             aria-label="view contract"
-            href={`https://polygonscan.com/address/${props.contract}`} //TODO: Follow the chain ID
+            href={`${chain?.chain.explorer}/address/${props.contract}`} //TODO: Follow the chain ID
           >
             <GavelIcon />
           </IconButton>
@@ -208,7 +214,7 @@ export const StatsVehicleCard: FC<VehicleProps> = (props) => {
         <CardActions disableSpacing>
           <IconButton
             aria-label="view contract"
-            href={`https://polygonscan.com/address/${props.contract}`} //TODO: Follow the chain ID
+            href={`${chain?.chain.explorer.url || 'https://polyscan.com'}/address/${props.contract}`} //TODO: Follow the chain ID
           >
             <GavelIcon />
           </IconButton>

@@ -4,11 +4,13 @@
 // https://opensource.org/licenses/MIT
 
 import FaceIcon from '@mui/icons-material/Face'
+import { Avatar, Tooltip } from '@mui/material'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
 import Stack from '@mui/material/Stack'
 import Image from 'next/image'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
+import { NetworkDetails, networks } from '../blockchain/networks'
 import { hooks, metaMask } from '../connectors/metamask'
 import { shortenAddress } from '../utils/formaters'
 import { AlertDialog, Contracts, WhoAreWe } from './AlertDialog'
@@ -22,11 +24,23 @@ export const Header: FC = () => {
   const chainid = useChainId()
   const [openHelp, setOpenHelp] = useState(false)
   const [openContract, setOpenContract] = useState(false)
+  const [chain, setChain] = useState<NetworkDetails>()
 
 
   // ==== MENU CONTROLS ==== // //TODO:Clean this up this mess later!
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
+
+  useEffect(() => {
+    if(chainid) {
+      setChain(networks[chainid])
+    }
+
+    return () => {
+      setChain(undefined)
+    }
+  }, [chainid])
+
 
 
   const authenticatebtn = (
@@ -96,7 +110,11 @@ export const Header: FC = () => {
           content={Contracts}
         />
       </Stack>
+      <Tooltip title={`Connected to ${chain?.chain.name} network`}>
+      <Avatar src={chain?.chain.logo}></Avatar>
+      </Tooltip>
       {isActive ? authID : authenticatebtn}
+
     </Stack>
   )
 }

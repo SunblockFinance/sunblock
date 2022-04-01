@@ -2,12 +2,10 @@
 // SPDX-License-Identifier: MIT
 import { Container, Stack } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
-import ContractConnector from '../../blockchain/ContractConnector'
-import { networks } from '../../blockchain/networks'
+import { networks, VehicleContractDetails } from '../../blockchain/networks'
 import { hooks } from '../../connectors/metamask'
 import {
-  ContractDescriptor,
-  NameToDescriptor,
+  ContractDescriptor
 } from '../../contracts/deployedContracts'
 import { StatsVehicleCard } from './StatsVehicleCard'
 
@@ -19,41 +17,19 @@ export const StatsOverview: FC = () => {
   const [nextVehicle, setNextVehicle] = useState<ContractDescriptor>()
   const [nextVehicleContract, setNextVehicleContract] = useState('')
   const chainid = useChainId()
+  const [deployedVehicles, setDeployedVehicles] = useState<Array<VehicleContractDetails>>()
 
   useEffect(() => {
     if (chainid) {
-      try {
-        /**
-         * TODO:GET THE CONTRACTS FROM A FIXED LIST RATHER THAN WHATS ON THE CUEUE
-         */
-        const connector = new ContractConnector(chainid)
-        const currentNetwork = networks.get(chainid) // Default to Polygon main
-        setCurrentVehicleContract(currentNetwork?.vehicleContracts[0] || '')
-        setNextVehicleContract(currentNetwork?.vehicleContracts[1] || '')
-        if (currentNetwork) {
-          connector
-            .getCurrentTargetName()
-            .then((name) => {
-              setCurrentVehicle(NameToDescriptor(name))
-            })
-            .catch((e) => console.error)
-          connector
-            .getNextTargetName()
-            .then((name) => {
-              setNextVehicle(NameToDescriptor(name))
-            })
-            .catch((e) => console.error)
-        }
-      } catch (error) {
-        console.error
-      }
+      const currentNetwork = networks[chainid]
+      setDeployedVehicles(currentNetwork?.vehicleContracts)
     }
 
     return () => {
-      setCurrentVehicle(undefined)
-      setNextVehicle(undefined)
+
     }
   }, [chainid])
+
 
   return (
     <Container
@@ -72,26 +48,21 @@ export const StatsOverview: FC = () => {
         justifyContent="space-around"
         alignItems="stretch"
       >
-        <StatsVehicleCard
-          contract={currentVehicleContract}
-          title={currentVehicle?.title || ''}
-          logo={currentVehicle?.logo || ''}
+        {deployedVehicles?.map(_vehicle => (
+          <StatsVehicleCard
+          key={_vehicle.address}
+          contract={_vehicle.address}
+          title={_vehicle.name || ''}
+          logo={_vehicle.logo || ''}
           description={
-            currentVehicle?.description ||
+            _vehicle.description ||
             'Loading up the next great thing. Give it a second...'
           }
-          url={currentVehicle?.url || ''}
+          url={_vehicle.url || ''}
         />
-        <StatsVehicleCard
-          contract={nextVehicleContract}
-          title={nextVehicle?.title || ''}
-          logo={nextVehicle?.logo || ''}
-          description={
-            nextVehicle?.description ||
-            'Loading up the next great thing. Give it a second...'
-          }
-          url={nextVehicle?.url || ''}
-        />
+        ))}
+
+
       </Stack>
     </Container>
   )

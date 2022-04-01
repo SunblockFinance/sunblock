@@ -8,22 +8,24 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle
+  DialogTitle,
 } from '@mui/material'
 import { BigNumber } from 'ethers'
 import { hexStripZeros } from 'ethers/lib/utils'
 import { FC, useEffect, useState } from 'react'
 import { networks } from '../blockchain/networks'
-import { hooks } from '../connectors/metamask'
+import { hooks, metaMask } from '../connectors/metamask'
 
-const { useProvider, useChainId } = hooks
+const { useProvider, useChainId, useIsActive } = hooks
 
 const NetworkAlert: FC = () => {
   const [open, setOpen] = useState(false)
   const provider = useProvider()
+  const active = useIsActive()
+
   const chainID = useChainId()
   useEffect(() => {
-    if (chainID != undefined && !networks.has(chainID)) {
+    if (chainID != undefined && !networks[chainID]) {
       setOpen(true)
     } else {
       setOpen(false)
@@ -37,12 +39,15 @@ const NetworkAlert: FC = () => {
     const attributes: NamedNodeMap = e.target.attributes
     const chosenChain = Number(attributes.getNamedItem('chain')?.value)
 
-    if (provider && chosenChain) {
+    if (chosenChain) {
+      if (!provider) {
+        metaMask.activate(chainID) //Hmm.. Not sure if this is a hack.. Let's watch and see
+      }
       try {
         const formattedChainId = hexStripZeros(
           BigNumber.from(chosenChain).toHexString()
         )
-        provider
+        provider!
           .send('wallet_switchEthereumChain', [{ chainId: formattedChainId }])
           .then()
           .catch((e) => console.error)
@@ -55,8 +60,6 @@ const NetworkAlert: FC = () => {
         }
       }
     } else {
-
-
     }
   }
 

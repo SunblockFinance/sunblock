@@ -17,6 +17,7 @@ import TextField from '@mui/material/TextField'
 import { useSnackbar } from 'notistack'
 import React, { FC, useEffect, useState } from 'react'
 import ContractConnector from '../blockchain/ContractConnector'
+import { Explorer, networks } from '../blockchain/networks'
 import { hooks } from '../connectors/metamask'
 import AllowancePill from './AllowancePill'
 
@@ -29,10 +30,10 @@ export const PurchaseShares: FC = () => {
   const isWalletActive = useIsActive()
 
   const closeSpinner = () => {
-    setOpen(false)
+    setOpenProgress(false)
   }
   const openSpinner = () => {
-    setOpen(!open)
+    setOpenProgress(!openProgress)
   }
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar()
@@ -46,15 +47,29 @@ export const PurchaseShares: FC = () => {
   const [shareAmount, setShareAmount] = useState(DEFAULT_SHARE_AMOUNT)
   const [basketPrice, setBasketPrice] = useState(0)
   const [balance, setBalance] = useState(0)
-  const [open, setOpen] = useState(false)
+  const [openProgress, setOpenProgress] = useState(false)
+  const [openSnack, setOpenSnack] = useState(false)
   const [sharePrice, setSharePrice] = useState(0)
+  const [explorer, setExplorer] = useState<Explorer>()
 
   const isUnderfunded = basketPrice > Number(balance)
 
   async function purchaseShare(amount: number) {
     if (chainid && provider) {
-      const connector = new ContractConnector(chainid)
+      const connector = new ContractConnector(chainid, (event) => {
+        console.log(event)
+        setOpenProgress(false)
+        enqueueSnackbar(
+          `🎉 Success! You now have ${event.data['shares']} more share${event.data['shares']>1?'s':''}`,
+          {
+            variant: 'success',
+            anchorOrigin: { horizontal: 'center', vertical: 'top' },
+            preventDuplicate: true
+          }
+        )
+      })
       connector.purchaseShare(provider.getSigner(), amount)
+      setOpenProgress(true)
     }
   }
 
@@ -83,16 +98,18 @@ export const PurchaseShares: FC = () => {
     if (chainid) {
       try {
         const cube = new ContractConnector(chainid)
-      cube
-        .getSharePrice()
-        .then((price) => {
-          setSharePrice(price)
-          setBasketPrice(price * DEFAULT_SHARE_AMOUNT)
-        })
-        .catch(() => console.error)
+        cube
+          .getSharePrice()
+          .then((price) => {
+            setSharePrice(price)
+            setBasketPrice(price * DEFAULT_SHARE_AMOUNT)
+          })
+          .catch(() => console.error)
       } catch (error) {
         console.error
       }
+      const network = networks[chainid]
+      setExplorer(network?.chain.explorer)
     }
 
     return () => {
@@ -105,18 +122,18 @@ export const PurchaseShares: FC = () => {
     if (provider) {
       try {
         const cube = new ContractConnector(chainid)
-      provider
-        .getSigner()
-        .getAddress()
-        .then((address) => {
-          cube
-            .getUSDTBalance(address)
-            .then((amount) => {
-              setBalance(amount)
-            })
-            .catch(() => console.error)
-        })
-        .catch(() => console.error)
+        provider
+          .getSigner()
+          .getAddress()
+          .then((address) => {
+            cube
+              .getUSDTBalance(address)
+              .then((amount) => {
+                setBalance(amount)
+              })
+              .catch(() => console.error)
+          })
+          .catch(() => console.error)
       } catch (error) {
         console.error
       }
@@ -160,20 +177,22 @@ export const PurchaseShares: FC = () => {
           color: '#fff',
           zIndex: (theme) => theme.zIndex.drawer + 1,
         }}
-        open={open}
+        open={openProgress}
         onClick={closeSpinner}
       >
         <Stack direction="column" spacing={4} alignItems="center">
           <h3>Transaction in progress...</h3>
           <CircularProgress color="inherit" />
-          <Button
+          {/* <Button
             target="_blank"
             rel="noopener"
             variant="outlined"
-            href={`https://polygonscan.com/tx/${activeTx?.hash}`}
+            href={`${explorer?.url || 'https://polyscan.com'}/tx/${    //ADD BACK LATER. NEED GET TX FROM CONTRACT CONNECTOR
+              activeTx?.hash
+            }`}
           >
-            See on polyscan
-          </Button>
+            See on {explorer?.name}
+          </Button> */}
         </Stack>
       </Backdrop>
     </Stack>

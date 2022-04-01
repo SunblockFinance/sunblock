@@ -37,36 +37,50 @@ export default function InvestmentQueue() {
 
   useEffect(() => {
     if (!chainid || chainid === 0) return
-    console.log(`QUEUE = ${chainid}`)
     try {
       const cube = new ContractConnector(chainid)
       setInprogress((prevcount) => prevcount + 1)
-      cube.getCurrentTargetAmount().then((amount) => {
-        setCurrentTargetAmount(amount || 0)
-        setInprogress((prevcount) => prevcount - 1)
-      }).catch((e) => console.error)
+      cube
+        .getCurrentTargetAmount()
+        .then((amount) => {
+          setCurrentTargetAmount(amount || 0)
+          setInprogress((prevcount) => prevcount - 1)
+        })
+        .catch((e) => console.error)
       setInprogress((prevcount) => prevcount + 1)
-      cube.getCurrentTargetName().then((name) => {
-        setCurrentVehicleDescriptor(NameToDescriptor(name || ''))
-        setCurrentVehicleName(name || '')
-        setInprogress((prevcount) => prevcount - 1)
-      }).catch((e) => console.error)
+      cube
+        .getCurrentTargetName()
+        .then((name) => {
+          setCurrentVehicleDescriptor(NameToDescriptor(name || ''))
+          setCurrentVehicleName(name || '')
+          setInprogress((prevcount) => prevcount - 1)
+        })
+        .catch((e) => console.error)
       setInprogress((prevcount) => prevcount + 1)
-      cube.getNextTargetAmount().then((amount) => {
-        setNextTargetAmount(amount || 0)
-        setInprogress((prevcount) => prevcount - 1)
-      }).catch((e) => console.error)
+      cube
+        .getNextTargetAmount()
+        .then((amount) => {
+          setNextTargetAmount(amount || 0)
+          setInprogress((prevcount) => prevcount - 1)
+        })
+        .catch((e) => console.error)
       setInprogress((prevcount) => prevcount + 1)
-      cube.getNextTargetName().then((name) => {
-        setNextVehicleDescriptor(NameToDescriptor(name || ''))
-        setNextVehicleName(name || '')
-        setInprogress((prevcount) => prevcount - 1)
-      }).catch((e) => console.error)
+      cube
+        .getNextTargetName()
+        .then((name) => {
+          setNextVehicleDescriptor(NameToDescriptor(name || ''))
+          setNextVehicleName(name || '')
+          setInprogress((prevcount) => prevcount - 1)
+        })
+        .catch((e) => console.error)
       setInprogress((prevcount) => prevcount + 1)
-      cube.getCubeInvestmentFund().then((amount) => {
-        setInvestmentFund(amount || 0)
-        setInprogress((prevcount) => prevcount - 1)
-      }).catch((e) => console.error)
+      cube
+        .getCubeInvestmentFund()
+        .then((amount) => {
+          setInvestmentFund(amount || 0)
+          setInprogress((prevcount) => prevcount - 1)
+        })
+        .catch((e) => console.error)
     } catch (error) {
       console.error
     }

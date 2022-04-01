@@ -6,7 +6,7 @@
 import EventIcon from '@mui/icons-material/Event'
 import MonetizationOnOutlinedIcon from '@mui/icons-material/MonetizationOnOutlined'
 import PollOutlinedIcon from '@mui/icons-material/PollOutlined'
-import { Avatar, Divider, Stack } from '@mui/material'
+import { Avatar, Divider, Stack, Tooltip } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
 import ContractConnector from '../../blockchain/ContractConnector'
 import { hooks } from '../../connectors/metamask'
@@ -28,9 +28,7 @@ export const HeroRow: FC = () => {
 
   useEffect(() => {
     try {
-
       if (!chainid || chainid === 0) return
-      console.log(`HERO = ${chainid}`)
       const cube = new ContractConnector(chainid)
       cube
         .getCubeInvestmentFund()
@@ -65,20 +63,18 @@ export const HeroRow: FC = () => {
     if (provider && chainid !== 0) {
       try {
         const cube = new ContractConnector(chainid)
-      provider
-        .getSigner()
-        .getAddress()
-        .then((address) => {
-          console.log(`Signer address is ${address} on chain ${chainid}`)
-          cube
-            .getHeldShares(address)
-            .then((shares) => {
-              console.log(`Shares owned is ${shares}`)
-              setUserShares(shares)
-            })
-            .catch(() => console.error)
-        })
-        .catch(() => console.error)
+        provider
+          .getSigner()
+          .getAddress()
+          .then((address) => {
+            cube
+              .getHeldShares(address)
+              .then((shares) => {
+                setUserShares(shares)
+              })
+              .catch(() => console.error)
+          })
+          .catch(() => console.error)
       } catch (error) {
         console.error
       }
@@ -139,9 +135,11 @@ export const HeroRow: FC = () => {
           <Avatar sx={{ backgroundColor: 'transparent' }}>
             <EventIcon fontSize="large" color="info" />
           </Avatar>
-          <span style={{ fontWeight: 'bold', fontSize: 24 }}>
-            &nbsp;{`ETA 6 days`}
-          </span>
+          <Tooltip title="Will be set when first investment has been made">
+            <span style={{ fontWeight: 'bold', fontSize: 24 }}>
+              &nbsp;{`TBC`}
+            </span>
+          </Tooltip>
         </Stack>
       </HeroItem>
       <HeroItem

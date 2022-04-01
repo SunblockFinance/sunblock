@@ -25,8 +25,6 @@ let eth
 const { useAccount, useProvider, useChainId } = hooks
 
 const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
-  console.log(`SHARE COST IS ${shareCost}`);
-
   const provider = useProvider()
   const chainid = useChainId()
   const { enqueueSnackbar } = useSnackbar()
@@ -56,11 +54,11 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
       try {
         const connector = new ContractConnector(chainid)
 
-      const shareprice = await connector.getSharePrice()
-      const ethSharePrice = ethers.utils.parseUnits(shareprice.toString(), 6)
+        const shareprice = await connector.getSharePrice()
+        const ethSharePrice = ethers.utils.parseUnits(shareprice.toString(), 6)
 
-      const signer = provider.getSigner()
-      connector.approveERC20Allowance(signer, ethSharePrice.mul(amount))
+        const signer = provider.getSigner()
+        connector.approveERC20Allowance(signer, ethSharePrice.mul(amount))
       } catch (error) {
         console.error
       }
@@ -88,20 +86,21 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
     } catch (error) {}
   }
 
-
-
   React.useEffect(() => {
     if (provider && chainid && account) {
       try {
         const cube = new ContractConnector(chainid)
-        cube.getERC20Allowance(account).then((amount) => {
-          setAllowance(amount)
-          if (amount === 0) {
-            setSpendlimitWarning(true)
-          } else {
-            setSpendlimitWarning(false)
-          }
-        }).catch(console.error)
+        cube
+          .getERC20Allowance(account)
+          .then((amount) => {
+            setAllowance(amount)
+            if (amount === 0) {
+              setSpendlimitWarning(true)
+            } else {
+              setSpendlimitWarning(false)
+            }
+          })
+          .catch(console.error)
       } catch (error) {
         console.error
       }

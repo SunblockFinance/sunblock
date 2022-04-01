@@ -9,9 +9,8 @@ import { SnackbarProvider } from 'notistack'
 import React, { FC, useEffect } from 'react'
 import { hooks, metaMask } from '../connectors/metamask'
 
-
 const App: FC<AppProps> = ({ Component, pageProps }) => {
-  const {useIsActive, useChainId} = hooks
+  const { useIsActive, useChainId } = hooks
 
   const currentChainID = useChainId()
 
@@ -22,12 +21,6 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
     void metaMask.connectEagerly()
   }, [])
 
-  useEffect(() => {
-    console.log('ChainID updated')
-    console.log(currentChainID)
-
-  }, [currentChainID])
-
   const theme = React.useMemo(
     () =>
       createTheme({
@@ -37,7 +30,6 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
       }),
     []
   )
-
 
   return (
     <React.StrictMode>

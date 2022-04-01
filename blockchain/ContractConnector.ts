@@ -13,21 +13,30 @@ import { ABI_VEHICLE } from '../contracts/abi/vehicle'
 import { formatUSDTWeiToNumber } from '../utils/formaters'
 import { DEFAULT_CHAINID, NetworkDetails, networks } from './networks'
 
+export interface ContractEvent {
+  event: string
+  data: any
+}
+
+export type eventCallback = (event: ContractEvent) => void
+
 class ContractConnector {
   network: NetworkDetails
   provider: JsonRpcProvider
   cube: Contract
   token: Contract
+  callback: eventCallback | undefined
 
-  constructor(chainid: number | undefined) {
-    console.log(`Connector ${chainid}`)
-
+  constructor(
+    chainid: number | undefined,
+    eventCallback?: (event: ContractEvent) => void
+  ) {
     /**
      * Set Network
      */
 
-    const chosenNetwork = networks.get(chainid || DEFAULT_CHAINID) // We default to Polygon main if user not connected
-
+    const chosenNetwork = networks[chainid || DEFAULT_CHAINID] // We default to Polygon main if user not connected
+    this.callback = eventCallback
     if (chosenNetwork !== undefined) {
       this.network = chosenNetwork
     } else {
@@ -74,6 +83,15 @@ class ContractConnector {
     try {
       const signedCube = this.cube.connect(signer)
       await signedCube.buyShares(amount)
+      signedCube.once('SharesIssued', (addr, shares) => {
+        if (this.callback) {
+          const ev: ContractEvent = {
+            event: 'SharesIssued',
+            data: { address: addr, shares: shares },
+          }
+          this.callback(ev)
+        }
+      })
     } catch (error) {
       console.error
     }
@@ -182,7 +200,6 @@ class ContractConnector {
   async getNextTargetName(): Promise<string> {
     try {
       const vehicleAddress: string = await this.cube.nextVehicle()
-      console.log(vehicleAddress)
 
       const vehicle = new ethers.Contract(
         vehicleAddress,
