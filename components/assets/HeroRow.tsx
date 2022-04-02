@@ -9,6 +9,7 @@ import PollOutlinedIcon from '@mui/icons-material/PollOutlined'
 import { Avatar, Divider, Stack, Tooltip } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
 import ContractConnector from '../../blockchain/ContractConnector'
+import { NetworkDetails, networks } from '../../blockchain/networks'
 import { hooks } from '../../connectors/metamask'
 import InvestmentQueue from '../InvestmentQueue'
 import { PurchaseShares } from '../PurchaseShare'
@@ -22,34 +23,37 @@ export const HeroRow: FC = () => {
   const [earnings, setEarnings] = useState(0)
   const [investFund, setInvestFund] = useState(0)
   const [rewardFund, setRewardFund] = useState(0)
+  const [chainDetails, setChainDetails] = useState<NetworkDetails>()
 
   const provider = useProvider()
   const chainid = useChainId()
 
   useEffect(() => {
-    try {
-      if (!chainid || chainid === 0) return
-      const cube = new ContractConnector(chainid)
-      cube
-        .getCubeInvestmentFund()
-        .then((amount) => {
-          setInvestFund(amount)
-        })
-        .catch(() => console.error)
-      cube
-        .getCubeRewardFund()
-        .then((amount) => {
-          setRewardFund(amount)
-        })
-        .catch(() => console.error)
-      cube
-        .getSharesIssued()
-        .then((amount) => {
-          setSharesIssued(amount)
-        })
-        .catch(() => console.error)
-    } catch (error) {
-      console.error
+    if (chainid) {
+      try {
+        const cube = new ContractConnector(chainid)
+        cube
+          .getCubeInvestmentFund()
+          .then((amount) => {
+            setInvestFund(amount)
+          })
+          .catch(() => console.error)
+        cube
+          .getCubeRewardFund()
+          .then((amount) => {
+            setRewardFund(amount)
+          })
+          .catch(() => console.error)
+        cube
+          .getSharesIssued()
+          .then((amount) => {
+            setSharesIssued(amount)
+          })
+          .catch(() => console.error)
+      } catch (error) {
+        console.error
+      }
+      setChainDetails(networks[chainid])
     }
 
     return () => {
@@ -124,9 +128,9 @@ export const HeroRow: FC = () => {
       >
         <Divider textAlign="left">Estimated earnings</Divider>
         <Stack direction="row">
-          <Avatar src="/crypto-icons/usdt.svg"></Avatar>
+          <Avatar src={chainDetails?.cubeNativeTokenLogo}></Avatar>
           <span style={{ fontWeight: 'bold', fontSize: 24 }}>
-            &nbsp;{`${earnings.toFixed(2)} USDT`}
+            &nbsp;{`${earnings.toFixed(2)} ${chainDetails?.cubeNativeTokenName}`}
           </span>
         </Stack>
         <br />
@@ -144,8 +148,8 @@ export const HeroRow: FC = () => {
       </HeroItem>
       <HeroItem
         title="Purchase shares"
-        subtitle="Each share is 10 USDT"
-        avatar="./crypto-icons/usdt.svg"
+        subtitle={`Each share is 10 ${chainDetails?.cubeNativeTokenName}`}
+        avatar={chainDetails?.cubeNativeTokenLogo}
         promote
       >
         <PurchaseShares />

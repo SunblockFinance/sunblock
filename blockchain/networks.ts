@@ -17,6 +17,9 @@ export interface Explorer {
 export interface NetworkDetails {
   cubeContract: string
   cubeNativeToken: string
+  cubeNativeTokenName: string
+  cubeNativeTokenDecimals: number
+  cubeNativeTokenLogo: string
   vehicleContracts: Array<VehicleContractDetails>
   providerURL: string
   chain: Chain
@@ -50,6 +53,9 @@ export const networks: { [chainid: number]: NetworkDetails } = {
       },
     ],
     cubeNativeToken: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+    cubeNativeTokenName: 'USDT',
+    cubeNativeTokenDecimals: 6,
+    cubeNativeTokenLogo: './crypto-icons/usdt.svg',
     providerURL:
       'https://apis-sj.ankr.com/a2619343e18742269cd75b3d774b2dd7/fc5bf88d2604a7790ef5a8b216d87cc0/polygon/full/main',
     chain: {
@@ -83,6 +89,9 @@ export const networks: { [chainid: number]: NetworkDetails } = {
       },
     ],
     cubeNativeToken: '0x2AF8C95864dAF017906b310C4910C4B1b1E55499',
+    cubeNativeTokenName: 'USDT',
+    cubeNativeTokenDecimals: 6,
+    cubeNativeTokenLogo: './crypto-icons/usdt.svg',
     providerURL:
       'https://apis.ankr.com/ae5b5e85d5a94ee38490f6f20ec93c5b/fc5bf88d2604a7790ef5a8b216d87cc0/polygon/full/test',
     chain: {
@@ -116,6 +125,9 @@ export const networks: { [chainid: number]: NetworkDetails } = {
       },
     ],
     cubeNativeToken: '0x020E3EB05a80aB431F37171Fa5Bd0f175E62Ca0F',
+    cubeNativeTokenName: 'USDT.e',
+    cubeNativeTokenDecimals: 6,
+    cubeNativeTokenLogo: './crypto-icons/usdt.svg',
     providerURL: 'https://rpc.ankr.com/avalanche_fuji',
     chain: {
       name: 'Avalanche Fuji',
@@ -156,6 +168,9 @@ export const networks: { [chainid: number]: NetworkDetails } = {
       },
     ],
     cubeNativeToken: '0xc7198437980c041c805a1edcba50c1ce5db95118',
+    cubeNativeTokenName: 'USDT.e',
+    cubeNativeTokenDecimals: 6,
+    cubeNativeTokenLogo: './crypto-icons/usdt.svg',
     providerURL: 'https://rpc.ankr.com/avalanche',
     chain: {
       name: 'Avalanche Mainnet',

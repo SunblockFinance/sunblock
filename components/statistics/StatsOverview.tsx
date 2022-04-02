@@ -2,31 +2,23 @@
 // SPDX-License-Identifier: MIT
 import { Container, Stack } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
-import { networks, VehicleContractDetails } from '../../blockchain/networks'
+import { NetworkDetails, networks } from '../../blockchain/networks'
 import { hooks } from '../../connectors/metamask'
-import {
-  ContractDescriptor
-} from '../../contracts/deployedContracts'
 import { StatsVehicleCard } from './StatsVehicleCard'
 
 const { useChainId } = hooks
 
 export const StatsOverview: FC = () => {
-  const [currentVehicle, setCurrentVehicle] = useState<ContractDescriptor>()
-  const [currentVehicleContract, setCurrentVehicleContract] = useState('')
-  const [nextVehicle, setNextVehicle] = useState<ContractDescriptor>()
-  const [nextVehicleContract, setNextVehicleContract] = useState('')
   const chainid = useChainId()
-  const [deployedVehicles, setDeployedVehicles] = useState<Array<VehicleContractDetails>>()
+  const [chainDetails, setChainDetails] = useState<NetworkDetails>()
 
   useEffect(() => {
     if (chainid) {
-      const currentNetwork = networks[chainid]
-      setDeployedVehicles(currentNetwork?.vehicleContracts)
+      setChainDetails(networks[chainid])
     }
 
     return () => {
-
+      setChainDetails(undefined)
     }
   }, [chainid])
 
@@ -48,7 +40,7 @@ export const StatsOverview: FC = () => {
         justifyContent="space-around"
         alignItems="stretch"
       >
-        {deployedVehicles?.map(_vehicle => (
+        {chainDetails?.vehicleContracts?.map(_vehicle => (
           <StatsVehicleCard
           key={_vehicle.address}
           contract={_vehicle.address}

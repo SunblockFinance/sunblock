@@ -11,6 +11,7 @@ import CoinGecko from 'coingecko-api'
 import { FC, useEffect, useState } from 'react'
 import { CoinGeckoPrice } from '../../blockchain/coingecko'
 import ContractConnector from '../../blockchain/ContractConnector'
+import { NetworkDetails, networks } from '../../blockchain/networks'
 import { hooks } from '../../connectors/metamask'
 import { AssetItem } from './AssetItem'
 
@@ -18,7 +19,6 @@ const { useChainId } = hooks
 
 export const AssetGroup: FC = () => {
   const chainid = useChainId()
-  const usdt = './crypto-icons/usdt.svg'
   const strong = './crypto-icons/strong.webp'
   const reward = './svg/treasure.svg'
 
@@ -36,6 +36,7 @@ export const AssetGroup: FC = () => {
   const [totalInvestment, setTotalInvestment] = useState(0)
   const [sharePrice, setSharePrice] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [chainDetails, setChainDetails] = useState<NetworkDetails>()
 
   useEffect(() => {
     // void network.activate(CHAINID)
@@ -73,6 +74,7 @@ export const AssetGroup: FC = () => {
         } catch(error) {
           console.error
         }
+        setChainDetails(networks[chainid])
     }
 
 
@@ -129,12 +131,12 @@ export const AssetGroup: FC = () => {
           >
             <AssetItem
               title="Capital waiting to be invested"
-              value={`${investFund.toString()} USDT`}
-              avatar={usdt}
+              value={`${investFund.toString()} ${chainDetails?.cubeNativeTokenName}`}
+              avatar={chainDetails?.cubeNativeTokenLogo}
             />
             <AssetItem
               title="Rewards accumulated"
-              value={`${rewardFund.toString()} USDT `}
+              value={`${rewardFund.toString()} ${chainDetails?.cubeNativeTokenName} `}
               avatar={reward}
             />
           </Stack>

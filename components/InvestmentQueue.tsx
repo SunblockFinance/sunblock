@@ -9,7 +9,7 @@ import ListItemText from '@mui/material/ListItemText'
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 import ContractConnector from '../blockchain/ContractConnector'
-import { networks, VehicleContractDetails } from '../blockchain/networks'
+import { NetworkDetails, networks } from '../blockchain/networks'
 import { hooks } from '../connectors/metamask'
 import {
   ContractDescriptor,
@@ -33,15 +33,15 @@ export default function InvestmentQueue() {
   const [nextVehicleDescriptor, setNextVehicleDescriptor] =
     useState<ContractDescriptor>()
 
-  const [deployedVehicles, setDeployedVehicles] = useState<VehicleContractDetails[]>()
+  const [chainDetails, setChainDetails] = useState<NetworkDetails>()
+
 
   const chainid = useChainId()
   const isActive = useIsActive()
 
   useEffect(() => {
     if (chainid) {
-      const currentNetwork = networks[chainid]
-      setDeployedVehicles(currentNetwork?.vehicleContracts)
+      setChainDetails(networks[chainid])
     }
 
     return () => {
@@ -184,7 +184,7 @@ export default function InvestmentQueue() {
                 ) : (
                   <span>&#8734;</span>
                 )}{' '}
-                USDT
+                {chainDetails?.cubeNativeTokenName}
               </Box>
             }
           />
@@ -206,7 +206,7 @@ export default function InvestmentQueue() {
                 ) : (
                   <span>&#8734;</span>
                 )}{' '}
-                USDT
+                {chainDetails?.cubeNativeTokenName}
               </Box>
             }
           />

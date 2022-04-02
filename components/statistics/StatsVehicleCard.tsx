@@ -60,7 +60,7 @@ export const StatsVehicleCard: FC<VehicleProps> = (props) => {
   const [investFund, setInvestFund] = useState('')
   const [rewardFund, setRewardFund] = useState('')
   const [isLoading, setIsLoading] = useState(true)
-  const [chain, setChain] = useState<NetworkDetails>()
+  const [chainDetails, setChainDetails] = useState<NetworkDetails>()
   const chainid = useChainId()
 
   const handleExpandClick = () => {
@@ -80,12 +80,8 @@ export const StatsVehicleCard: FC<VehicleProps> = (props) => {
       } catch (error) {
         console.error
       }
-      setChain(networks[chainid])
+      setChainDetails(networks[chainid])
     }
-
-
-
-
 
     return () => {
       setInvestFund('')
@@ -138,7 +134,7 @@ export const StatsVehicleCard: FC<VehicleProps> = (props) => {
         <CardActions disableSpacing>
           <IconButton
             aria-label="view contract"
-            href={`${chain?.chain.explorer}/address/${props.contract}`} //TODO: Follow the chain ID
+            href={`${chainDetails?.chain.explorer}/address/${props.contract}`} //TODO: Follow the chain ID
           >
             <GavelIcon />
           </IconButton>
@@ -202,19 +198,19 @@ export const StatsVehicleCard: FC<VehicleProps> = (props) => {
         <Divider textAlign="left">CAPITAL</Divider>
         <AssetItem
           title="To be invested"
-          value={`${investFund} USDT`}
-          avatar={usdt}
+          value={`${investFund} ${chainDetails?.cubeNativeTokenName}`}
+          avatar={chainDetails?.cubeNativeTokenLogo}
         />
         <AssetItem
           title="Rewards held"
-          value={`${rewardFund} USDT`}
+          value={`${rewardFund} ${chainDetails?.cubeNativeTokenName}`}
           avatar={treasure}
         />
 
         <CardActions disableSpacing>
           <IconButton
             aria-label="view contract"
-            href={`${chain?.chain.explorer.url || 'https://polyscan.com'}/address/${props.contract}`} //TODO: Follow the chain ID
+            href={`${chainDetails?.chain.explorer.url || 'https://polyscan.com'}/address/${props.contract}`} //TODO: Follow the chain ID
           >
             <GavelIcon />
           </IconButton>
