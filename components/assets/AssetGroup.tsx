@@ -42,37 +42,39 @@ export const AssetGroup: FC = () => {
   }, [])
 
   useEffect(() => {
-    if (chainid === 0) return
-    try {
-    const cube = new ContractConnector(chainid)
-    cube
-      .getCubeInvestmentFund()
-      .then((amount) => {
-        setInvestFund(amount)
-      }).catch(e => console.error)
-    cube
-      .getSharesIssued()
-      .then((amount) => {
-        setSharesIssued(amount)
-      }).catch(e => console.error)
-    cube
-      .getSharePrice()
-      .then((price) => {
-        setSharePrice(price)
-      }).catch(e => console.error)
-    cube
-      .getCubeRewardFund()
-      .then((amount) => {
-        setRewardFund(amount)
-      }).catch(e => console.error)
-    cube
-      .getShareholderCount()
-      .then((count) => {
-        setInvestorCount(count)
-      }).catch(e => console.error)
-    } catch(error) {
-      console.error
+    if (chainid) {
+      try {
+        const cube = new ContractConnector(chainid)
+        cube
+          .getCubeInvestmentFund()
+          .then((amount) => {
+            setInvestFund(amount)
+          }).catch(e => console.error)
+        cube
+          .getSharesIssued()
+          .then((amount) => {
+            setSharesIssued(amount)
+          }).catch(e => console.error)
+        cube
+          .getSharePrice()
+          .then((price) => {
+            setSharePrice(price)
+          }).catch(e => console.error)
+        cube
+          .getCubeRewardFund()
+          .then((amount) => {
+            setRewardFund(amount)
+          }).catch(e => console.error)
+        cube
+          .getShareholderCount()
+          .then((count) => {
+            setInvestorCount(count)
+          }).catch(e => console.error)
+        } catch(error) {
+          console.error
+        }
     }
+
 
     return () => {
       setInvestFund(0)
