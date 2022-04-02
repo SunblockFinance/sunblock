@@ -41,7 +41,7 @@ export default function InvestmentQueue() {
   useEffect(() => {
     if (chainid) {
       const currentNetwork = networks[chainid]
-      setDeployedVehicles(currentNetwork!.vehicleContracts)
+      setDeployedVehicles(currentNetwork?.vehicleContracts)
     }
 
     return () => {
