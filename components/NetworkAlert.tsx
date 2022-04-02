@@ -68,7 +68,7 @@ const NetworkAlert: FC = () => {
   }
 
   const polygonChain = { chain: 137 }
-  const avalancheChain = { chain: 43113 }
+  const avalancheChain = { chain: 43114 }
 
   return (
     <div>
