@@ -127,6 +127,48 @@ export const networks: { [chainid: number]: NetworkDetails } = {
       },
     },
   },
+  43114: {
+    cubeContract: '0xCcECc32caA42A25BAEf6B2A1dBFF2C6C79Adf2cA',
+    vehicleContracts: [
+      {
+        address: '0x59A974776C25080328A7480Af4EbaD72b9D3dda1',
+        name: 'Polar nodes',
+        logo: '/svg/polar.svg',
+        description:
+          "A fully decentralized Node Protocol on Avalanche",
+        url: 'https://polarnodes.finance/',
+      },
+      {
+        address: '0x4943Ee1090d92f143E44631DC07aF88f5BE50287',
+        name: 'Anchor protocol',
+        logo: '/anchor.svg',
+        description:
+          'Better savings',
+        url: 'https://www.anchorprotocol.com/',
+      },
+      {
+        address: '0x9e937413A629Eb060461589E1Ba8e17A0E41f4Db',
+        name: 'Etherstones',
+        logo: '/etherstones.webp',
+        description:
+          'Etherstones is an innovative DaaS on the Avalanche Network, focused on long-term growth and sustainability.',
+        url: 'https://etherstones.fi/',
+      },
+    ],
+    cubeNativeToken: '0xc7198437980c041c805a1edcba50c1ce5db95118',
+    providerURL: 'https://rpc.ankr.com/avalanche',
+    chain: {
+      name: 'Avalanche Mainnet',
+      logo: '/crypto-icons/avax.svg',
+      explorer: {
+        name: 'snowtrace',
+        url: 'https://snowtrace.io',
+        standard: 'EIP3091',
+      },
+    },
+  },
 }
 
 export const DEFAULT_CHAINID = 137
+
+//https://rpc.ankr.com/avalanche
