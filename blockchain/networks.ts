@@ -141,7 +141,7 @@ export const networks: { [chainid: number]: NetworkDetails } = {
       {
         address: '0x4943Ee1090d92f143E44631DC07aF88f5BE50287',
         name: 'Anchor protocol',
-        logo: '/anchor.svg',
+        logo: '/svg/anchor.svg',
         description:
           'Better savings',
         url: 'https://www.anchorprotocol.com/',
@@ -151,7 +151,7 @@ export const networks: { [chainid: number]: NetworkDetails } = {
         name: 'Etherstones',
         logo: '/etherstones.webp',
         description:
-          'Etherstones is an innovative DaaS on the Avalanche Network, focused on long-term growth and sustainability.',
+          'Etherstones is an innovative DaaS on the Avalanche',
         url: 'https://etherstones.fi/',
       },
     ],
