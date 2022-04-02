@@ -33,7 +33,7 @@ export default function InvestmentQueue() {
   const [nextVehicleDescriptor, setNextVehicleDescriptor] =
     useState<ContractDescriptor>()
 
-  const [deployedVehicles, setDeployedVehicles] = useState<VehicleContractDetails>()
+  const [deployedVehicles, setDeployedVehicles] = useState<VehicleContractDetails[]>()
 
   const chainid = useChainId()
   const isActive = useIsActive()
