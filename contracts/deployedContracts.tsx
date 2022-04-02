@@ -29,6 +29,20 @@ export const DESCRIPTOR_THOR:ContractDescriptor = {
     url:'https://www.thor.financial/'
 }
 
+export const DESCRIPTOR_POLAR:ContractDescriptor = {
+    title:"Polar",
+    logo:"/svg/polar.svg",
+    description:"Poloar nodes",
+    url:'https://www.polar.financial/'
+}
+
+export const DESCRIPTOR_ANCHOR:ContractDescriptor = {
+    title:"Anchor",
+    logo:"/svg/anchor.svg",
+    description:"Anchor",
+    url:'https://www.anchor.financial/'
+}
+
 export const DESCRIPTOR_ETHERSTONES:ContractDescriptor = {
     title:"Etherstones",
     logo:"/etherstones.webp",
@@ -42,6 +56,8 @@ export function NameToDescriptor(contractName:string):ContractDescriptor {
             return DESCRIPTOR_STRONGBLOCK
         case 'Yieldnodes':
             return DESCRIPTOR_YIELDNODE
+        case 'Polar':
+            return DESCRIPTOR_POLAR
         case 'Thor':
             return DESCRIPTOR_THOR
         case 'Etherstones':

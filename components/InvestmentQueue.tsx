@@ -9,6 +9,7 @@ import ListItemText from '@mui/material/ListItemText'
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 import ContractConnector from '../blockchain/ContractConnector'
+import { networks, VehicleContractDetails } from '../blockchain/networks'
 import { hooks } from '../connectors/metamask'
 import {
   ContractDescriptor,
@@ -32,8 +33,21 @@ export default function InvestmentQueue() {
   const [nextVehicleDescriptor, setNextVehicleDescriptor] =
     useState<ContractDescriptor>()
 
+  const [deployedVehicles, setDeployedVehicles] = useState<VehicleContractDetails>()
+
   const chainid = useChainId()
   const isActive = useIsActive()
+
+  useEffect(() => {
+    if (chainid) {
+      const currentNetwork = networks[chainid]
+      setDeployedVehicles(currentNetwork!.vehicleContracts)
+    }
+
+    return () => {
+
+    }
+  }, [chainid])
 
   useEffect(() => {
     if (!chainid || chainid === 0) return
