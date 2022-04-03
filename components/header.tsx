@@ -4,37 +4,49 @@
 // https://opensource.org/licenses/MIT
 
 import FaceIcon from '@mui/icons-material/Face'
+import { Avatar, Tooltip } from '@mui/material'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
 import Stack from '@mui/material/Stack'
-import { track } from 'insights-js'
 import Image from 'next/image'
 import { FC, useEffect, useState } from 'react'
+import { NetworkDetails, networks } from '../blockchain/networks'
 import { hooks, metaMask } from '../connectors/metamask'
-import { CHAINID } from '../programs/polygon'
 import { shortenAddress } from '../utils/formaters'
 import { AlertDialog, Contracts, WhoAreWe } from './AlertDialog'
 import styles from './header.module.css'
 
-
-let eth: any
-const { useAccount, useError, useIsActive, useProvider } = hooks
+const { useAccount, useError, useIsActive, useProvider, useChainId } = hooks
 
 export const Header: FC = () => {
   const account = useAccount()
   const isActive = useIsActive()
+  const chainid = useChainId()
   const [openHelp, setOpenHelp] = useState(false)
   const [openContract, setOpenContract] = useState(false)
+  const [chain, setChain] = useState<NetworkDetails>()
 
+
+  // ==== MENU CONTROLS ==== // //TODO:Clean this up this mess later!
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const open = Boolean(anchorEl)
 
   useEffect(() => {
-    void metaMask.connectEagerly()
-  }, [])
+    if(chainid) {
+      setChain(networks[chainid])
+    }
+
+    return () => {
+      setChain(undefined)
+    }
+  }, [chainid])
+
+
 
   const authenticatebtn = (
     <Button
       onClick={async () => {
-        metaMask.activate(CHAINID) //TODO: Parameter this bad boy
+        metaMask.activate(chainid) //TODO: Parameter this bad boy
       }}
       variant="contained"
     >
@@ -72,7 +84,9 @@ export const Header: FC = () => {
         priority
       />
       <Stack direction="row">
-        <Button href="https://docs.sunblock.finance" target="_blank"
+        <Button
+          href="https://docs.sunblock.finance"
+          target="_blank"
           color="warning"
         >
           <span className={styles.inprogress}>What is Sunblock?</span>
@@ -80,18 +94,27 @@ export const Header: FC = () => {
         <Button
           onClick={() => {
             setOpenContract(true)
-            track({
-              id: "open-contract",
-            })
           }}
         >
           Contracts and addresses
         </Button>
 
-        <AlertDialog active={openHelp} title="What is Sunblock" content={WhoAreWe} />
-        <AlertDialog active={openContract} title="Contracts and wallets" content={Contracts} />
+        <AlertDialog
+          active={openHelp}
+          title="What is Sunblock"
+          content={WhoAreWe}
+        />
+        <AlertDialog
+          active={openContract}
+          title="Contracts and wallets"
+          content={Contracts}
+        />
       </Stack>
+      <Tooltip title={`Connected to ${chain?.chain.name} network`}>
+      <Avatar src={chain?.chain.logo}></Avatar>
+      </Tooltip>
       {isActive ? authID : authenticatebtn}
+
     </Stack>
   )
 }

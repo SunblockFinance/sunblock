@@ -40,7 +40,7 @@ export default async function handler(
     case 'vehicleInvestmentPool':
       await getVehicleInvestmentPool(addr).then((pool) => {
         res.status(200).json({ field: q, value: pool })
-      })
+      }).catch((error) => console.error)
       break
     case 'vehicleRewardPool':
         await getVehicleRewardPool(addr).then((pool) => {

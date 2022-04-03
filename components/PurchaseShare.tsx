@@ -14,28 +14,26 @@ import {
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
-import { ethers } from 'ethers'
 import { useSnackbar } from 'notistack'
 import React, { FC, useEffect, useState } from 'react'
-import * as cube from '../blockchain/providercalls'
-import { getUSDTBalance } from '../blockchain/query'
+import ContractConnector from '../blockchain/ContractConnector'
+import { Explorer, networks } from '../blockchain/networks'
 import { hooks } from '../connectors/metamask'
-import { ABI_SUNBLOCK_CUBE } from '../contracts/abi/sunblock'
-import { CONTRACT_ADDRESS_CUBE } from '../programs/polygon'
 import AllowancePill from './AllowancePill'
 
-const DEFAULT_SHARE_VALUE = 10
-const { useIsActive, useProvider } = hooks
+const DEFAULT_SHARE_AMOUNT = 10
+const { useIsActive, useProvider, useChainId } = hooks
 
 export const PurchaseShares: FC = () => {
   const provider = useProvider()
+  const chainid = useChainId()
   const isWalletActive = useIsActive()
 
   const closeSpinner = () => {
-    setOpen(false)
+    setOpenProgress(false)
   }
   const openSpinner = () => {
-    setOpen(!open)
+    setOpenProgress(!openProgress)
   }
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar()
@@ -46,51 +44,34 @@ export const PurchaseShares: FC = () => {
   const [usdt, setUsdt] = useState(0)
   const [activeTx, setActiveTx] = useState<TransactionResponse>()
   const [stopPurchase, setStopPurchase] = useState(false)
-  const [shareAmount, setShareAmount] = useState(DEFAULT_SHARE_VALUE)
+  const [shareAmount, setShareAmount] = useState(DEFAULT_SHARE_AMOUNT)
   const [basketPrice, setBasketPrice] = useState(0)
   const [balance, setBalance] = useState(0)
-  const [open, setOpen] = useState(false)
+  const [openProgress, setOpenProgress] = useState(false)
+  const [openSnack, setOpenSnack] = useState(false)
   const [sharePrice, setSharePrice] = useState(0)
+  const [explorer, setExplorer] = useState<Explorer>()
 
   const isUnderfunded = basketPrice > Number(balance)
 
   async function purchaseShare(amount: number) {
-    if (provider === undefined) return
-    const signer = provider.getSigner()
-    const signerAddress = await signer.getAddress()
-    const sunblockContract = new ethers.Contract(
-      CONTRACT_ADDRESS_CUBE,
-      ABI_SUNBLOCK_CUBE,
-      signer
-    )
-    try {
-      const response: TransactionResponse = await sunblockContract.buyShares(
-        amount
-      )
-      setActiveTx(response)
-      openSpinner()
-    } catch (error) {
-      closeSpinner()
-      enqueueSnackbar("🙁 That didn't work as expected... Try again?", {
-        variant: 'error',
-        anchorOrigin: { horizontal: 'center', vertical: 'top' },
+    if (chainid && provider) {
+      const connector = new ContractConnector(chainid, (event) => {
+        setOpenProgress(false)
+        enqueueSnackbar(
+          `🎉 Success! You now have ${event.data['shares']} more share${
+            event.data['shares'] > 1 ? 's' : ''
+          }`,
+          {
+            variant: 'success',
+            anchorOrigin: { horizontal: 'center', vertical: 'top' },
+            preventDuplicate: true,
+          }
+        )
       })
+      connector.purchaseShare(provider.getSigner(), amount)
+      setOpenProgress(true)
     }
-    const filter = sunblockContract.filters.SharesIssued(signerAddress, null)
-    provider.once('block', () => {
-      sunblockContract.once(filter, async (buyer: string, amount) => {
-        console.log(`BUY EVENT: Address,${buyer} Amount,${amount}`)
-
-        if (signerAddress !== buyer) {
-          return
-        }
-        closeSpinner()
-        enqueueSnackbar(`👍 Done! You now got ${amount} new share(s). Nice!`, {
-          variant: 'success',
-          anchorOrigin: { horizontal: 'center', vertical: 'top' },
-        })
-      })
-    })
   }
 
   const handleShareTextUpdate = (
@@ -115,27 +96,54 @@ export const PurchaseShares: FC = () => {
   }
 
   useEffect(() => {
-    cube.getSharePrice().then((price) => {
-      setSharePrice(price)
-      setBasketPrice(price * DEFAULT_SHARE_VALUE)
-    })
+    if (chainid) {
+      try {
+        const cube = new ContractConnector(chainid)
+        cube
+          .getSharePrice()
+          .then((price) => {
+            setSharePrice(price)
+            setBasketPrice(price * DEFAULT_SHARE_AMOUNT)
+          })
+          .catch(() => console.error)
+      } catch (error) {
+        console.error
+      }
+      const network = networks[chainid]
+      setExplorer(network?.chain.explorer)
+    }
+
     return () => {
       setSharePrice(0)
       setBasketPrice(0)
     }
-  }, [])
+  }, [chainid])
 
   useEffect(() => {
     if (provider) {
-      getUSDTBalance(provider).then((amount) => {
-        setBalance(amount)
-      })
+      try {
+        const cube = new ContractConnector(chainid)
+        provider
+          .getSigner()
+          .getAddress()
+          .then((address: string) => {
+            cube
+              .getUSDTBalance(address)
+              .then((amount) => {
+                setBalance(amount)
+              })
+              .catch(() => console.error)
+          })
+          .catch(() => console.error)
+      } catch (error) {
+        console.error
+      }
     }
     return () => {
       setBalance(0)
       setSharePrice(0)
     }
-  }, [provider])
+  }, [provider, chainid])
 
   return (
     <Stack direction="column">
@@ -170,20 +178,22 @@ export const PurchaseShares: FC = () => {
           color: '#fff',
           zIndex: (theme) => theme.zIndex.drawer + 1,
         }}
-        open={open}
+        open={openProgress}
         onClick={closeSpinner}
       >
         <Stack direction="column" spacing={4} alignItems="center">
           <h3>Transaction in progress...</h3>
           <CircularProgress color="inherit" />
-          <Button
+          {/* <Button
             target="_blank"
             rel="noopener"
             variant="outlined"
-            href={`https://polygonscan.com/tx/${activeTx?.hash}`}
+            href={`${explorer?.url || 'https://polyscan.com'}/tx/${    //ADD BACK LATER. NEED GET TX FROM CONTRACT CONNECTOR
+              activeTx?.hash
+            }`}
           >
-            See on polyscan
-          </Button>
+            See on {explorer?.name}
+          </Button> */}
         </Stack>
       </Backdrop>
     </Stack>

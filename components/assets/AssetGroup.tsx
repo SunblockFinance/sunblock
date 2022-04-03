@@ -10,16 +10,15 @@ import Stack from '@mui/material/Stack'
 import CoinGecko from 'coingecko-api'
 import { FC, useEffect, useState } from 'react'
 import { CoinGeckoPrice } from '../../blockchain/coingecko'
-import * as cube from '../../blockchain/providercalls'
-import { hooks } from '../../connectors/network'
+import ContractConnector from '../../blockchain/ContractConnector'
+import { DEFAULT_TOKEN_LOGO, DEFAULT_TOKEN_NAME, NetworkDetails, networks } from '../../blockchain/networks'
+import { hooks } from '../../connectors/metamask'
 import { AssetItem } from './AssetItem'
 
-let eth: any
-const { useProvider } = hooks
+const { useChainId } = hooks
 
 export const AssetGroup: FC = () => {
-  const provider = useProvider()
-  const usdt = './crypto-icons/usdt.svg'
+  const chainid = useChainId()
   const strong = './crypto-icons/strong.webp'
   const reward = './svg/treasure.svg'
 
@@ -36,27 +35,48 @@ export const AssetGroup: FC = () => {
   const [sharesIssued, setSharesIssued] = useState(0)
   const [totalInvestment, setTotalInvestment] = useState(0)
   const [sharePrice, setSharePrice] = useState(0)
+  const [loading, setLoading] = useState(true)
+  const [chainDetails, setChainDetails] = useState<NetworkDetails>()
 
   useEffect(() => {
     // void network.activate(CHAINID)
   }, [])
 
   useEffect(() => {
-    cube.getCubeInvestmentFund().then((amount) => {
-      setInvestFund(amount)
-    })
-    cube.getSharesIssued().then((amount) => {
-      setSharesIssued(amount)
-    })
-    cube.getSharePrice().then((price) => {
-      setSharePrice(price)
-    })
-    cube.getCubeRewardFund().then((amount) => {
-      setRewardFund(amount)
-    })
-    cube.getShareholderCount().then((count) => {
-      setInvestorCount(count)
-    })
+    if (chainid) {
+      try {
+        const cube = new ContractConnector(chainid)
+        cube
+          .getCubeInvestmentFund()
+          .then((amount) => {
+            setInvestFund(amount)
+          }).catch(e => console.error)
+        cube
+          .getSharesIssued()
+          .then((amount) => {
+            setSharesIssued(amount)
+          }).catch(e => console.error)
+        cube
+          .getSharePrice()
+          .then((price) => {
+            setSharePrice(price)
+          }).catch(e => console.error)
+        cube
+          .getCubeRewardFund()
+          .then((amount) => {
+            setRewardFund(amount)
+          }).catch(e => console.error)
+        cube
+          .getShareholderCount()
+          .then((count) => {
+            setInvestorCount(count)
+          }).catch(e => console.error)
+        } catch(error) {
+          console.error
+        }
+        setChainDetails(networks[chainid])
+    }
+
 
     return () => {
       setInvestFund(0)
@@ -66,7 +86,7 @@ export const AssetGroup: FC = () => {
       setRewardFund(0)
       setInvestorCount(0)
     }
-  }, [])
+  }, [chainid])
 
   useEffect(() => {
     const CoinGeckoClient = new CoinGecko()
@@ -76,6 +96,7 @@ export const AssetGroup: FC = () => {
         setStrongPrice(data.data.strong.usd)
         setStrongChange(data.data.strong.usd_24h_change)
       })
+      .catch(() => console.error)
     return () => {
       setStrongPrice(0)
       setStrongChange(0)
@@ -110,12 +131,12 @@ export const AssetGroup: FC = () => {
           >
             <AssetItem
               title="Capital waiting to be invested"
-              value={`${investFund.toString()} USDT`}
-              avatar={usdt}
+              value={`${investFund.toString()} ${chainDetails?.cubeNativeTokenName || DEFAULT_TOKEN_NAME}`}
+              avatar={chainDetails?.cubeNativeTokenLogo || DEFAULT_TOKEN_LOGO}
             />
             <AssetItem
               title="Rewards accumulated"
-              value={`${rewardFund.toString()} USDT `}
+              value={`${rewardFund.toString()} ${chainDetails?.cubeNativeTokenName || DEFAULT_TOKEN_NAME} `}
               avatar={reward}
             />
           </Stack>

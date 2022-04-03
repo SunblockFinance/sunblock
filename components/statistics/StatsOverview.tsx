@@ -1,40 +1,60 @@
 // Copyright 2022 Kenth Fagerlund.
 // SPDX-License-Identifier: MIT
 import { Container, Stack } from '@mui/material'
-import { FC } from 'react'
-import {
-  DESCRIPTOR_STRONGBLOCK,
-  DESCRIPTOR_YIELDNODE
-} from '../../contracts/deployedContracts'
+import { FC, useEffect, useState } from 'react'
+import { NetworkDetails, networks } from '../../blockchain/networks'
+import { hooks } from '../../connectors/metamask'
 import { StatsVehicleCard } from './StatsVehicleCard'
 
+const { useChainId } = hooks
+
 export const StatsOverview: FC = () => {
+  const chainid = useChainId()
+  const [chainDetails, setChainDetails] = useState<NetworkDetails>()
+
+  useEffect(() => {
+    if (chainid) {
+      setChainDetails(networks[chainid])
+    }
+
+    return () => {
+      setChainDetails(undefined)
+    }
+  }, [chainid])
+
+
   return (
     <Container
-        sx={{
-          outlineStyle: 'solid',
-          outlineColor: 'gray',
-          borderRadius: '5px',
-          backgroundColor: 'rgba(56,71,80,0.5)',
-          backdropFilter: 'blur(8px)',
-          padding: '20px',
-        }}
+      sx={{
+        outlineStyle: 'solid',
+        outlineColor: 'gray',
+        borderRadius: '5px',
+        backgroundColor: 'rgba(56,71,80,0.5)',
+        backdropFilter: 'blur(8px)',
+        padding: '20px',
+      }}
+    >
+      <Stack
+        direction={{ xs: 'column', md: 'row' }}
+        spacing={2}
+        justifyContent="space-around"
+        alignItems="stretch"
       >
-      <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} justifyContent="space-around" alignItems="stretch">
-        <StatsVehicleCard
-          title={DESCRIPTOR_STRONGBLOCK.title}
-          logo={DESCRIPTOR_STRONGBLOCK.logo}
-          description={DESCRIPTOR_STRONGBLOCK.description}
-          contract={DESCRIPTOR_STRONGBLOCK.contract}
-          url={DESCRIPTOR_STRONGBLOCK.url}
+        {chainDetails?.vehicleContracts?.map(_vehicle => (
+          <StatsVehicleCard
+          key={_vehicle.address}
+          contract={_vehicle.address}
+          title={_vehicle.name || ''}
+          logo={_vehicle.logo || ''}
+          description={
+            _vehicle.description ||
+            'Loading up the next great thing. Give it a second...'
+          }
+          url={_vehicle.url || ''}
         />
-        <StatsVehicleCard
-          title={DESCRIPTOR_YIELDNODE.title}
-          logo={DESCRIPTOR_YIELDNODE.logo}
-          description={DESCRIPTOR_YIELDNODE.description}
-          contract={DESCRIPTOR_YIELDNODE.contract}
-          url={DESCRIPTOR_YIELDNODE.url}
-        />
+        ))}
+
+
       </Stack>
     </Container>
   )

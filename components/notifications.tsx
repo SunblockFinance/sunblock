@@ -38,5 +38,13 @@ export function useSnackbarNotifications() {
     }
   )
 
-  return {NotifyAllowanceIncresed, NotifyAllowanceRemoved, NotifyFailure, NotifySharesPurchased}
+  const NotifyNeedConnectedMetamask = enqueueSnackbar(
+    "🙁 That didn't work as expected... Try again?",
+    {
+      variant: 'error',
+      anchorOrigin: { horizontal: 'center', vertical: 'top' },
+    }
+  )
+
+  return {NotifyAllowanceIncresed, NotifyAllowanceRemoved, NotifyFailure, NotifySharesPurchased, NotifyNeedConnectedMetamask}
 }
