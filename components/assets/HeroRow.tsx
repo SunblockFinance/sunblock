@@ -9,7 +9,7 @@ import PollOutlinedIcon from '@mui/icons-material/PollOutlined'
 import { Avatar, Divider, Stack, Tooltip } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
 import ContractConnector from '../../blockchain/ContractConnector'
-import { NetworkDetails, networks } from '../../blockchain/networks'
+import { DEFAULT_TOKEN_LOGO, DEFAULT_TOKEN_NAME, NetworkDetails, networks } from '../../blockchain/networks'
 import { hooks } from '../../connectors/metamask'
 import InvestmentQueue from '../InvestmentQueue'
 import { PurchaseShares } from '../PurchaseShare'
@@ -128,9 +128,9 @@ export const HeroRow: FC = () => {
       >
         <Divider textAlign="left">Estimated earnings</Divider>
         <Stack direction="row">
-          <Avatar src={chainDetails?.cubeNativeTokenLogo}></Avatar>
+          <Avatar src={chainDetails?.cubeNativeTokenLogo || DEFAULT_TOKEN_LOGO}></Avatar>
           <span style={{ fontWeight: 'bold', fontSize: 24 }}>
-            &nbsp;{`${earnings.toFixed(2)} ${chainDetails?.cubeNativeTokenName}`}
+            &nbsp;{`${earnings.toFixed(2)} ${chainDetails?.cubeNativeTokenName || DEFAULT_TOKEN_NAME}`}
           </span>
         </Stack>
         <br />
@@ -148,8 +148,8 @@ export const HeroRow: FC = () => {
       </HeroItem>
       <HeroItem
         title="Purchase shares"
-        subtitle={`Each share is 10 ${chainDetails?.cubeNativeTokenName}`}
-        avatar={chainDetails?.cubeNativeTokenLogo}
+        subtitle={`Each share is 10 ${chainDetails?.cubeNativeTokenName || DEFAULT_TOKEN_NAME}`}
+        avatar={chainDetails?.cubeNativeTokenLogo || DEFAULT_TOKEN_LOGO}
         promote
       >
         <PurchaseShares />

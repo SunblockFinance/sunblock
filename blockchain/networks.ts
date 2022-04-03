@@ -185,5 +185,7 @@ export const networks: { [chainid: number]: NetworkDetails } = {
 }
 
 export const DEFAULT_CHAINID = 137
+export const DEFAULT_TOKEN_NAME = 'USDT'
+export const DEFAULT_TOKEN_LOGO = './crypto-icons/usdt.svg'
 
 //https://rpc.ankr.com/avalanche
