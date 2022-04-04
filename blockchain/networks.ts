@@ -146,24 +146,21 @@ export const networks: { [chainid: number]: NetworkDetails } = {
         address: '0x59A974776C25080328A7480Af4EbaD72b9D3dda1',
         name: 'Polar nodes',
         logo: '/svg/polar.svg',
-        description:
-          "A fully decentralized Node Protocol on Avalanche",
+        description: 'A fully decentralized Node Protocol on Avalanche',
         url: 'https://polarnodes.finance/',
       },
       {
         address: '0x4943Ee1090d92f143E44631DC07aF88f5BE50287',
         name: 'Anchor protocol',
         logo: '/svg/anchor.svg',
-        description:
-          'Better savings',
+        description: 'Better savings',
         url: 'https://www.anchorprotocol.com/',
       },
       {
         address: '0x9e937413A629Eb060461589E1Ba8e17A0E41f4Db',
         name: 'Etherstones',
         logo: '/etherstones.webp',
-        description:
-          'Etherstones is an innovative DaaS on the Avalanche',
+        description: 'Etherstones is an innovative DaaS on the Avalanche',
         url: 'https://etherstones.fi/',
       },
     ],
@@ -182,10 +179,43 @@ export const networks: { [chainid: number]: NetworkDetails } = {
       },
     },
   },
+  250: {
+    cubeContract: '0xF054c307A72bbe7b5E6D7831C04bFc6E93f97eA4',
+    cubeNativeToken: '0x049d68029688eabf473097a2fc38ef61633a3c7a',
+    cubeNativeTokenName: 'fUSDT',
+    cubeNativeTokenDecimals: 6,
+    cubeNativeTokenLogo: './crypto-icons/usdt.svg',
+    vehicleContracts: [
+      {
+        address: '0xbB360b04a49786EeCeFf029bb89bD0218bea6baA',
+        name: 'Kingdoms',
+        logo: '/kingdoms.png',
+        description:
+          'An easy-to-use tool to grow your riches - sacrifice Pawns to earn passive income.',
+        url: 'https://kingdoms.financial/',
+      },
+      {
+        address: '0xbB360b04a49786EeCeFf029bb89bD0218bea6baA',
+        name: 'SpookyFarms',
+        logo: '/svg/spookyswap.svg',
+        description:
+          'All in one decentralized exchange for leveraging diversified funds across ecosystems',
+        url: 'https://spookyswap.finance/',
+      },
+    ],
+    providerURL: 'https://rpc.ftm.tools/',
+    chain: {
+      name: 'Fantom',
+      logo: './crypto-icons/ftm.svg',
+      explorer: {
+        name: 'Fantom Explorer',
+        url: 'https://ftmscan.com/',
+        standard: 'EIP3091',
+      },
+    },
+  },
 }
 
 export const DEFAULT_CHAINID = 137
 export const DEFAULT_TOKEN_NAME = 'USDT'
 export const DEFAULT_TOKEN_LOGO = './crypto-icons/usdt.svg'
-
-//https://rpc.ankr.com/avalanche
