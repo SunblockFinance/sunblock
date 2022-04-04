@@ -158,6 +158,24 @@ class ContractConnector {
     }
   }
 
+  async getCurrentTargetAddress(): Promise<string | undefined> {
+    try {
+      return await this.cube.currentVehicle()
+    } catch (error) {
+      console.error
+      return undefined
+    }
+  }
+
+  async getNextTargetAddress(): Promise<string | undefined> {
+    try {
+      return await this.cube.nextVehicle()
+    } catch (error) {
+      console.error
+      return undefined
+    }
+  }
+
   /**
    * Will retrieive the name of the current vehicle waiting to be funded
    * @returns name of vehicle as stated in the contract

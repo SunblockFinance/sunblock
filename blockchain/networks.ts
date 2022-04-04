@@ -187,7 +187,7 @@ export const networks: { [chainid: number]: NetworkDetails } = {
     cubeNativeTokenLogo: './crypto-icons/usdt.svg',
     vehicleContracts: [
       {
-        address: '0xbB360b04a49786EeCeFf029bb89bD0218bea6baA',
+        address: '0xD697D3444E0cb93E4B0Cc5dFa3C874b50f4eecE2',
         name: 'Kingdoms',
         logo: '/kingdoms.png',
         description:
@@ -206,7 +206,7 @@ export const networks: { [chainid: number]: NetworkDetails } = {
     providerURL: 'https://rpc.ftm.tools/',
     chain: {
       name: 'Fantom',
-      logo: './crypto-icons/ftm.svg',
+      logo: '/crypto-icons/ftm.svg',
       explorer: {
         name: 'Fantom Explorer',
         url: 'https://ftmscan.com/',

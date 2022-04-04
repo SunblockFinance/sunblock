@@ -111,7 +111,7 @@ export const Header: FC = () => {
         />
       </Stack>
       <Tooltip title={`Connected to ${chain?.chain.name} network`}>
-      <Avatar src={chain?.chain.logo}></Avatar>
+      <Avatar sx={{backgroundColor:'#5524B1'}} src={chain?.chain.logo}></Avatar>
       </Tooltip>
       {isActive ? authID : authenticatebtn}
 

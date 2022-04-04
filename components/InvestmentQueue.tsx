@@ -9,12 +9,8 @@ import ListItemText from '@mui/material/ListItemText'
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 import ContractConnector from '../blockchain/ContractConnector'
-import { NetworkDetails, networks } from '../blockchain/networks'
+import { NetworkDetails, networks, VehicleContractDetails } from '../blockchain/networks'
 import { hooks } from '../connectors/metamask'
-import {
-  ContractDescriptor,
-  NameToDescriptor
-} from '../contracts/deployedContracts'
 import styles from './InvestmentQueue.module.css'
 
 // Web3 Provider
@@ -29,9 +25,9 @@ export default function InvestmentQueue() {
   const [investmentFund, setInvestmentFund] = useState(0)
   const [inprogress, setInprogress] = useState(0)
   const [currentVehicleDescriptor, setCurrentVehicleDescriptor] =
-    useState<ContractDescriptor>()
+    useState<VehicleContractDetails>()
   const [nextVehicleDescriptor, setNextVehicleDescriptor] =
-    useState<ContractDescriptor>()
+    useState<VehicleContractDetails>()
 
   const [chainDetails, setChainDetails] = useState<NetworkDetails>()
 
@@ -50,54 +46,69 @@ export default function InvestmentQueue() {
   }, [chainid])
 
   useEffect(() => {
-    if (!chainid || chainid === 0) return
-    try {
-      const cube = new ContractConnector(chainid)
-      setInprogress((prevcount) => prevcount + 1)
-      cube
-        .getCurrentTargetAmount()
-        .then((amount) => {
-          setCurrentTargetAmount(amount || 0)
-          setInprogress((prevcount) => prevcount - 1)
-        })
-        .catch((e) => console.error)
-      setInprogress((prevcount) => prevcount + 1)
-      cube
-        .getCurrentTargetName()
-        .then((name) => {
-          setCurrentVehicleDescriptor(NameToDescriptor(name || ''))
-          setCurrentVehicleName(name || '')
-          setInprogress((prevcount) => prevcount - 1)
-        })
-        .catch((e) => console.error)
-      setInprogress((prevcount) => prevcount + 1)
-      cube
-        .getNextTargetAmount()
-        .then((amount) => {
-          setNextTargetAmount(amount || 0)
-          setInprogress((prevcount) => prevcount - 1)
-        })
-        .catch((e) => console.error)
-      setInprogress((prevcount) => prevcount + 1)
-      cube
-        .getNextTargetName()
-        .then((name) => {
-          setNextVehicleDescriptor(NameToDescriptor(name || ''))
-          setNextVehicleName(name || '')
-          setInprogress((prevcount) => prevcount - 1)
-        })
-        .catch((e) => console.error)
-      setInprogress((prevcount) => prevcount + 1)
-      cube
-        .getCubeInvestmentFund()
-        .then((amount) => {
-          setInvestmentFund(amount || 0)
-          setInprogress((prevcount) => prevcount - 1)
-        })
-        .catch((e) => console.error)
-    } catch (error) {
-      console.error
+    if (chainid){
+      const chainDesc = networks[chainid]
+
+
+      try {
+        const cube = new ContractConnector(chainid)
+        setInprogress((prevcount) => prevcount + 1)
+        cube
+          .getCurrentTargetAmount()
+          .then((amount) => {
+            setCurrentTargetAmount(amount || 0)
+            setInprogress((prevcount) => prevcount - 1)
+          })
+          .catch((e) => console.error)
+        setInprogress((prevcount) => prevcount + 1)
+        cube
+          .getCurrentTargetAddress()
+          .then((addr) => {
+            if (addr){
+            console.log(`CONTRACT ${addr}`);
+
+            const vehicle = chainDesc.vehicleContracts.find(e => e.address === addr)
+            console.log(vehicle);
+
+            setCurrentVehicleDescriptor(vehicle)
+            setCurrentVehicleName(vehicle?.name || '')
+            setInprogress((prevcount) => prevcount - 1)
+            }
+
+          })
+          .catch((e) => console.error)
+        setInprogress((prevcount) => prevcount + 1)
+        cube
+          .getNextTargetAmount()
+          .then((amount) => {
+            setNextTargetAmount(amount || 0)
+            setInprogress((prevcount) => prevcount - 1)
+          })
+          .catch((e) => console.error)
+        setInprogress((prevcount) => prevcount + 1)
+        cube
+          .getNextTargetName()
+          .then((addr) => {
+            const vehicle = chainDesc.vehicleContracts.find(e => e.address === addr)
+            setNextVehicleDescriptor(vehicle)
+            setNextVehicleName(vehicle?.name || '')
+            setInprogress((prevcount) => prevcount - 1)
+          })
+          .catch((e) => console.error)
+        setInprogress((prevcount) => prevcount + 1)
+        cube
+          .getCubeInvestmentFund()
+          .then((amount) => {
+            setInvestmentFund(amount || 0)
+            setInprogress((prevcount) => prevcount - 1)
+          })
+          .catch((e) => console.error)
+      } catch (error) {
+        console.error
+      }
+
     }
+
 
     return () => {
       setCurrentTargetAmount(0)
@@ -170,7 +181,7 @@ export default function InvestmentQueue() {
           <ListItemText
             disableTypography={true}
             primary={`${
-              currentVehicleName === '' ? 'No target' : currentVehicleName
+              currentVehicleName === '' ? 'Choose new target' : currentVehicleName
             }`}
             secondary={
               <Box sx={{ width: '100%' }}>
@@ -196,7 +207,7 @@ export default function InvestmentQueue() {
           <ListItemText
             disableTypography={true}
             primary={`${
-              nextVehicleName === '' ? '😢 No target' : nextVehicleName
+              nextVehicleName === '' ? 'Choose new target' : nextVehicleName
             }`}
             secondary={
               <Box sx={{ width: '100%' }}>
