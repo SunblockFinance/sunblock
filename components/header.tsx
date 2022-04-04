@@ -41,7 +41,11 @@ export const Header: FC = () => {
     }
   }, [chainid])
 
-
+  useEffect(() => {
+    if (!isActive) {
+      metaMask.connectEagerly()
+    }
+  },[isActive])
 
   const authenticatebtn = (
     <Button
