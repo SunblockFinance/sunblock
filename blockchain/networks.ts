@@ -206,7 +206,7 @@ export const networks: { [chainid: number]: NetworkDetails } = {
     providerURL: 'https://rpc.ftm.tools/',
     chain: {
       name: 'Fantom',
-      logo: '/crypto-icons/ftm.svg',
+      logo: '/svg/fantom.svg',
       explorer: {
         name: 'Fantom Explorer',
         url: 'https://ftmscan.com/',
