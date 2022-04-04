@@ -69,6 +69,7 @@ const NetworkAlert: FC = () => {
 
   const polygonChain = { chain: 137 }
   const avalancheChain = { chain: 43114 }
+  const fantomChain = { chain: 250 }
 
   return (
     <div>
@@ -102,6 +103,10 @@ const NetworkAlert: FC = () => {
             <Button {...avalancheChain} onClick={handleNetworkSwitch}>
               <Avatar src="/crypto-icons/avax.svg" />
               &nbsp;Avalanche
+            </Button>
+            <Button {...fantomChain} onClick={handleNetworkSwitch}>
+              <Avatar src="/svg/fantom.svg" />
+              &nbsp;Fantom
             </Button>
           </ButtonGroup>
         </DialogActions>
