@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 // Copyright (c) 2022 Kenth Fagerlund
 //
 // This software is released under the MIT License.
@@ -8,8 +9,8 @@ import TelegramIcon from '@mui/icons-material/Telegram'
 import TwitterIcon from '@mui/icons-material/Twitter'
 import { IconButton, Stack, Tooltip } from '@mui/material'
 import Typography from '@mui/material/Typography'
-import Image from 'next/image'
 import { FC } from 'react'
+
 //https://t.me/sunblock_finance
 export const Footer: FC = ({ children }) => {
   return (
@@ -18,12 +19,13 @@ export const Footer: FC = ({ children }) => {
       <Tooltip title="Documentation" placement="top" arrow>
       <IconButton href="https://docs.sunblock.finance" target="_blank">
           {' '}
-          <Image
+          <img src='/svg/gitbook.svg' alt="gitbook logo" height={20} width={20}></img>
+          {/* <Image
             src="/svg/gitbook.svg"
             alt="gitbook logo"
             height={20}
             width={20}
-          />
+          /> */}
         </IconButton>
         </Tooltip>
         <Tooltip title="Github" placement="top" arrow>
@@ -41,12 +43,7 @@ export const Footer: FC = ({ children }) => {
         <Tooltip title="Signal" placement="top" arrow>
         <IconButton href="https://signal.group/#CjQKIMyRLW1F7QuJb7NXSTiXGz1EtNsL_pY0WCRceI3pXHzWEhDVARhYf8FY9rE4F8VlkpRS" target="_blank">
           {' '}
-          <Image
-            src="/svg/signal-logo.svg"
-            alt="signal logo"
-            height={20}
-            width={20}
-          />
+          <img src="/svg/signal-logo.svg" alt="signal logo" height={20} width={20}></img>
         </IconButton>
         </Tooltip>
         <Tooltip title="Telegram" placement="top" arrow>
@@ -57,12 +54,13 @@ export const Footer: FC = ({ children }) => {
         </Tooltip>
         <Tooltip title="Discord" placement="top" arrow>
         <IconButton target="_blank" href="https://discord.gg/6x2ndn5anT">
-          <Image
+          <img src="/discord-logo.svg" height={20} width={20} alt="discord" />
+          {/* <Image
             src="/discord-logo.svg"
             alt="discord"
             height={20}
             width={20}
-          />
+          /> */}
         </IconButton>
         </Tooltip>
       </Stack>

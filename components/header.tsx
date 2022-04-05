@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 // Copyright (c) 2022 Kenth Fagerlund
 //
 // This software is released under the MIT License.
@@ -8,7 +9,6 @@ import { Avatar, Tooltip } from '@mui/material'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
 import Stack from '@mui/material/Stack'
-import Image from 'next/image'
 import { FC, useEffect, useState } from 'react'
 import { NetworkDetails, networks } from '../blockchain/networks'
 import { hooks, metaMask } from '../connectors/metamask'
@@ -80,13 +80,7 @@ export const Header: FC = () => {
       alignItems="center"
       sx={{ width: '100%' }}
     >
-      <Image
-        src="/sunblock-logo/sunblock-text-side-transparent.svg"
-        alt="Sunblock logo"
-        width="263"
-        height="100"
-        priority
-      />
+      <img src='/sunblock-logo/sunblock-text-side-transparent.svg' width="263" height="100" alt="Sunblock logo"></img>
       <Stack direction="row">
         <Button
           href="https://docs.sunblock.finance"

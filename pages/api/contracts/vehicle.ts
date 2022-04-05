@@ -45,7 +45,7 @@ export default async function handler(
     case 'vehicleRewardPool':
         await getVehicleRewardPool(addr).then((pool) => {
         res.status(200).json({ field: q, value: pool })
-        })
+        }).catch((error) => console.error)
         break
     default:
       res.status(400).json({ field: 'error', value: 'Unknown search request' })
