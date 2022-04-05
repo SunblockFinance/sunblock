@@ -3,7 +3,6 @@
 
 import { Chip } from '@mui/material'
 import { BigNumber, Contract, ethers } from 'ethers'
-import { track } from 'insights-js'
 import { useSnackbar } from 'notistack'
 import React, { FC, useState } from 'react'
 import ContractConnector from '../blockchain/ContractConnector'
@@ -78,9 +77,6 @@ const AllowancePill: FC<{ shareCost: number }> = ({ shareCost: shareCost }) => {
         ?.once('Approval', (to, spender, value) => {
           const ethValue = formatUSDTWeiToNumber(value)
           setAllowance(ethValue)
-          track({
-            id: 'approval-removed',
-          })
         })
         .catch((error: Error) => console.log(error))
     } catch (error) {}
