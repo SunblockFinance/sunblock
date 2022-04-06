@@ -65,11 +65,7 @@ export default function InvestmentQueue() {
           .getCurrentTargetAddress()
           .then((addr) => {
             if (addr){
-            console.log(`CONTRACT ${addr}`);
-
             const vehicle = chainDesc.vehicleContracts.find(e => e.address === addr)
-            console.log(vehicle);
-
             setCurrentVehicleDescriptor(vehicle)
             setCurrentVehicleName(vehicle?.name || '')
             setInprogress((prevcount) => prevcount - 1)
@@ -87,10 +83,11 @@ export default function InvestmentQueue() {
           .catch((e) => console.error)
         setInprogress((prevcount) => prevcount + 1)
         cube
-          .getNextTargetName()
+          .getNextTargetAddress()
           .then((addr) => {
             const vehicle = chainDesc.vehicleContracts.find(e => e.address === addr)
             setNextVehicleDescriptor(vehicle)
+
             setNextVehicleName(vehicle?.name || '')
             setInprogress((prevcount) => prevcount - 1)
           })

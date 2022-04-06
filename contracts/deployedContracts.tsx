@@ -50,6 +50,13 @@ export const DESCRIPTOR_ETHERSTONES:ContractDescriptor = {
     url:'https://etherstones.fi/'
 }
 
+export const DESCRIPTOR_PHOENIX:ContractDescriptor = {
+    title:"Phoenix",
+    logo:"/crypto-icons/fire.png",
+    description:"Fire nodes",
+    url:'https://thephoenix.finance/app/'
+}
+
 export function NameToDescriptor(contractName:string):ContractDescriptor {
     switch (contractName) {
         case 'Strongblock':
@@ -62,6 +69,8 @@ export function NameToDescriptor(contractName:string):ContractDescriptor {
             return DESCRIPTOR_THOR
         case 'Etherstones':
             return DESCRIPTOR_ETHERSTONES
+        case 'Phoenix':
+            return DESCRIPTOR_PHOENIX
         default:
             return DESCRIPTOR_STRONGBLOCK
     }
