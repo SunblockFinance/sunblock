@@ -28,19 +28,19 @@ export const TabMenu: FC = () => {
 
           <TabList  onChange={handleChange} aria-label="lab API tabs example" >
 
-            <Tab label="Community stats" value="1" />
-            <Tab label="Investment Stats" value="2" />
+            <Tab label="Investment vehicles" value="1" />
+            <Tab label="Community stats" value="2" />
             <Tab label="Sunblock updates" value="3" />
 
           </TabList>
         </Box>
         <TabPanel value="1">
           {' '}
-          <AssetGroup />
+          <StatsOverview />
         </TabPanel>
         <TabPanel value="2">
           {' '}
-          <StatsOverview />
+          <AssetGroup />
         </TabPanel>
         <TabPanel value="3">
           {' '}

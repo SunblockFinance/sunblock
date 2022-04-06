@@ -153,7 +153,7 @@ export const networks: { [chainid: number]: NetworkDetails } = {
         address: '0x4943Ee1090d92f143E44631DC07aF88f5BE50287',
         name: 'Anchor protocol',
         logo: '/svg/anchor.svg',
-        description: 'Better savings',
+        description: 'Lending service with high investor return',
         url: 'https://www.anchorprotocol.com/',
       },
       {
@@ -162,6 +162,13 @@ export const networks: { [chainid: number]: NetworkDetails } = {
         logo: '/etherstones.webp',
         description: 'Etherstones is an innovative DaaS on the Avalanche',
         url: 'https://etherstones.fi/',
+      },
+      {
+        address: '0x9Ff3C22805Fd43531577fD1bC61216bc04DC1609',
+        name: 'Phoenix',
+        logo: '/crypto-icons/fire.png',
+        description: 'RISE FROM THE ASHES OF TRADITIONAL FINANCE',
+        url: 'https://thephoenix.finance/app/',
       },
     ],
     cubeNativeToken: '0xc7198437980c041c805a1edcba50c1ce5db95118',
