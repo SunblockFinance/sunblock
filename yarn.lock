@@ -2124,13 +2124,13 @@
   optionalDependencies:
     "@ethersproject/providers" "^5.6.0"
 
-"@web3-react/metamask@^8.0.16-beta.0":
-  version "8.0.16-beta.0"
-  resolved "https://registry.npmjs.org/@web3-react/metamask/-/metamask-8.0.16-beta.0.tgz"
-  integrity sha512-YuI2UY7ka+VJt8m7K3SmpXouyORZIIcNyAERc50ipZPeWro9j/a0qDavFZ0OnE8nhGrgBA+kJq+hMTvZrggCZQ==
+"@web3-react/metamask@^8.2.0":
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/@web3-react/metamask/-/metamask-8.2.0.tgz#4f822e36bcbc37bbbce6f97f55c10537eeb5014d"
+  integrity sha512-nitDOHFZOUi9FWBmGAKlvExZDxZPWSJaXZn0lxl7LKaM6rPwBoEWKI2wJJvWCf+h5q9+p6ifiaFd7JKqucS6rQ==
   dependencies:
     "@metamask/detect-provider" "^1.2.0"
-    "@web3-react/types" "^8.0.10-beta.0"
+    "@web3-react/types" "^8.2.0"
 
 "@web3-react/network@^8.0.15-beta.0":
   version "8.0.15-beta.0"
@@ -2156,6 +2156,13 @@
   integrity sha512-HitBmoKHyLDeRrJgtkImPddb8nzsb/FroAdiaYA15gAwAE3Y/p7Nd/TN8IANlgKcMkuyGyUjPD27fE7Mvw9rEA==
   dependencies:
     zustand "^4.0.0-beta.2"
+
+"@web3-react/types@^8.2.0":
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/@web3-react/types/-/types-8.2.0.tgz#195464ebb94cb417e6dc3c16951573f9b6b3832a"
+  integrity sha512-TBYTFlqJZaEpVbuAAKRJFX5PZc3lI1TqDZzY94zwCrCh4GBepwwK7+PxmRAppMFuNa5x0vFX/ghLEC44e6TCFg==
+  dependencies:
+    zustand "^4.3.5"
 
 "@yarnpkg/lockfile@^1.1.0":
   version "1.1.0"
@@ -10277,6 +10284,11 @@ use-sync-external-store@1.0.0-rc.1-next-629036a9c-20220224:
   resolved "https://registry.npmjs.org/use-sync-external-store/-/use-sync-external-store-1.0.0-rc.1-next-629036a9c-20220224.tgz"
   integrity sha512-IhuMl0apVVYsT3XPfV+0nuwf0T6+3d4YxQXV4tDRsGpSQcYVG4zoWwfX4zdtouUfuelYg4t2SEmFifIMrxPfIw==
 
+use-sync-external-store@1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-1.2.0.tgz#7dbefd6ef3fe4e767a0cf5d7287aacfb5846928a"
+  integrity sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==
+
 use@^3.1.0:
   version "3.1.1"
   resolved "https://registry.npmjs.org/use/-/use-3.1.1.tgz"
@@ -11436,3 +11448,10 @@ zustand@^4.0.0-beta.2:
   integrity sha512-aJ5ypnOwPIa/uSjdZv/oHChTWPplpFOG/hvWwzkR5ahFiPI5R6ifyObf8Fz1Vi6Obz2wY1N32fT2pNrpT2hzPw==
   dependencies:
     use-sync-external-store "1.0.0-rc.1-next-629036a9c-20220224"
+
+zustand@^4.3.5:
+  version "4.3.7"
+  resolved "https://registry.yarnpkg.com/zustand/-/zustand-4.3.7.tgz#501b1f0393a7f1d103332e45ab574be5747fedce"
+  integrity sha512-dY8ERwB9Nd21ellgkBZFhudER8KVlelZm8388B5nDAXhO/+FZDhYMuRnqDgu5SYyRgz/iaf8RKnbUs/cHfOGlQ==
+  dependencies:
+    use-sync-external-store "1.2.0"
